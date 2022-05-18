@@ -8,6 +8,19 @@ static uint8_t * currentVideo = (uint8_t*)0xB8000;
 static const uint32_t width = 80;
 static const uint32_t height = 25 ;
 
+
+void ncPrintTime(){
+		ncPrint("  Hours:");
+    	ncPrintDec(getHours());
+    	ncNewline();
+    	ncPrint("  Minutes:");
+    	ncPrintDec(getMinutes());
+    	ncNewline();
+    	ncPrint("  Seconds:");
+    	ncPrintDec(getSeconds());
+    	ncNewline();
+	}
+
 void ncPrint(const char * string)
 {
 	int i;
