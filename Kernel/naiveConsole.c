@@ -1,4 +1,5 @@
 #include <naiveConsole.h>
+#include <lib.h>
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 
@@ -11,7 +12,7 @@ static const uint32_t height = 25 ;
 
 void ncPrintTime(){
 		ncPrint("  Hours:");
-    	ncPrintDec(getHours());
+    	ncPrintDec(getHours()-3); //restamos 3 ya que la hora argentina es UTC-03:00
     	ncNewline();
     	ncPrint("  Minutes:");
     	ncPrintDec(getMinutes());
