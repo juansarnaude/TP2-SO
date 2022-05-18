@@ -98,6 +98,7 @@ int main()
 	ncPrint("  Sample data module contents: ");
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
+	ncPrintTime();
 
 	ncPrint("[Finished]");
 	return 0;
