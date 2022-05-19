@@ -102,6 +102,7 @@ int main()
 	ncNewline();
 	ncPrintTime();
 
+	while(1);
 
 	ncPrint("[Finished]");
 	return 0;
