@@ -2,6 +2,7 @@ GLOBAL cpuVendor
 GLOBAL getSeconds
 GLOBAL getMinutes
 GLOBAL getHours
+GLOBAL read_port
 section .text
 	
 cpuVendor:
@@ -73,3 +74,14 @@ getHours:
     mov rsp,rbp
     pop rbp
     ret	
+
+read_port:
+    push rbp
+    mov rbp, rsp
+    
+    mov dx, di
+    in al, dx
+
+    mov rsp, rbp
+    pop rbp 
+    ret
