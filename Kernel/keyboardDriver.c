@@ -44,8 +44,12 @@ void key_handler(){
     0,  /* F12 Key */
     0,  /* All other keys are undefined */
     };
-    char c=read_port(0x60);
+    int c=read_port(0x60);
      if (!(c & 0x80)){
-        ncPrintChar(keyboard_map[c]);
+        if(keyboard_map[c] == '\b'){
+          ncDeleteChar();
+        }else{
+          ncPrintChar(keyboard_map[c]);
+        }       
      }
 }
