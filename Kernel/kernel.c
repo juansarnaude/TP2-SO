@@ -101,7 +101,7 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 	ncPrintTime();
-	
+
 
 	ncPrint("[Finished]");
 	return 0;
