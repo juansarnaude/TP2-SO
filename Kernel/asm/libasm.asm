@@ -2,7 +2,13 @@ GLOBAL cpuVendor
 GLOBAL getSeconds
 GLOBAL getMinutes
 GLOBAL getHours
+<<<<<<< HEAD
 GLOBAL read_port
+=======
+GLOBAL getDay
+GLOBAL getMonth
+GLOBAL getYear
+>>>>>>> 34ed40acc7d813660a1cc199d793757afa898ecf
 section .text
 	
 cpuVendor:
@@ -75,6 +81,7 @@ getHours:
     pop rbp
     ret	
 
+<<<<<<< HEAD
 read_port:
     push rbp
     mov rbp, rsp
@@ -85,3 +92,37 @@ read_port:
     mov rsp, rbp
     pop rbp 
     ret
+=======
+getDay:
+    push rbp
+    mov rbp,rsp
+	call setBinaryBitRTC
+    mov al,07
+    out 70h,al
+    in al,71h
+    mov rsp,rbp
+    pop rbp
+    ret		
+
+getMonth:
+    push rbp
+    mov rbp,rsp
+	call setBinaryBitRTC
+    mov al,08
+    out 70h,al
+    in al,71h
+    mov rsp,rbp
+    pop rbp
+    ret	
+
+getYear:
+	push rbp
+    mov rbp,rsp
+	call setBinaryBitRTC
+    mov al,09
+    out 70h,al
+    in al,71h
+    mov rsp,rbp
+    pop rbp
+    ret	
+>>>>>>> 34ed40acc7d813660a1cc199d793757afa898ecf
