@@ -29,10 +29,21 @@ void ncPrintTime()
 	ncPrintDec(getSeconds());
 	ncNewline();
 }
-// gola 
+
 void ncDeleteChar(){
 	currentVideo-=2;
 	*currentVideo=' ';
+}
+
+void ncPrintFormat(const char* string,uint8_t format){
+	for(int i=0;string[i]!=0;i++){
+		ncPrintCharFormat(string[i],format);
+	}
+}
+
+void ncPrintCharFormat(char character,uint8_t format){
+	*currentVideo++=character;
+	*currentVideo++=format;
 }
 
 void ncPrint(const char *string)

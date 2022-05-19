@@ -101,6 +101,9 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 	ncPrintTime();
+	ncClear();
+	ncPrint(" :HoraceOS");
+	ncPrintCharFormat('$',0b00000010);
 	while(1);
 
 	ncPrint("[Finished]");
