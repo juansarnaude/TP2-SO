@@ -29,11 +29,6 @@ void ncPrintTime()
 	ncPrintDec(getSeconds());
 	ncNewline();
 }
-// gola 
-void ncDeleteChar(){
-	currentVideo-=2;
-	*currentVideo=' ';
-}
 
 void ncPrint(const char *string)
 {

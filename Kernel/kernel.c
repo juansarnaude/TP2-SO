@@ -101,8 +101,12 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 	ncPrintTime();
+<<<<<<< HEAD
 
 	while(1);
+=======
+	
+>>>>>>> parent of beb62ae (mucho pensar valio la pena"mati)
 
 	ncPrint("[Finished]");
 	return 0;
