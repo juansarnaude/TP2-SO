@@ -31,12 +31,14 @@ void ncPrintTime()
 }
 
 void ncDeleteChar(){
-	currentVideo-=2;
-	*currentVideo=' ';
+	if(currentVideo - 2 >= video+2*14){
+		currentVideo-=2;
+		*currentVideo=' ';
+	}
 }
 
 void ncPrintFormat(const char* string,uint8_t format){
-	for(int i=0;string[i]!=0;i++){
+	for(int i=0;string[i]!='\0';i++){
 		ncPrintCharFormat(string[i],format);
 	}
 }

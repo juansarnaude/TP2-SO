@@ -103,7 +103,7 @@ int main()
 	ncPrintTime();
 
 	ncClear();
-	ncPrint(" :HoraceOS");
+	ncPrint(" :McWhigginOS");
 	ncPrintCharFormat('$',0b00000010);
 
 	while(1);
