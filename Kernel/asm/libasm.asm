@@ -2,6 +2,9 @@ GLOBAL cpuVendor
 GLOBAL getSeconds
 GLOBAL getMinutes
 GLOBAL getHours
+GLOBAL getDay
+GLOBAL getMonth
+GLOBAL getYear
 section .text
 	
 cpuVendor:
@@ -68,6 +71,39 @@ getHours:
     mov rbp,rsp
 	call setBinaryBitRTC
     mov al,04
+    out 70h,al
+    in al,71h
+    mov rsp,rbp
+    pop rbp
+    ret	
+
+getDay:
+    push rbp
+    mov rbp,rsp
+	call setBinaryBitRTC
+    mov al,07
+    out 70h,al
+    in al,71h
+    mov rsp,rbp
+    pop rbp
+    ret		
+
+getMonth:
+    push rbp
+    mov rbp,rsp
+	call setBinaryBitRTC
+    mov al,08
+    out 70h,al
+    in al,71h
+    mov rsp,rbp
+    pop rbp
+    ret	
+
+getYear:
+	push rbp
+    mov rbp,rsp
+	call setBinaryBitRTC
+    mov al,09
     out 70h,al
     in al,71h
     mov rsp,rbp

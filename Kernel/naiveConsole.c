@@ -1,5 +1,6 @@
 #include <naiveConsole.h>
 #include <lib.h>
+#include <dates.h>
 
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 
@@ -8,10 +9,16 @@ static uint8_t *const video = (uint8_t *)0xB8000;
 static uint8_t *currentVideo = (uint8_t *)0xB8000;
 static const uint32_t width = 80;
 static const uint32_t height = 25;
-static uint8_t localHours(void);
 
 void ncPrintTime()
 {
+	ncPrint("  Date:");
+	ncPrintDec(localDay());
+	ncPrint("/");
+	ncPrintDec(localMonth());
+	ncPrint("/20");
+	ncPrintDec(localYear());
+	ncNewline();
 	ncPrint("  Hours:");
 	ncPrintDec(localHours()); // restamos 3 ya que la hora argentina es UTC-03:00
 	ncNewline();
@@ -21,15 +28,6 @@ void ncPrintTime()
 	ncPrint("  Seconds:");
 	ncPrintDec(getSeconds());
 	ncNewline();
-}
-
-uint8_t localHours(void)
-{
-	uint8_t hour = getHours();
-	if( hour >= 0 && hour<=3  ){
-		return hour+21;
-	}
-	return hour;
 }
 
 void ncPrint(const char *string)
