@@ -8,20 +8,6 @@ static char buffer[64] = {'0'};
 static uint8_t *const video = (uint8_t *)0xB8000;
 static uint8_t *currentVideo = (uint8_t *)0xB8000;
 static const uint32_t width = 80;
-static const uint32_t height = 25 ;
-
-
-void ncPrintTime(){
-		ncPrint("  Hours:");
-    	ncPrintDec(getHours()); //restamos 3 ya que la hora argentina es UTC-03:00
-    	ncNewline();
-    	ncPrint("  Minutes:");
-    	ncPrintDec(getMinutes());
-    	ncNewline();
-    	ncPrint("  Seconds:");
-    	ncPrintDec(getSeconds());
-    	ncNewline();
-	}
 static const uint32_t height = 25;
 
 void ncPrintTime()

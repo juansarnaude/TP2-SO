@@ -2,13 +2,10 @@ GLOBAL cpuVendor
 GLOBAL getSeconds
 GLOBAL getMinutes
 GLOBAL getHours
-<<<<<<< HEAD
 GLOBAL read_port
-=======
 GLOBAL getDay
 GLOBAL getMonth
 GLOBAL getYear
->>>>>>> 34ed40acc7d813660a1cc199d793757afa898ecf
 section .text
 	
 cpuVendor:
@@ -81,7 +78,6 @@ getHours:
     pop rbp
     ret	
 
-<<<<<<< HEAD
 read_port:
     push rbp
     mov rbp, rsp
@@ -92,7 +88,6 @@ read_port:
     mov rsp, rbp
     pop rbp 
     ret
-=======
 getDay:
     push rbp
     mov rbp,rsp
@@ -125,4 +120,3 @@ getYear:
     mov rsp,rbp
     pop rbp
     ret	
->>>>>>> 34ed40acc7d813660a1cc199d793757afa898ecf
