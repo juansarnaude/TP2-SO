@@ -9,3 +9,5 @@
 
 #Object files
 *.o
+.bash_history
+.gdb_history
