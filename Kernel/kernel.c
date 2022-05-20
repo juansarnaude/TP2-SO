@@ -103,7 +103,21 @@ int main()
 	ncPrintTime();
 
 	ncClear();
-	ncPrint(" :McWhigginOS");
+	ncPrint(".   ,     ,   . .                    ,-.   ,-.  ");
+	ncNewline();
+	ncPrint("|\\ /|     | . | |   o         o     /   \\ (   ` ");
+	ncNewline();
+	ncPrint("| V | ,-. | ) ) |-. . ,-: ,-: . ;-. |   |  `-.  ");
+	ncNewline();
+	ncPrint("|   | |   |/|/  | | | | | | | | | | \\   / .   ) ");
+	ncNewline();
+	ncPrint("'   ' `-' ' '   ' ' ' `-| `-| ' ' '  `-'   `-'  ");
+	ncNewline();
+	ncPrint("                      `-' `-'                   ");
+	ncNewline();
+	ncPrint("The best terminal for all your needs...");
+	ncNewline();
+	ncPrint("McWhigginOS:");
 	ncPrintCharFormat('$',0b00000010);
 
 	while(1);

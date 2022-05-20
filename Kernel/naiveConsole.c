@@ -3,10 +3,10 @@
 #include <dates.h>
 
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
-
 static char buffer[64] = {'0'};
 static uint8_t *const video = (uint8_t *)0xB8000;
 static uint8_t *currentVideo = (uint8_t *)0xB8000;
+uint8_t *initialLine;
 static const uint32_t width = 80;
 static const uint32_t height = 25;
 
@@ -29,9 +29,8 @@ void ncPrintTime()
 	ncPrintDec(getSeconds());
 	ncNewline();
 }
-
 void ncDeleteChar(){
-	if(currentVideo - 2 >= video+2*14){
+	if(currentVideo - 2 >= initialLine+2*14){
 		currentVideo-=2;
 		*currentVideo=' ';
 	}
@@ -68,6 +67,7 @@ void ncNewline()
 	{
 		ncPrintChar(' ');
 	} while ((uint64_t)(currentVideo - video) % (width * 2) != 0);
+	initialLine=currentVideo-2;
 }
 
 void ncPrintDec(uint64_t value)
