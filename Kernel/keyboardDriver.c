@@ -44,6 +44,9 @@ void key_handler(){
     0,  /* F12 Key */
     0,  /* All other keys are undefined */
     };
+    if (! read_port(0x64) & 0x01)
+      return;
+    
     int c=read_port(0x60);
      if (!(c & 0x80)){
        if(keyboard_map[c] == '\b'){
