@@ -1,6 +1,4 @@
 #include <keyboardDriver.h>
-#include <idtLoader.h>
-#include <lib.h>
 
 
 

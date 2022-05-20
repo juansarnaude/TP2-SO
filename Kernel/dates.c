@@ -1,4 +1,3 @@
-#include <lib.h>
 #include <dates.h>
 
 static uint8_t getPreviousDay(uint8_t day);
@@ -18,7 +17,7 @@ uint8_t getPreviousDay(uint8_t day){
     uint8_t year = getYear();
     uint8_t dayMonth[13] = { 31, 31 , 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 0};
     if( year%4==0 && ( year%100!=0 || year%400==0 )){
-        dayMonth[2]==29;
+        dayMonth[2]=29;
     }
     return dayMonth[ (int)localMonth()-1 ];
 }

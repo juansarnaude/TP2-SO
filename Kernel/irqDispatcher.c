@@ -1,6 +1,4 @@
-#include <keyboardDriver.h>
-#include <timerDriver.h>
-#include <stdint.h>
+#include <irqDispatcher.h>
 
 
 static void int_20();

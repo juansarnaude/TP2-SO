@@ -1,6 +1,4 @@
 #include <timerDriver.h>
-#include <idtLoader.h>
-#include <naiveConsole.h>
 
 static unsigned long ticks = 0;
 
