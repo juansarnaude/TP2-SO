@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <defs.h>
 #include <interrupts.h>
+#include <syscalls.h>
 
 void load_idt();
 
