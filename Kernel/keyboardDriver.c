@@ -1,56 +1,152 @@
 #include <keyboardDriver.h>
 
+#define BUFFER_LENGTH 32 
 
+  static char keys[] = {
+    0,  //Error
+    27,  //Escape
+    '1','2','3','4','5','6','7','8','9','0','-','=',
+    8,  //Backspace
+    '\t',  //Tab
+    'q','w','e','r','t','y','u','i','o','p','[',']',
+    '\n',  //Enter
+    0,  //LControl
+    'a','s','d','f','g','h','j','k','l',';','\'','`',
+    0,  //LShift
+    '\\','z','x','c','v','b','n','m',',','.','/',
+    0,  //RShift
+    '*',
+    0,  //LAlt
+    ' ',
+    0,  //CapsLock
+    0,0,0,0,0,0,0,0,0,0,     //F1-F10
+    0,  //NumLock
+    0,  //ScrollLock
+    '7','8','9','-','4','5','6','+','1','2','3','0','.'
+};
 
-void key_handler(){
-    static unsigned char keyboard_map[128] =
-    {
-    0,  27, '1', '2', '3', '4', '5', '6', '7', '8',     /* 9 */
-  '9', '0', '-', '=', '\b',     /* Backspace */
-  '\t',                 /* Tab */
-  'q', 'w', 'e', 'r',   /* 19 */
-  't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', /* Enter key */
-    0,                  /* 29   - Control */
-  'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',     /* 39 */
- '\'', '`',   0,                /* Left shift */
- '\\', 'z', 'x', 'c', 'v', 'b', 'n',                    /* 49 */
-  'm', ',', '.', '/',   0,                              /* Right shift */
-  '*',
-    0,  /* Alt */
-  ' ',  /* Space bar */
-    0,  /* Caps lock */
-    0,  /* 59 - F1 key ... > */
-    0,   0,   0,   0,   0,   0,   0,   0,
-    0,  /* < ... F10 */
-    0,  /* 69 - Num lock*/
-    0,  /* Scroll Lock */
-    0,  /* Home key */
-    0,  /* Up Arrow */
-    0,  /* Page Up */
-  '-',
-    0,  /* Left Arrow */
-    0,
-    0,  /* Right Arrow */
-  '+',
-    0,  /* 79 - End key*/
-    0,  /* Down Arrow */
-    0,  /* Page Down */
-    0,  /* Insert Key */
-    0,  /* Delete Key */
-    0,   0,   0,
-    0,  /* F11 Key */
-    0,  /* F12 Key */
-    0,  /* All other keys are undefined */
-    };
+static char capKeys[] = {
+    0,  //Error
+    27,  //Escape
+    '1','2','3','4','5','6','7','8','9','0','-','=',
+    8,  //Backspace
+    '\t',  //Tab
+    'Q','W','E','R','T','Y','U','I','O','P','[',']',
+    '\n',  //Enter
+    0,  //LControl
+    'A','S','D','F','G','H','J','K','L',';','\'','`',
+    0,  //LShift
+    '\\','Z','X','C','V','B','N','M',',','.','/',
+    0,  //RShift
+    '*',
+    0,  //LAlt
+    ' ',
+    0,  //CapsLock
+    0,0,0,0,0,0,0,0,0,0,     //F1-F10
+    0,  //NumLock
+    0,  //ScrollLock
+    '7','8','9','-','4','5','6','+','1','2','3','0','.'
+};
+
+static char shiftCapKeys[] = {
+    0,  //Error
+    27, //Escape
+    '!','@','#','$','%','^','&','*','(',')','_','+',
+    8,  //Backspace
+    '\t',
+    'q','w','e','r','t','y','u','i','o','p','{','}',
+    '\n',   //Enter
+    0,  //LControl
+    'a','s','d','f','g','h','j','k','l',':','\"',
+    '~',
+    0,  //LShift
+    '|',
+    'z','x','c','v','b','n','m','<','>','?',
+    0,  //RShift
+    '*',
+    0,  //LAlt
+    ' ',
+    0,  //CapsLock
+    0,0,0,0,0,0,0,0,0,0,    //F1-F10
+    0,  //NumLock
+    0,  //ScrollLock
+    '7','8','9','-','4','5','6','+','1','2','3','0','.'
+};
+
+static char shiftedKeys[] = {
+    0,  //Error
+    27, //Escape
+    '!','@','#','$','%','^','&','*','(',')','_','+',
+    8,  //Backspace
+    '\t',
+    'Q','W','E','R','T','Y','U','I','O','P','{','}',
+    '\n',   //Enter
+    0,  //LControl
+    'A','S','D','F','G','H','J','K','L',':','\"',
+    '~',
+    0,  //LShift
+    '|',
+    'Z','X','C','V','B','N','M','<','>','?',
+    0,  //RShift
+    '*',
+    0,  //LAlt
+    ' ',
+    0,  //CapsLock
+    0,0,0,0,0,0,0,0,0,0,    //F1-F10
+    0,  //NumLock
+    0,  //ScrollLock
+    '7','8','9','-','4','5','6','+','1','2','3','0','.'
+};
+
+static uint8_t buffer[BUFFER_LENGTH];
+static unsigned int realDim=0,last=0;
+static int shift=0, capsLock=0, control=0, alt=0;
+
+void keyboard_handler(){
     if (! read_port(0x64) & 0x01)
       return;
-    
-    int c=read_port(0x60);
-     if (!(c & 0x80)){
-       if(keyboard_map[c] == '\b'){
-         ncDeleteChar();
-       }else{
-          ncPrintChar(keyboard_map[c]);
-       }
-     }
+    uint16_t key=read_port(0x60);
+    //Check if key was pressed
+    char pressed;
+    key = key & 0x7F;
+    switch (key){
+      case 0x3a:
+        capsLock = !capsLock;
+        return;
+        break;
+      case 0x2a:
+      case 0x36:
+        shift = 1;
+        return;
+        break;
+      case 0x38:
+        alt = 1;
+        return;
+        break;
+      default:
+        break;
+    }
+    if (capsLock && !shift)
+      pressed = capKeys[key];
+    else if (capsLock && shift)
+      pressed = shiftCapKeys[key];
+    else if (!capsLock && !shift)
+      pressed = keys[key];
+    else
+      pressed = shiftedKeys[key];
+    add(pressed);
+}
+
+static unsigned int readBuffer(char* output,unsigned int count){
+  for(int i=0;i < realDim && i < count;i++){
+    output[i] = buffer[i];
+  }
+  return i;
+}
+
+static void add(char key){
+    if(realDim <= BUFFER_LENGTH){
+      buffer[realDim++] = key;
+      realDim++;
+    }
 }
