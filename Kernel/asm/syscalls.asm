@@ -20,22 +20,11 @@ _syscallHandler:
 	push r14
 	push r15
 
-    ;rax, rdi, rsi, rdx, r10, r8, r9
-    push rax
-	push rdi
-	push rsi
-	push rdx
-	push r10
-	push r8
-	push r9
+    ;rax, rdi, rsi, rdx |||, r10, r8, r9
+
+	;rdi, rsi, rdx, rcx |||, r8 y r9
+	mov rcx, rax
     call syscallDispatcher
-	pop rax
-	pop rdi
-	pop rsi
-	pop rdx
-	pop r10
-	pop r8
-	pop r9
 
     pop r15
 	pop r14

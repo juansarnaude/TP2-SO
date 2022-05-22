@@ -21,5 +21,5 @@ void int_20() {
 }
 
 void int_21() {
-	key_handler();
+	keyboard_handler();
 }

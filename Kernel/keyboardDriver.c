@@ -102,6 +102,8 @@ static uint8_t buffer[BUFFER_LENGTH];
 static unsigned int realDim=0,last=0;
 static int shift=0, capsLock=0, control=0, alt=0;
 
+static void add(char key);
+
 void keyboard_handler(){
     if (! read_port(0x64) & 0x01)
       return;
@@ -137,8 +139,9 @@ void keyboard_handler(){
     add(pressed);
 }
 
-static unsigned int readBuffer(char* output,unsigned int count){
-  for(int i=0;i < realDim && i < count;i++){
+uint64_t readBuffer(char* output,unsigned int count){
+  int i;
+  for(i=0;i < realDim && i < count;i++){
     output[i] = buffer[i];
   }
   return i;

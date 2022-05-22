@@ -7,4 +7,6 @@
 
 void key_handler();
 
+uint64_t readBuffer(char* output,unsigned int count);
+
 #endif 
