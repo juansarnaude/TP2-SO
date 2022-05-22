@@ -18,4 +18,7 @@ void ncPrintBin(uint64_t value);
 void ncPrintBase(uint64_t value, uint32_t base);
 void ncClear();
 
+uint8_t ncWindows(uint8_t amount);
+uint8_t ncCurrentWindows(uint8_t select);
+
 #endif

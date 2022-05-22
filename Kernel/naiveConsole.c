@@ -8,6 +8,34 @@ uint8_t *initialLine;
 static const uint32_t width = 80;
 static const uint32_t height = 25;
 
+//Window currently writing to.
+static uint8_t currentWindow = 0;
+//Amount of windows
+static uint8_t windows = 1;
+//Pointer to windows
+static uint8_t *currentVideoW[2] = {(uint8_t *)0xB8000, (uint8_t *)0xB8000 + 80};
+//Default format color
+static const uint8_t color = 0x07;
+
+//Select amount of windows
+uint8_t ncWindows(uint8_t amount){
+	if (amount >= 2){
+		if (windows != 2)
+			ncClear();
+		return windows = 2;
+	}
+	if (windows != 1)
+		ncClear();
+	return windows = 1;
+}
+
+//Select windows to write to
+uint8_t ncCurrentWindows(uint8_t select){
+	if (select > 0)
+		return currentWindow = 1;
+	return currentWindow = 0;
+}
+
 void ncPrintTime()
 {
 	ncPrint("  Date:");
@@ -41,8 +69,17 @@ void ncPrintFormat(const char* string,uint8_t format){
 }
 
 void ncPrintCharFormat(char character,uint8_t format){
-	*currentVideo++=character;
-	*currentVideo++=format;
+	if (windows == 1){
+		*(currentVideo++) = character;
+		*(currentVideo++) = format;
+	} else {
+		*(currentVideoW[currentWindow]++) = character;
+		*(currentVideoW[currentWindow]++) = format;
+		if (currentWindow && ((currentVideoW[currentWindow] - video) % (2*width) <= width)){
+			currentVideoW[currentWindow] += width;
+		} else if (!currentWindow && ((currentVideoW[currentWindow] - video) % (2*width) >= width))
+			currentVideoW[currentWindow] += width;
+	}
 }
 
 void ncPrint(const char *string)
@@ -55,17 +92,24 @@ void ncPrint(const char *string)
 
 void ncPrintChar(char character)
 {
-	*currentVideo = character;
-	currentVideo += 2;
+	ncPrintCharFormat(character, color);
 }
 
 void ncNewline()
 {
-	do
-	{
-		ncPrintChar(' ');
-	} while ((uint64_t)(currentVideo - video) % (width * 2) != 0);
-	initialLine=currentVideo-2;
+	if (windows == 1){
+		do
+		{
+			ncPrintChar(' ');
+		} while ((uint64_t)(currentVideo - video) % (width * 2) != 0);
+		initialLine=currentVideo-2;
+	} else {
+		do
+		{
+			ncPrintChar(' ');
+		} while ((uint64_t)(currentVideoW[currentWindow] - video) % (width * 2) != ( currentWindow ? width : 0 ));
+		
+	}
 }
 
 void ncPrintDec(uint64_t value)
