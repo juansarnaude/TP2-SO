@@ -14,6 +14,7 @@ GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
 GLOBAL _exception0Handler
+GLOBAL _exception6Handler
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -74,8 +75,16 @@ SECTION .text
 %macro exceptionHandler 1
 	pushState
 
+	;rdi, rsi, rdx, rcx, r8 y r9
 	mov rdi, %1 ; pasaje de parametro
+	mov rsi, [rsp+15*8]	; Position of the original RIP in the stack
+	mov rdx, [rsp+18*8]	; Position of the original RSP in the stack
+	lea rcx, [rsp]
 	call exceptionDispatcher
+
+	;Should we call haltcpu? _hlt? go to the return of the main function?
+	;Should we call or modify the RIP value in the stack?
+	call haltcpu
 
 	popState
 	iretq
@@ -141,6 +150,10 @@ _irq05Handler:
 ;Zero Division Exception
 _exception0Handler:
 	exceptionHandler 0
+
+;Invalid Opcode Exception
+_exception6Handler:
+	exceptionHandler 6
 
 haltcpu:
 	cli
