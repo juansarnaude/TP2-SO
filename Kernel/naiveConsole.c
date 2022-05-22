@@ -30,7 +30,7 @@ uint8_t ncWindows(uint8_t amount){
 }
 
 //Select windows to write to
-uint8_t ncCurrentWindows(uint8_t select){
+uint8_t ncCurrentWindow(uint8_t select){
 	if (select > 0)
 		return currentWindow = 1;
 	return currentWindow = 0;

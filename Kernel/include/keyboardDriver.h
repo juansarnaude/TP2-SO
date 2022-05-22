@@ -7,6 +7,6 @@
 
 void keyboard_handler();
 
-uint64_t readBuffer(char* output,unsigned int count);
+uint64_t readBuffer(char* output, uint64_t count);
 
 #endif 

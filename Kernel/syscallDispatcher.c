@@ -2,19 +2,27 @@
 
 static uint64_t sys_read(unsigned int fd,char* output, uint64_t count);
 static void sys_write(unsigned fd,const char* buffer, uint64_t count);
+static uint64_t sys_divideWindow(uint64_t rdi);
+static uint64_t sys_changeWindow(uint64_t rdi);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax){
     //TODO: Aumentar la cantidad de registros que nos pasan a 6.
     //TODO: Fijarse si las interrupciones son atendidas mientras esta atendiendo a una syscall.
     switch(rax){
         case 0:
-            sys_read((unsigned int)rdi, (char*)rsi,rdx);
+            return sys_read((unsigned int)rdi, (char*)rsi,rdx);
             break;
         case 1:
             sys_write((unsigned int)rdi, (char*)rsi,rdx);
             break;
+        case 69:
+            return sys_divideWindow(rdi);
+            break;
+        case 70:
+            return sys_changeWindow(rdi);
+            break;
     }
-
+    return 0;
 }
 
 static uint64_t sys_read(unsigned int fd,char* output, uint64_t count){
@@ -68,4 +76,11 @@ static void sys_write(unsigned fd,const char* buffer, uint64_t count){
     default:
         return;
     } 
+}
+
+static uint64_t sys_divideWindow(uint64_t rdi){
+    return ncWindows(rdi);
+}
+static uint64_t sys_changeWindow(uint64_t rdi){
+    return ncCurrentWindow(rdi);
 }

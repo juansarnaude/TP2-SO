@@ -139,17 +139,22 @@ void keyboard_handler(){
     add(pressed);
 }
 
-uint64_t readBuffer(char* output,unsigned int count){
-  int i;
-  for(i=0;i < realDim && i < count;i++){
-    output[i] = buffer[i];
-  }
-  return i;
+static void add(char key){
+    buffer[realDim] = key;
+    if (realDim+1 == BUFFER_LENGTH){
+        realDim = 0;
+        last = -1;
+    }
 }
 
-static void add(char key){
-    if(realDim <= BUFFER_LENGTH){
-      buffer[realDim++] = key;
-      realDim++;
+uint64_t readBuffer(char* output, uint64_t count){
+    uint64_t i = 0;
+    for (; i < count && last < realDim && last < BUFFER_LENGTH; i++)
+    {
+        output[i] = buffer[last++];
     }
+    if (last == BUFFER_LENGTH){
+        realDim = last = 0;
+    }
+    return i;    
 }
