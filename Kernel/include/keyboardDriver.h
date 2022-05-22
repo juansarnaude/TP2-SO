@@ -5,7 +5,7 @@
 #include <naiveConsole.h>
 #include <lib.h>
 
-void key_handler();
+void keyboard_handler();
 
 uint64_t readBuffer(char* output,unsigned int count);
 

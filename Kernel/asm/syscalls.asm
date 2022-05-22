@@ -4,7 +4,6 @@ EXTERN syscallDispatcher
 SECTION .text
 
 _syscallHandler:
-    push rax
 	push rbx
 	push rcx
 	push rdx
@@ -40,6 +39,5 @@ _syscallHandler:
 	pop rdx
 	pop rcx
 	pop rbx
-	pop rax
 
     iretq

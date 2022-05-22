@@ -9,7 +9,7 @@
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
-#define KBINT 3
 
-void syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax);
+uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax);
+
 #endif

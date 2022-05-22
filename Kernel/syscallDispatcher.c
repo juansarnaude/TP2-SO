@@ -3,7 +3,7 @@
 static uint64_t sys_read(unsigned int fd,char* output, uint64_t count);
 static void sys_write(unsigned fd,const char* buffer, uint64_t count);
 
-void syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax){
+uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax){
     //TODO: Aumentar la cantidad de registros que nos pasan a 6.
     //TODO: Fijarse si las interrupciones son atendidas mientras esta atendiendo a una syscall.
     switch(rax){
