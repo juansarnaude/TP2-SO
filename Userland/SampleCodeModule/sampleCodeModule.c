@@ -14,6 +14,8 @@ int main() {
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)
 		return 0xDEADC0DE;
-
+	char*s[7];
+	sys_read(0,s,7);
+	puts(s);
 	return 0xDEADBEEF;
 }
