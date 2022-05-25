@@ -5,10 +5,10 @@
 #include <naiveConsole.h>
 #include <interrupts.h>
 
-void executeTask(int (*program)(int argc, char const * argv), int argc, char const *argv);
+int executeTask(int (*program)(int argc, char const * argv[]), int argc, char const *argv[]);
 
 void nextTask(uint64_t * registers);
 
-void exitTask(uint64_t * registers);
+void exitTask();
 
 #endif //SCHEDULER_H

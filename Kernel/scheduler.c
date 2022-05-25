@@ -1,7 +1,4 @@
-//
-// Created by monarch on 23/05/22.
-//
-#include "scheduler.h"
+#include <scheduler.h>
 
 #pragma pack(push)  /* Push de la alineación actual */
 #pragma pack (1)    /* Alinear las siguientes estructuras a 1 byte */
@@ -22,7 +19,7 @@ static int amount = 0;          //Amount of tasks currently running
 static int current = 0;         //Currently running task
 
 static void * const userlandAddress = (void*)0x600000;
-static void * const stepping = 0x100000;
+static void * const stepping = (void*)0x100000;
 
 
 static void saveContext(uint64_t * registers);
@@ -31,12 +28,12 @@ static void move(int a, int b);
 
 
 
-void executeTask(int (*program)(int argc, char const * argv), int argc, char const *argv){
+int executeTask(int (*program)(int argc, char const * argv[]), int argc, char const *argv[]){
     //Adds a task to the task array.
     if (amount < TASK_ARR_SIZE){
         int position = current+1;
-        tss[position].rip = program;
-        tss[position].rsp = userlandAddress + (uint64_t) stepping * amount;
+        tss[position].rip = (uint64_t)program;
+        tss[position].rsp = (uint64_t) userlandAddress + (uint64_t) stepping * amount;
         tss[position].window = 0;
         if (amount){
             tss[position].window = 1;
@@ -45,7 +42,9 @@ void executeTask(int (*program)(int argc, char const * argv), int argc, char con
             ncWindows(1);
         }
         amount++;
+        return 1;
     }
+    return 0;
 }
 
 void nextTask(uint64_t * registers){
@@ -59,13 +58,18 @@ void nextTask(uint64_t * registers){
     }
 }
 
-void exitTask(uint64_t * registers){
+void exitTask(){
     for (int i = current; i < TASK_ARR_SIZE - 1; i++)
     {
         move(i, i+1);
     }
     amount--;
-    nextTask(registers);
+    // Wait for the next timer tick.
+    while (1)
+    {
+        ;
+    }
+    
 }
 
 static void saveContext(uint64_t * registers){
