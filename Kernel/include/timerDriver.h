@@ -3,6 +3,7 @@
 
 #include <idtLoader.h>
 #include <naiveConsole.h>
+#include <scheduler.h>
 
 void timer_handler();
 int ticks_elapsed();
