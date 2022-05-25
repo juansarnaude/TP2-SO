@@ -5,6 +5,7 @@
 #include <naiveConsole.h>
 #include <lib.h>
 #include <keyboardDriver.h>
+#include <scheduler.h>
 
 #define STDIN 0
 #define STDOUT 1

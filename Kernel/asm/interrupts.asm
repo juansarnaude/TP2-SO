@@ -61,6 +61,7 @@ SECTION .text
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro
+	mov rsi, rsp	; pointer a backup registros
 	call irqDispatcher
 
 	; signal pic EOI (End of Interrupt)
@@ -79,7 +80,7 @@ SECTION .text
 	mov rdi, %1 ; pasaje de parametro
 	mov rsi, [rsp+15*8]	; Position of the original RIP in the stack
 	mov rdx, [rsp+18*8]	; Position of the original RSP in the stack
-	lea rcx, [rsp]
+	mov rcx, rsp
 	call exceptionDispatcher
 
 	;Should we call haltcpu? _hlt? go to the return of the main function?
