@@ -7,8 +7,8 @@
 
 void executeTask(int (*program)(int argc, char const * argv), int argc, char const *argv);
 
-void nextTask();
+void nextTask(uint64_t * registers);
 
-void exitTask();
+void exitTask(uint64_t * registers);
 
 #endif //SCHEDULER_H

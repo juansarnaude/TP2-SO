@@ -2,11 +2,9 @@
 
 static unsigned long ticks = 0;
 
-void timer_handler() {
+void timer_handler(uint64_t * registers) {
 	ticks++;
-	//La interrupción tiene que terminar en el nuevo programa
-	//Fuck
-	nextTask();
+	nextTask(registers);
 }
 
 int ticks_elapsed() {

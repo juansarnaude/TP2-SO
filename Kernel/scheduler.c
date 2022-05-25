@@ -8,7 +8,7 @@
 
 /* Contexto de cada task */
 typedef struct {
-    uint64_t rax, rbx, rcx, rdx, rbp, rdi, rsi, r8, r9, r10, r11, r12, r13, r14, r15;
+    uint64_t registers[15]; // Registers: R15, ..., RBX, RAX
     uint64_t rsp, rip, rflags;
     uint8_t window;
 } TASK_CONTEXT;
@@ -23,6 +23,13 @@ static int current = 0;         //Currently running task
 
 static void * const userlandAddress = (void*)0x600000;
 static void * const stepping = 0x100000;
+
+
+static void saveContext(uint64_t * registers);
+static void loadContext(uint64_t * registers);
+static void move(int a, int b);
+
+
 
 void executeTask(int (*program)(int argc, char const * argv), int argc, char const *argv){
     //Adds a task to the task array.
@@ -41,45 +48,49 @@ void executeTask(int (*program)(int argc, char const * argv), int argc, char con
     }
 }
 
-void nextTask(){
+void nextTask(uint64_t * registers){
     if (amount > 1){
-        _saveContext(&tss[current]);
+        saveContext(registers);
         current = (current+1) % TASK_ARR_SIZE;
         ncCurrentWindow(tss[current].window);
-        //Tengo que cargar el contexto AL FINAL DE LA INTERRUPCION
-        _loadContext(&tss[current]);
+        loadContext(registers);
     } else if (amount == 0) {
         haltcpu();
     }
 }
 
-static void move(int a, int b);
-
-void exitTask(){
+void exitTask(uint64_t * registers){
     for (int i = current; i < TASK_ARR_SIZE - 1; i++)
     {
         move(i, i+1);
     }
     amount--;
-    nextTask();
+    nextTask(registers);
+}
+
+static void saveContext(uint64_t * registers){
+    for (int i = 0; i < 15; i++)
+    {
+        tss[current].registers[i] = registers[i];
+    }
+    tss[current].rsp = registers[18];
+    tss[current].rip = registers[15];
+}
+
+static void loadContext(uint64_t * registers){
+    for (int i = 0; i < 15; i++)
+    {
+        registers[i] = tss[current].registers[i];
+    }
+    registers[18] = tss[current].rsp;
+    registers[15] = tss[current].rip;
 }
 
 static void move(int a, int b){
-    tss[a].rax = tss[b].rax;
-    tss[a].rbx = tss[b].rbx;
-    tss[a].rcx = tss[b].rcx;
-    tss[a].rdx = tss[b].rdx;
-    tss[a].rsi = tss[b].rsi;
-    tss[a].rdi = tss[b].rdi;
-    tss[a].rbp = tss[b].rbp;
-    tss[a].r8 = tss[b].r8;
-    tss[a].r9 = tss[b].r9;
-    tss[a].r10 = tss[b].r10;
-    tss[a].r11 = tss[b].r11;
-    tss[a].r12 = tss[b].r12;
-    tss[a].r13 = tss[b].r13;
-    tss[a].r14 = tss[b].r14;
-    tss[a].r15 = tss[b].r15;
+    for (int i = 0; i < 15; i++)
+    {
+        tss[a].registers[i] = tss[b].registers[i];
+    }
     tss[a].rsp = tss[b].rsp;
     tss[a].rip = tss[b].rip;
     tss[a].rflags = tss[b].rflags;
