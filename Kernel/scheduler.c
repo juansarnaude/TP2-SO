@@ -50,7 +50,7 @@ int executeTask(int (*program)()){
 }
 
 void nextTask(uint64_t * registers){
-    if (amount > 0){
+    if (amount > 1){
         saveContext(registers);
         current = (current+1) % TASK_ARR_SIZE;
         ncCurrentWindow(tss[current].window);
