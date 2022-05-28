@@ -17,7 +17,7 @@ void ncPrintHex(uint64_t value);
 void ncPrintBin(uint64_t value);
 void ncPrintBase(uint64_t value, uint32_t base);
 void ncClear();
-
+void ncClearWindow(uint8_t windowToCLear);
 uint8_t ncWindows(uint8_t amount);
 uint8_t ncCurrentWindow(uint8_t select);
 

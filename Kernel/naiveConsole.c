@@ -84,7 +84,7 @@ void ncPrintCharFormat(char character,uint8_t format){
 
 void ncPrint(const char *string)
 {
-	int i;
+	int i; 
 
 	for (i = 0; string[i] != 0; i++)
 		ncPrintChar(string[i]);
@@ -135,11 +135,39 @@ void ncPrintBase(uint64_t value, uint32_t base)
 
 void ncClear()
 {
+	
+	if (windows==1){
 	int i;
 
 	for (i = 0; i < height * width; i++)
 		video[i * 2] = ' ';
 	currentVideo = video;
+	}
+
+	else{
+		ncClearWindow(currentWindow);
+	}
+}
+
+void ncClearWindow(uint8_t windowToCLear){
+	int i;
+	uint32_t widthW;
+	if (windowToCLear==0){
+		widthW=width/2;
+		i=0;
+	}
+	else{
+		widthW=width;
+		i=width/2 +1 ;
+	}
+		
+	while(i < height*widthW){
+		video[i*2]=' ';
+		if (i && (i+1)%widthW==0)
+			i+=width/2;
+		i++;
+	}
+	currentVideoW[windowToCLear]=video;
 }
 
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
