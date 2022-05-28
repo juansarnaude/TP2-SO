@@ -13,9 +13,9 @@ int main() {
 	*v = 'X';
 	*(v+1) = 0x74;
 
-	char s[] = "hola";
+	char s[8];
+	sys_read(0,s,8);
 	puts(s);
-
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)
 		return 0xDEADC0DE;

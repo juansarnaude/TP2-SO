@@ -101,7 +101,7 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 	ncPrintTime();
-
+	while(1);
 	ncClear();
 	ncPrint(".   ,     ,   . .                    ,-.   ,-.  ");
 	ncNewline();
@@ -120,7 +120,7 @@ int main()
 	ncPrint("McWhigginOS:");
 	ncPrintCharFormat('$',0b00000010);
 
-	while(1);
+	
 	ncPrint("[Finished]");
 	return 0;
 }

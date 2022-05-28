@@ -108,10 +108,12 @@ void keyboard_handler(){
     if (! read_port(0x64) & 0x01)
       return;
     uint16_t key=read_port(0x60);
-    //Check if key was pressed
-    char pressed;
     key = key & 0x7F;
-    switch (key){
+    add(key_handler(key));
+}
+
+char key_handler(char key){
+  switch (key){
       case 0x3a:
         capsLock = !capsLock;
         return;
@@ -127,16 +129,17 @@ void keyboard_handler(){
         break;
       default:
         break;
-    }
-    if (capsLock && !shift)
-      pressed = capKeys[key];
-    else if (capsLock && shift)
-      pressed = shiftCapKeys[key];
-    else if (!capsLock && !shift)
-      pressed = keys[key];
-    else
-      pressed = shiftedKeys[key];
-    add(pressed);
+  }
+  char pressed;
+  if (capsLock && !shift)
+    pressed = capKeys[key];
+  else if (capsLock && shift)
+    pressed = shiftCapKeys[key];
+  else if (!capsLock && !shift)
+    pressed = keys[key];
+  else
+    pressed = shiftedKeys[key];
+  return pressed; 
 }
 
 static void add(char key){
@@ -155,6 +158,14 @@ uint64_t readBuffer(char* output, uint64_t count){
     }
     if (last == BUFFER_LENGTH){
         realDim = last = 0;
+    }
+    while(i < count){
+      if(read_port(0x64) & 0x01){
+        uint16_t key=read_port(0x60);
+        if(key == (key & 0x7F) ){
+          output[i++] = key_handler(key);
+        }
+      }
     }
     return i;    
 }
