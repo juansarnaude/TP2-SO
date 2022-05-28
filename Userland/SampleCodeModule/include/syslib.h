@@ -6,5 +6,7 @@ int sys_read(int fd,void* buffer,int size);
 unsigned int strlen(const char *s);
 void puts(const char* s);
 void putChar(char);
+char getChar();
+unsigned int scanf(char *s,unsigned int size);
 
 #endif
