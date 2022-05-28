@@ -18,7 +18,7 @@ $(MODULE): $(OBJECTS) $(OBJECTS_ASM)
 #	$(GCC) $(GCCFLAGS) -T sampleCodeModule.ld -Wl,--oformat=elf64-x86-64 _loader.c $(SOURCES) -o ../0000-sampleCodeModule.elf
 
 clean:
-	rm -rf *.o
+	rm -rf *.o ./asm/*.o 
 
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
