@@ -83,6 +83,7 @@ static void saveContext(uint64_t * registers){
     }
     tss[current].rsp = registers[18];
     tss[current].rip = registers[15];
+    tss[current].rflags = registers[17];
 }
 
 static void loadContext(uint64_t * registers){
@@ -92,6 +93,7 @@ static void loadContext(uint64_t * registers){
     }
     registers[18] = tss[current].rsp;
     registers[15] = tss[current].rip;
+    registers[17] = tss[current].rflags;
 }
 
 static void move(int a, int b){
