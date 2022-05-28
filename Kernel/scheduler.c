@@ -28,12 +28,14 @@ static void move(int a, int b);
 
 
 
-int executeTask(int (*program)(int argc, char const * argv[]), int argc, char const *argv[]){
+int executeTask(int (*program)()){
     //Adds a task to the task array.
     if (amount < TASK_ARR_SIZE){
         int position = current+1;
         tss[position].rip = (uint64_t)program;
         tss[position].rsp = (uint64_t) userlandAddress + (uint64_t) stepping * amount;
+        //Return address for the program.
+        *((uint64_t*)tss[position].rsp) = (uint64_t) exitTask;
         tss[position].window = 0;
         if (amount){
             tss[position].window = 1;
@@ -48,7 +50,7 @@ int executeTask(int (*program)(int argc, char const * argv[]), int argc, char co
 }
 
 void nextTask(uint64_t * registers){
-    if (amount > 1){
+    if (amount > 0){
         saveContext(registers);
         current = (current+1) % TASK_ARR_SIZE;
         ncCurrentWindow(tss[current].window);
@@ -58,18 +60,20 @@ void nextTask(uint64_t * registers){
     }
 }
 
-void exitTask(){
+void exitTask(int retValue){
     for (int i = current; i < TASK_ARR_SIZE - 1; i++)
     {
         move(i, i+1);
     }
     amount--;
+    ncNewline();
+    ncPrint("Program returned ");
+    ncPrintDec(retValue);
     // Wait for the next timer tick.
     while (1)
     {
         ;
     }
-    
 }
 
 static void saveContext(uint64_t * registers){

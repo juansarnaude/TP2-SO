@@ -2,7 +2,7 @@
 
 static uint64_t sys_read(unsigned int fd,char* output, uint64_t count);
 static void sys_write(unsigned fd,const char* buffer, uint64_t count);
-static int sys_exec(int (*function)(int argc, char const * argv[]), char const *argv[]);
+static int sys_exec(int (*function)());
 static void sys_exit();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax){
@@ -16,7 +16,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
             sys_write((unsigned int)rdi, (char*)rsi,rdx);
             break;
         case 11:
-            return sys_exec((int (*)(int, char const **))rdi, (char const **)rsi);
+            return sys_exec((int (*)())rdi);
             break;
         case 60:
             sys_exit();
@@ -76,14 +76,8 @@ static void sys_write(unsigned fd,const char* buffer, uint64_t count){
     } 
 }
 
-static int sys_exec(int (*function)(int argc, char const * argv[]), char const *argv[]){
-    int argc = 0;
-    while (argv[argc] != (void*)0)
-    {
-        argc++;
-    }
-    
-    return executeTask(function, argc, argv);
+static int sys_exec(int (*function)()){    
+    return executeTask(function);
 }
 
 static void sys_exit(){

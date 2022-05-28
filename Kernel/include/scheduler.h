@@ -5,7 +5,7 @@
 #include <naiveConsole.h>
 #include <interrupts.h>
 
-int executeTask(int (*program)(int argc, char const * argv[]), int argc, char const *argv[]);
+int executeTask(int (*program)());
 
 void nextTask(uint64_t * registers);
 
