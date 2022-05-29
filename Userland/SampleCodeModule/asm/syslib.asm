@@ -39,3 +39,12 @@ sys_execve:
     mov rsp,rbp
     pop rbp
     ret
+
+sys_time:
+    push rbp
+    mov rbp,rsp
+    mov rax,100
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret

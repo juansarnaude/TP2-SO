@@ -4,6 +4,7 @@ static uint64_t sys_read(unsigned int fd,char* output, uint64_t count);
 static void sys_write(unsigned fd,const char* buffer, uint64_t count);
 static int sys_exec(int (*function)());
 static void sys_exit();
+static void sys_time();
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax){
     //TODO: Aumentar la cantidad de registros que nos pasan a 6.
@@ -20,6 +21,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
             break;
         case 60:
             sys_exit();
+        case 100:
+            sys_time();
     }
     return 0;
 }
@@ -82,4 +85,8 @@ static int sys_exec(int (*function)()){
 
 static void sys_exit(){
     exitTask();
+}
+
+static void sys_time(){
+    ncPrintTime();
 }
