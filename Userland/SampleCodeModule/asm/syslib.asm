@@ -2,6 +2,7 @@ GLOBAL sys_write
 GLOBAL sys_read
 GLOBAL sys_exit
 GLOBAL sys_execve
+GLOBAL sys_time
 
 section .text
 sys_write:
