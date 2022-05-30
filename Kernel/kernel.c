@@ -93,15 +93,16 @@ int main()
 	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
 	ncNewline();
 	ncNewline();
-
+	
 	ncPrint("  Sample data module at 0x");
 	ncPrintHex((uint64_t)sampleDataModuleAddress);
 	ncNewline();
 	ncPrint("  Sample data module contents: ");
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
-	ncPrintTime();
 	while(1);
+	ncPrintTime();
+	
 	ncClear();
 	ncPrint(".   ,     ,   . .                    ,-.   ,-.  ");
 	ncNewline();
@@ -119,7 +120,7 @@ int main()
 	ncNewline();
 	ncPrint("McWhigginOS:");
 	ncPrintCharFormat('$',0b00000010);
-
+	
 	
 	ncPrint("[Finished]");
 	return 0;
