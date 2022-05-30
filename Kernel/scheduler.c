@@ -7,7 +7,7 @@
 typedef struct {
     uint64_t registers[15]; // Registers: R15, ..., RBX, RAX
     uint64_t rsp, rip, rflags;
-    uint8_t window;
+    uint8_t window, active;
 } TASK_CONTEXT;
 
 #pragma pack(pop)   /* Reestablece la alineación actual */
@@ -37,6 +37,7 @@ int executeTask(int (*program)()){
         //Return address for the program.
         *((uint64_t*)tss[position].rsp) = (uint64_t) exitTask;
         tss[position].window = 0;
+        tss[position].active = 1;
         if (amount){
             tss[position].window = 1;
             ncWindows(2);
@@ -49,10 +50,17 @@ int executeTask(int (*program)()){
     return 0;
 }
 
+void pauseTask(unsigned int taskNum){
+    tss[taskNum % TASK_ARR_SIZE].active = ! tss[taskNum % TASK_ARR_SIZE].active;
+}
+
 void nextTask(uint64_t * registers){
     if (amount > 1){
+        int next = (current+1) % TASK_ARR_SIZE;
+        if (! tss[next].active)
+            return;
         saveContext(registers);
-        current = (current+1) % TASK_ARR_SIZE;
+        current = next;
         ncCurrentWindow(tss[current].window);
         loadContext(registers);
     } else if (amount == 0) {

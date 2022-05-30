@@ -83,26 +83,6 @@ void * initializeKernelBinary()
 
 int main()
 {	
-	load_idt();
-	ncPrint("[Kernel Main]");
-	ncNewline();
-	ncPrint("  Sample code module at 0x");
-	ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	ncNewline();
-	ncPrint("  Calling the sample code module returned: ");
-	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	ncNewline();
-	ncNewline();
-	
-	ncPrint("  Sample data module at 0x");
-	ncPrintHex((uint64_t)sampleDataModuleAddress);
-	ncNewline();
-	ncPrint("  Sample data module contents: ");
-	ncPrint((char*)sampleDataModuleAddress);
-	ncNewline();
-	while(1);
-	ncPrintTime();
-	
 	ncClear();
 	ncPrint(".   ,     ,   . .                    ,-.   ,-.  ");
 	ncNewline();
@@ -120,8 +100,8 @@ int main()
 	ncNewline();
 	ncPrint("McWhigginOS:");
 	ncPrintCharFormat('$',0b00000010);
-	
-	
-	ncPrint("[Finished]");
+	load_idt();
+	((EntryPoint)sampleCodeModuleAddress)();
+	while(1) _hlt();
 	return 0;
 }
