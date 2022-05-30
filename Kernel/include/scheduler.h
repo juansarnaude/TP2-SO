@@ -9,6 +9,8 @@ int executeTask(int (*program)());
 
 void nextTask(uint64_t * registers);
 
+void pauseTask(unsigned int taskNum);
+
 void exitTask();
 
 #endif //SCHEDULER_H
