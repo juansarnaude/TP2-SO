@@ -18,6 +18,7 @@ static TASK_CONTEXT tss[TASK_ARR_SIZE];    //Task array
 static int amount = 0;          //Amount of tasks currently running
 static int current = 0;         //Currently running task
 
+static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const userlandAddress = (void*)0x600000;
 static void * const stepping = (void*)0x100000;
 
@@ -55,7 +56,7 @@ void pauseTask(unsigned int taskNum){
 }
 
 void nextTask(uint64_t * registers){
-    if (amount > 1){
+    if (amount > 0){
         int next = (current+1) % TASK_ARR_SIZE;
         if (! tss[next].active)
             return;
@@ -64,7 +65,7 @@ void nextTask(uint64_t * registers){
         ncCurrentWindow(tss[current].window);
         loadContext(registers);
     } else if (amount == 0) {
-        haltcpu();
+        executeTask(sampleCodeModuleAddress);
     }
 }
 

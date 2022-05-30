@@ -13,5 +13,6 @@ uint8_t getMonth();
 uint8_t getYear();
 uint8_t read_port(uint8_t key);
 char *cpuVendor(char *result);
+void tick();
 
 #endif

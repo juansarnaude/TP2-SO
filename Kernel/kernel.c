@@ -4,6 +4,7 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtLoader.h>
+#include <scheduler.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -83,25 +84,12 @@ void * initializeKernelBinary()
 
 int main()
 {	
-	ncClear();
-	ncPrint(".   ,     ,   . .                    ,-.   ,-.  ");
-	ncNewline();
-	ncPrint("|\\ /|     | . | |   o         o     /   \\ (   ` ");
-	ncNewline();
-	ncPrint("| V | ,-. | ) ) |-. . ,-: ,-: . ;-. |   |  `-.  ");
-	ncNewline();
-	ncPrint("|   | |   |/|/  | | | | | | | | | | \\   / .   ) ");
-	ncNewline();
-	ncPrint("'   ' `-' ' '   ' ' ' `-| `-| ' ' '  `-'   `-'  ");
-	ncNewline();
-	ncPrint("                      `-' `-'                   ");
-	ncNewline();
-	ncPrint("The best terminal for all your needs...");
-	ncNewline();
-	ncPrint("McWhigginOS:");
-	ncPrintCharFormat('$',0b00000010);
 	load_idt();
-	((EntryPoint)sampleCodeModuleAddress)();
-	while(1) _hlt();
+	executeTask(sampleCodeModuleAddress);
+	picMasterMask(0xFC);
+	
+	tick();	
+	
+	ncPrint("[Finished]");
 	return 0;
 }
