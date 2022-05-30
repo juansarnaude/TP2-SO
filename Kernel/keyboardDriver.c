@@ -110,7 +110,21 @@ void keyboard_handler()
   uint16_t key = scancode & 0x7F;
   if (pressed(scancode, key))
   {
-    add(translate(key));
+    if (control){
+      switch (key)
+      {
+      case 0x26:  //Pause left window
+        pauseTask(0);
+        break;
+      case 0x13:  //Pause right window
+        pauseTask(1);
+        break;
+      default:
+        break;
+      }
+    } else {
+      add(translate(key));
+    }
   }
 }
 
