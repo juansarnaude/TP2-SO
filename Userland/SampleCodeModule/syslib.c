@@ -62,6 +62,58 @@ int strcmp (const char *p1, const char *p2){
   return c1 - c2;
 }
 
+//Turn an integer number to a char array
+void itoa(int n, char s[]){
+     int i, sign;
+ 
+     if ((sign = n) < 0)  /* record sign */
+         n = -n;          /* make n positive */
+     i = 0;
+     do {       /* generate digits in reverse order */
+         s[i++] = n % 10 + '0';   /* get next digit */
+     } while ((n /= 10) > 0);     /* delete it */
+     if (sign < 0)
+         s[i++] = '-';
+     s[i] = '\0';
+     reverse(s);
+}
+
+void reverse(char s[]){
+     int i, j;
+     char c;
+ 
+     for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+         c = s[i];
+         s[i] = s[j];
+         s[j] = c;
+     }
+}
+
+//Ciclo infinito que imprime numeros primos
+void printPrime(){
+    char num[30];
+    int i=2;
+    while(1){
+        if(isPrime(i) == 0){
+            itoa(i,num);
+            puts(num);
+        }
+        i++;
+    }
+}
+
+//Devuelve 0 si es primo, 1 si no lo es.
+int isPrime(int n)
+{
+	int i;
+	for(i=2;i<=n/2;i++)
+	{
+		if(n%i==0)
+			return 1;
+	}
+	return 0;
+}
+
 //solucion momentanea para interpretar comandos
 int strcmpBrazil (const char *p1, const char *p2){
   const unsigned char *s1 = (const unsigned char *) p1;
