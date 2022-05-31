@@ -54,7 +54,7 @@ static void sys_write(unsigned fd,const char* buffer, uint64_t count){
                 break;
     
             case STDERR:
-                ncPrintFormat(string, 0x0C);
+                ncPrintFormat(string, ERROR_FORMAT);
                 break;
             default:
                 return;
@@ -64,7 +64,7 @@ static void sys_write(unsigned fd,const char* buffer, uint64_t count){
         string[j++] = buffer[i];
         
     }
-    string[i] = '\0';
+    string[j] = '\0';
     switch (fd)
     {
     case STDOUT:
@@ -72,7 +72,7 @@ static void sys_write(unsigned fd,const char* buffer, uint64_t count){
         break;
 
     case STDERR:
-        ncPrintFormat(string, 0x0C);
+        ncPrintFormat(string, ERROR_FORMAT);
         break;
     default:
         return;

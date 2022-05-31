@@ -69,6 +69,19 @@ void ncPrintFormat(const char* string,uint8_t format){
 }
 
 void ncPrintCharFormat(char character,uint8_t format){
+	switch (character)
+	{
+	case '\n':
+		ncNewline();
+		return;
+		break;
+	case '8':
+		ncDeleteChar();
+		return;
+		break;
+	default:
+		break;
+	}
 	if (windows == 1){
 		*(currentVideo++) = character;
 		*(currentVideo++) = format;

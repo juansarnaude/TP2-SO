@@ -17,7 +17,6 @@ void exceptionDispatcher(uint64_t exception, uint64_t rip, uint64_t rsp, const u
 	
 }
 
-#define ERROR_FORMAT 0x0C
 
 static char* registers[] = {" RAX:", " RBX:", " RCX:", " RDX:", " RBP:", " RDI:", " RSI:", " R8:", " R9:", " R10:", " R11:", " R12:", " R13:", " R14:", " R15:"};
 
