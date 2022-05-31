@@ -62,13 +62,13 @@ void ncPrintTime()
 }
 void ncDeleteChar(){
 	if (windows == 1){
-		if (currentVideo-2 > video){
+		if (currentVideo-2 >= video){
 			currentVideo -= 2;
 			*currentVideo = ' ';
 		}
 		return;
 	} else {
-		if (currentVideoW[currentWindow]-2 > videoWindow[currentWindow]){
+		if (currentVideoW[currentWindow]-2 >= videoWindow[currentWindow]){
 			currentVideoW[currentWindow] -= 2;
 			*(currentVideoW[currentWindow]) = ' ';
 		}
@@ -88,7 +88,7 @@ void ncPrintCharFormat(char character,uint8_t format){
 		ncNewline();
 		return;
 		break;
-	case '8':
+	case '\b':
 		ncDeleteChar();
 		return;
 		break;
