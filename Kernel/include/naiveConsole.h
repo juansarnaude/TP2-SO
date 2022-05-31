@@ -22,5 +22,6 @@ void ncClear();
 void ncClearWindow(uint8_t windowToCLear);
 uint8_t ncWindows(uint8_t amount);
 uint8_t ncCurrentWindow(uint8_t select);
+void scrollUp();
 
 #endif
