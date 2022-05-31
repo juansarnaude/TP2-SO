@@ -1,19 +1,24 @@
 #include <naiveConsole.h>
 
+#define WIDTH 80
+#define HEIGHT 25
+#define VIDEOSTART 0xB8000
+
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 static char buffer[64] = {'0'};
-static uint8_t *const video = (uint8_t *)0xB8000;
-static uint8_t *currentVideo = (uint8_t *)0xB8000;
-uint8_t *initialLine;
-static const uint32_t width = 80;
-static const uint32_t height = 25;
+static uint8_t *const video = (uint8_t *)VIDEOSTART;
+static uint8_t *currentVideo = (uint8_t *)VIDEOSTART;
+static const uint32_t width = WIDTH;
+static const uint32_t height = HEIGHT;
 
 //Window currently writing to.
 static uint8_t currentWindow = 0;
 //Amount of windows
 static uint8_t windows = 1;
+//Starting point for windows
+static uint8_t *videoWindow[2] = {(uint8_t*)VIDEOSTART, (uint8_t*)VIDEOSTART + WIDTH};
 //Pointer to windows
-static uint8_t *currentVideoW[2] = {(uint8_t *)0xB8000, (uint8_t *)0xB8000 + 80};
+static uint8_t *currentVideoW[2] = {(uint8_t*)VIDEOSTART, (uint8_t*)VIDEOSTART + WIDTH};
 //Default format color
 static const uint8_t color = 0x07;
 
@@ -56,9 +61,17 @@ void ncPrintTime()
 	ncNewline();
 }
 void ncDeleteChar(){
-	if(currentVideo - 2 >= initialLine+2*14){
-		currentVideo-=2;
-		*currentVideo=' ';
+	if (windows == 1){
+		if (currentVideo-2 > video){
+			currentVideo -= 2;
+			*currentVideo = ' ';
+		}
+		return;
+	} else {
+		if (currentVideoW[currentWindow]-2 > videoWindow[currentWindow]){
+			currentVideoW[currentWindow] -= 2;
+			*(currentVideoW[currentWindow]) = ' ';
+		}
 	}
 }
 
@@ -115,7 +128,6 @@ void ncNewline()
 		{
 			ncPrintChar(' ');
 		} while ((uint64_t)(currentVideo - video) % (width * 2) != 0);
-		initialLine=currentVideo-2;
 	} else {
 		do
 		{
