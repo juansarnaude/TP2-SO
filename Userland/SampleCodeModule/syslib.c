@@ -91,10 +91,16 @@ void reverse(char s[]){
 void printPrime(){
     char num[30];
     int i=2;
+    puts("Prime numbers: ");
     while(1){
         if(isPrime(i) == 0){
+            if(i<0){
+            puts("\b\b");
+            return;
+            }   
             itoa(i,num);
             puts(num);
+            puts(", ");
         }
         i++;
     }
@@ -108,7 +114,11 @@ void fibonacciNumbs(){
     int nextTerm = t1 + t2;
     puts("Fibonacci Series: 0, 1, ");
     while(1) {
-        itoa(num,nextTerm);
+        if(nextTerm<0){
+            puts("\b\b");
+            return;
+        }
+        itoa(nextTerm,num);
         puts(num);
         puts(", ");
         t1 = t2;
