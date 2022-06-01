@@ -3,6 +3,7 @@ GLOBAL sys_read
 GLOBAL sys_exit
 GLOBAL sys_execve
 GLOBAL sys_time
+GLOBAL inv_opcode
 
 section .text
 sys_write:
@@ -49,3 +50,6 @@ sys_time:
     mov rsp,rbp
     pop rbp
     ret
+
+inv_opcode:
+    ud2

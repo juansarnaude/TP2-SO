@@ -19,12 +19,21 @@ int readInput(){
     }else if(strcmp(buffer,"time") == 0){
         putChar('\n');
         getTime();
-    }else if(strcmp(buffer,"prime")==0){
+    }else if(strcmp(buffer,"prime") == 0){
         putChar('\n');
         printPrime();
-    }else if(strcmp(buffer,"fibonazi")==0){
+    }else if(strcmp(buffer,"fibonazi") == 0){
         putChar('\n');
         fibonacciNumbs();
+    }else if(strcmp(buffer,"inforeg") == 0){
+        putChar('\n');
+        inforeg();
+    }else if(strcmp(buffer,"div zero") == 0){
+        putChar('\n');
+        excepDivZero();
+    }else if(strcmp(buffer,"inv opcode") == 0){
+        putChar('\n');
+        excepInvalidOpcode();
     }else{//el comando ingresado no existe.
         puts("\nUnknown command: ");
         puts(buffer);

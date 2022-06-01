@@ -53,6 +53,14 @@ char getChar(){
     return c;
 }
 
+void excepDivZero(){
+    int i=7/0;
+}
+
+void excepInvalidOpcode(){
+    inv_opcode();
+}
+
 //https://code.woboq.org/userspace/glibc/string/strcmp.c.html
 int strcmp (const char *p1, const char *p2){
   const unsigned char *s1 = (const unsigned char *) p1;
@@ -101,6 +109,7 @@ void printPrime(){
     char num[30];
     int i=2;
     puts("Prime numbers: ");
+    puts("1, ");
     while(1){
         if(isPrime(i) == 0){
             if(i<0){
