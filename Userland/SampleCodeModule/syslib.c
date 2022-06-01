@@ -102,6 +102,24 @@ void printPrime(){
     }
 }
 
+//Ciclo infinito que imprime numeros de secuencia de fibonacci
+void fibonacciNumbs(){
+    char num[30];
+    int i=3;
+    int t1 = 0, t2 = 1;
+    int nextTerm = t1 + t2;
+    puts("Fibonacci Series: 0, 1, ");
+    while(1) {
+        itoa(num,nextTerm);
+        puts(num);
+        puts(", ");
+        t1 = t2;
+        t2 = nextTerm;
+        nextTerm = t1 + t2;
+        i++;
+    }
+}
+
 //Devuelve 0 si es primo, 1 si no lo es.
 int isPrime(int n)
 {

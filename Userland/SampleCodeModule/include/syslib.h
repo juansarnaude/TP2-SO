@@ -13,5 +13,6 @@ unsigned int scanf(char *s,unsigned int size);
 int strcmpBrazil (const char *p1, const char *p2);
 int strcmp (const char *p1, const char *p2);
 void getTime();
+void fibonacciNumbs();
 
 #endif
