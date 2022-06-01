@@ -5,19 +5,30 @@ void bash() {
     help();
     int i=0;
     while(i != -1){
+        puts("McWhigginOS:$ ");
         i = readInput();
+        putChar('\n');
     }
 }
 
 int readInput(){
     int sizeRead = gets(buffer);
-    if(strcmpBrazil(buffer,"exit") == 0){
+    if(strcmp(buffer,"exit") == 0){
+        puts("\nGoodbye\n");
         return -1;
-    }else if(strcmpBrazil(buffer,"time") == 0){
+    }else if(strcmp(buffer,"time") == 0){
+        putChar('\n');
         getTime();
+    }else if(strcmp(buffer,"prime")==0){
+        putChar('\n');
+        printPrime();
+    }else if(strcmp(buffer,"fibonazi")==0){
+        putChar('\n');
+        fibonacciNumbs();
     }else{//el comando ingresado no existe.
-        puts("Unknown command: ");
+        puts("\nUnknown command: ");
         puts(buffer);
+        putChar('\n');
     }//etc, para los distintos comandos a implementar
     return sizeRead;
 }

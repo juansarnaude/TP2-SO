@@ -22,8 +22,16 @@ char * gets(char * s){
     int i = 0, c = getChar();
     while (c != '\n' && c != EOF)
     {
-        s[i++] = c;
-        putChar(c);
+        s[i] = c;
+        if(s[i] == '\b' && i > 0){
+            i--;
+            putChar(c);
+        }else if(s[i] == '\b' && i == 0 ){
+            //no hago nada
+        }else{
+            i++;
+            putChar(c);
+        }
         c = getChar();
     }
     s[i] = '\0';
@@ -139,20 +147,3 @@ int isPrime(int n)
 	}
 	return 0;
 }
-
-//solucion momentanea para interpretar comandos
-int strcmpBrazil (const char *p1, const char *p2){
-  const unsigned char *s1 = (const unsigned char *) p1;
-  const unsigned char *s2 = (const unsigned char *) p2;
-  unsigned char c1, c2;
-  do
-    {
-      c1 = (unsigned char) *s1++;
-      c2 = (unsigned char) *s2++;
-      if (c1 == '\0' || c2 == '\0')
-        return 0;;
-    }
-  while (c1 == c2);
-  return c1 - c2;
-}
-
