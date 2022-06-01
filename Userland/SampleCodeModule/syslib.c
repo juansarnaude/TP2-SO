@@ -1,4 +1,5 @@
 #include <syslib.h>
+#include <stdint.h>
 
 unsigned int strlen(const char *str){
     unsigned int len = 0;
@@ -139,6 +140,35 @@ int isPrime(int n)
 	}
 	return 0;
 }
+
+
+void inforeg(){
+    static char* registers[17] = { "RIP", "RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "RSP", "R8 ", "R9 ", "R10", "R11", "R12", "R13", "R14", "R15"};
+    uint64_t regvalues[17];
+
+    char buffer[18];
+    buffer[0]='0';
+    buffer[1]='x';
+    for(int i=0;i<17;i++){
+        puts(registers[i]);
+        puts(": ");
+        b64ToHex(regvalues[i],buffer+2);
+        puts(buffer);
+        if((i%4)==0)
+            puts("\n");
+        else
+            puts(" ");
+    }
+}
+
+void b64ToHex(uint64_t n, char string[16]) {
+    for(int i=15;i!=0;i--){
+        int num = n%16;
+        string[i] =(num<10 ? '0':('A'-10)) + num;
+        n/=16;
+    }
+}
+
 
 //solucion momentanea para interpretar comandos
 int strcmpBrazil (const char *p1, const char *p2){
