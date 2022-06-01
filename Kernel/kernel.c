@@ -86,16 +86,10 @@ int main()
 {	
 	ncClear();
 	load_idt();
-	while (1)
-	{
-		;
-	}
+	executeTask(sampleCodeModuleAddress);
+	picMasterMask(0xFC);
 	
-
-	// executeTask(sampleCodeModuleAddress);
-	// picMasterMask(0xFC);
-	
-	// tick();
+	tick();
 	ncPrint("[Finished]");
 	return 0;
 }
