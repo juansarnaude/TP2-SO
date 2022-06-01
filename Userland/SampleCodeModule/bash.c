@@ -3,10 +3,10 @@ static char buffer[32];
 
 void bash() {
     help();
-    // int i=0;
-    // while(i != -1){
-    //     i = readInput();
-    // }
+    int i=0;
+    while(i != -1){
+        i = readInput();
+    }
 }
 
 int readInput(){
