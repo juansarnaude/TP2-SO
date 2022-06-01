@@ -187,16 +187,16 @@ void ncClearWindow(uint8_t windowToCLear){
 	}
 	else{
 		widthW=width;
-		i=width/2 +1 ;
+		i=width/2 ;
 	}
 		
-	while(i < height*widthW){
+	while(i < height*width){
 		video[i*2]=' ';
 		if (i && (i+1)%widthW==0)
 			i+=width/2;
 		i++;
 	}
-	currentVideoW[windowToCLear]=video;
+	currentVideoW[windowToCLear]=videoWindow[windowToCLear];
 }
 
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
@@ -246,28 +246,31 @@ void scrollUp(){
 		currentVideo -= width*2;
 	} else {	// Scroll a window
 		uint64_t i = 0;
-		if (currentWindow == 0){	// Left window
-			for(; i < width * (height-1); i++){
-				if (((i * 2) / width) % 2 == 1)
-					i += width/2;
-				videoWindow[currentWindow][i*2] = videoWindow[currentWindow][(i+width)*2];
-			}
-			for (uint64_t j = i; j < i + width/2; j++)
-			{
-				videoWindow[currentWindow][j*2] = ' ';
-			}
-		} else {	// Right window
-			for (i = width/2; i < width * (height-1); i++)
-			{
-				if (((i*2) / width) % 2 == 0)
-					i += width/2;
-				videoWindow[currentWindow][i*2] = videoWindow[currentWindow][(i+width)*2];
-			}
-			for (uint64_t j = i+width/2; j < i + width; j++)
-			{
-				videoWindow[currentWindow][j*2] = ' ';
-			}
+		uint32_t widthW;
+		if (currentWindow==0){
+			widthW=width/2;
+			i=0;
 		}
-		currentVideoW[currentWindow] -= width;
+		else{
+			widthW=width;
+			i=width/2 ;
+		}
+			
+		while(i < (height-1)*width){
+			video[i*2]=video[(i+width)*2];
+			if (i && (i+1)%widthW==0)
+				i+=width/2;
+			i++;
+		}
+		while (i < height*width)
+		{
+			video[i*2]=' ';
+			if (i && (i+1)%widthW==0)
+				i+=width/2;
+			i++;
+		}
+		currentVideoW[currentWindow]=videoWindow[currentWindow] + width*2*(height-1);
+		// Hardcoded memory directions.
+		// currentVideoW[currentWindow]=(currentWindow) ? (0xb8f00 + width) : (0xb8f00);
 	}
 }
