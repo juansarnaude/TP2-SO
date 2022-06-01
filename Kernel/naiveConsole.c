@@ -20,7 +20,7 @@ static uint8_t *videoWindow[2] = {(uint8_t*)VIDEOSTART, (uint8_t*)VIDEOSTART + W
 //Pointer to windows
 static uint8_t *currentVideoW[2] = {(uint8_t*)VIDEOSTART, (uint8_t*)VIDEOSTART + WIDTH};
 //Default format color
-static const uint8_t format = 0x07;
+static const uint8_t defaultFormat = 0x07;
 
 //Select amount of windows
 uint8_t ncWindows(uint8_t amount){
@@ -98,7 +98,7 @@ void ncPrintCharFormat(char character,uint8_t format){
 	if (windows == 1){
 		*(currentVideo++) = character;
 		*(currentVideo++) = format;
-		if ((uint64_t)(currentVideo - video) / (2*width) >= height - 1)
+		if ((uint64_t)(currentVideo - video) / (2*width) >= height)
 			scrollUp();
 	} else {
 		*(currentVideoW[currentWindow]++) = character;
@@ -107,7 +107,7 @@ void ncPrintCharFormat(char character,uint8_t format){
 			currentVideoW[currentWindow] += width;
 		} else if (!currentWindow && ((currentVideoW[currentWindow] - video) % (2*width) >= width))
 			currentVideoW[currentWindow] += width;
-		if ((uint64_t)(currentVideoW[currentWindow] - video) / (width*2) >= height - 1)
+		if ((uint64_t)(currentVideoW[currentWindow] - video) / (width*2) >= height)
 			scrollUp();
 	}
 }
@@ -122,7 +122,7 @@ void ncPrint(const char *string)
 
 void ncPrintChar(char character)
 {
-	ncPrintCharFormat(character, format);
+	ncPrintCharFormat(character, defaultFormat);
 }
 
 void ncNewline()
@@ -234,10 +234,16 @@ static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 void scrollUp(){
 	// Scroll all
 	if (windows == 1){
-		for (uint64_t i = 0; i < width * (height-1); i++)
+		uint64_t i;
+		for (i = 0; i <= width * (height-1); i++)
 		{
 			video[i*2] = video[(i+width)*2];
 		}
+		for (uint64_t j = i; j < width * height; j++)
+		{
+			video[j*2] = video[(i+width)*2];
+		}
+		currentVideo -= width*2;
 	} else {	// Scroll a window
 		uint64_t i = 0;
 		if (currentWindow == 0){	// Left window
@@ -246,9 +252,9 @@ void scrollUp(){
 					i += width/2;
 				videoWindow[currentWindow][i*2] = videoWindow[currentWindow][(i+width)*2];
 			}
-			for (uint64_t j = i; j < i + width/2; i++)
+			for (uint64_t j = i; j < i + width/2; j++)
 			{
-				videoWindow[currentWindow][i+j*2] = ' ';
+				videoWindow[currentWindow][j*2] = ' ';
 			}
 		} else {	// Right window
 			for (i = width/2; i < width * (height-1); i++)
@@ -257,10 +263,11 @@ void scrollUp(){
 					i += width/2;
 				videoWindow[currentWindow][i*2] = videoWindow[currentWindow][(i+width)*2];
 			}
-			for (uint64_t j = i+width/2; j < i + width; i++)
+			for (uint64_t j = i+width/2; j < i + width; j++)
 			{
-				videoWindow[currentWindow][i+j*2] = ' ';
+				videoWindow[currentWindow][j*2] = ' ';
 			}
 		}
+		currentVideoW[currentWindow] -= width;
 	}
 }
