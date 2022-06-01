@@ -19,7 +19,7 @@ int putChar(char c){
     return sys_write(STDOUT, &c, 1);
 }
 
-char * gets(char * s){
+int gets(char * s){
     int i = 0, c = getChar();
     while (c != '\n' && c != EOF)
     {
@@ -36,7 +36,7 @@ char * gets(char * s){
         c = getChar();
     }
     s[i] = '\0';
-    return (i != 0) ? s : NULL;
+    return i;
 }
 
 void getTime(){
@@ -69,6 +69,8 @@ int strcmp (const char *p1, const char *p2){
   return c1 - c2;
 }
 
+static void reverse(char s[]);
+
 //Turn an integer number to a char array
 void itoa(int n, char s[]){
      int i, sign;
@@ -85,7 +87,7 @@ void itoa(int n, char s[]){
      reverse(s);
 }
 
-void reverse(char s[]){
+static void reverse(char s[]){
      int i, j;
      char c;
  
@@ -94,6 +96,18 @@ void reverse(char s[]){
          s[i] = s[j];
          s[j] = c;
      }
+}
+
+//Devuelve 0 si es primo, 1 si no lo es.
+int isPrime(int n)
+{
+	int i;
+	for(i=2;i<=n/2;i++)
+	{
+		if(n%i==0)
+			return 1;
+	}
+	return 0;
 }
 
 //Ciclo infinito que imprime numeros primos
@@ -137,42 +151,49 @@ void fibonacciNumbs(){
     }
 }
 
-//Devuelve 0 si es primo, 1 si no lo es.
-int isPrime(int n)
-{
-	int i;
-	for(i=2;i<=n/2;i++)
-	{
-		if(n%i==0)
-			return 1;
-	}
-	return 0;
-}
-
-
 void inforeg(){
-    static char* registers[17] = { "RIP", "RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "RSP", "R8 ", "R9 ", "R10", "R11", "R12", "R13", "R14", "R15"};
-    uint64_t regvalues[17];
-
-    char buffer[18];
-    buffer[0]='0';
-    buffer[1]='x';
-    for(int i=0;i<17;i++){
+    static char* registers[] = { "RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "RSP", "R8 ", "R9 ", "R10", "R11", "R12", "R13", "R14", "R15"};
+    uint64_t regvalues[16];
+    getRegisters(regvalues);
+    char buffer[64] = {'0'};
+    for(int i=0;i<16;i++){
         puts(registers[i]);
-        puts(": ");
-        b64ToHex(regvalues[i],buffer+2);
+        puts(": 0x");
+        uintToBase(registers[i], buffer, 16);
         puts(buffer);
-        if((i%4)==0)
-            puts("\n");
-        else
-            puts(" ");
+        putChar('\n');
     }
 }
 
-void b64ToHex(uint64_t n, char string[16]) {
-    for(int i=15;i!=0;i--){
-        int num = n%16;
-        string[i] =(num<10 ? '0':('A'-10)) + num;
-        n/=16;
-    }
+//Tomado de x86-Barebones
+static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
+{
+	char *p = buffer;
+	char *p1, *p2;
+	uint32_t digits = 0;
+
+	// Calculate characters for each digit
+	do
+	{
+		uint32_t remainder = value % base;
+		*p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
+		digits++;
+	} while (value /= base);
+
+	// Terminate string in buffer.
+	*p = 0;
+
+	// Reverse string in buffer.
+	p1 = buffer;
+	p2 = p - 1;
+	while (p1 < p2)
+	{
+		char tmp = *p1;
+		*p1 = *p2;
+		*p2 = tmp;
+		p1++;
+		p2--;
+	}
+
+	return digits;
 }

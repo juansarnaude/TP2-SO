@@ -9,18 +9,23 @@
 
 #define EOF -1
 
-int sys_write(int fd, void *buffer, int size);
-int sys_read(int fd,void* buffer,int size);
+#include <stdint.h>
+
+int sys_write(int fd, const char *buffer, int size);
+int sys_read(int fd,char * buffer,int size);
 void sys_time();
 
 unsigned int strlen(const char *s);
 int puts(const char* s);
 int putChar(char);
 char getChar();
-char * gets(char * s);
+int gets(char * s);
 int strcmpBrazil (const char *p1, const char *p2);
 int strcmp (const char *p1, const char *p2);
 void getTime();
 void fibonacciNumbs();
+void getRegisters(uint64_t * registers);
+void inforeg();
+static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 
 #endif
