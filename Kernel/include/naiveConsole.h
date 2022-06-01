@@ -5,6 +5,8 @@
 #include <lib.h>
 #include <dates.h>
 
+#define ERROR_FORMAT 0x0C
+
 void ncPrintTime();
 void ncDeleteChar();
 void ncPrintFormat(const char* string,uint8_t format);
@@ -20,5 +22,6 @@ void ncClear();
 void ncClearWindow(uint8_t windowToCLear);
 uint8_t ncWindows(uint8_t amount);
 uint8_t ncCurrentWindow(uint8_t select);
+void scrollUp();
 
 #endif

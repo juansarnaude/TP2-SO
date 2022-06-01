@@ -6,6 +6,7 @@ GLOBAL read_port
 GLOBAL getDay
 GLOBAL getMonth
 GLOBAL getYear
+GLOBAL tick
 section .text
 	
 cpuVendor:
@@ -120,3 +121,11 @@ getYear:
     mov rsp,rbp
     pop rbp
     ret	
+
+tick:
+    push rbp
+    mov rbp, rsp
+    int 20h
+    mov rsp, rbp
+    pop rbp
+    ret

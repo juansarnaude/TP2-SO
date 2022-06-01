@@ -187,7 +187,7 @@ static char translate(uint16_t key)
 
 static void add(char key)
 {
-  buffer[realDim] = key;
+  buffer[realDim++] = key;
   if (realDim + 1 == BUFFER_LENGTH)
   {
     realDim = 0;
@@ -205,18 +205,6 @@ uint64_t readBuffer(char *output, uint64_t count)
   if (last == BUFFER_LENGTH)
   {
     realDim = last = 0;
-  }
-  while (i < count)
-  {
-    if (read_port(0x64) & 0x01)
-    {
-      uint16_t scancode = read_port(0x60);
-      uint16_t key = scancode & 0x7F;
-      if (pressed(scancode, key))
-      {
-        output[i++] = translate(key);
-      }
-    }
   }
   return i;
 }

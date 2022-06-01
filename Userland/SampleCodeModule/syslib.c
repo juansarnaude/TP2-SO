@@ -1,28 +1,33 @@
 #include <syslib.h>
 
-unsigned int strlen(const char *s){
-    unsigned int count = 0;
-    while(*s!='\0')
+unsigned int strlen(const char *str){
+    unsigned int len = 0;
+    while(str[len]!='\0')
     {
-        count++;
-        s++;
+        len++;
     }
-    return count;
+    return len;
 }
 
-unsigned int scanf(char *s,unsigned int size){
-    int i=0;
-    while(i < size){
-        char c =getChar();
-        if('\n' == c){
-            s[i] = '\0';
-            return i;
-        }
+int puts(const char * str){
+    int len = strlen(str);
+    return sys_write(STDOUT, str, len);
+}
+
+int putChar(char c){
+    return sys_write(STDOUT, &c, 1);
+}
+
+char * gets(char * s){
+    int i = 0, c = getChar();
+    while (c != '\n' && c != EOF)
+    {
+        s[i++] = c;
         putChar(c);
-        s[i] = c;
-        i++;
+        c = getChar();
     }
-    return i;
+    s[i] = '\0';
+    return (i != 0) ? s : NULL;
 }
 
 void getTime(){
@@ -31,19 +36,12 @@ void getTime(){
 
 char getChar(){
     char c;
-    sys_read(0,&c,1);
-    return c;
-}
-
-void putChar(char c){
-    sys_write(1,&c,1);
-}
-
-void puts(const char* s){
-    while(*s != '\0'){
-        putChar(*s);
-        s++;
+    while (sys_read(STDIN, &c, 1) == 0)
+    {
+        ;
     }
+    
+    return c;
 }
 
 //https://code.woboq.org/userspace/glibc/string/strcmp.c.html
@@ -146,23 +144,5 @@ int strcmpBrazil (const char *p1, const char *p2){
     }
   while (c1 == c2);
   return c1 - c2;
-}
-
-
-    
-void help(){
-    const char* helpstring = 
-    "HELP                 Provides help information for commands.\n"
-	"CLEAR                Clears the console.\n"
-	"DIVIDEBYZERO         Command to verify the operation of the exception routine \"Divide by zero\"\n"
-    "INVALIDOPCODE        Command to verify the operation of the exception routine \"Invalid Opcode\"\n"
-	"INFOREG              Prints on screen the value of all registers.\n"
-	"PRINTMEM             Receives as argument a pointer and performs a memory dump of 32 bytes from the\n"
-	"                     address received as an argument.\n"
-	"TIME                 Command to display the system day and time.\n";
-    "PRIMENUMBS           Dispalys prime numbers starting from 1.\n"
-    "FIBONACCINUMBS       Dispalys fibonacci series numbers.\n"
-    "COMAND1 | COMAND2    The \"|\" operand allows the execution of multimple comands at the same time.\n";
-    puts(helpstring);
 }
 

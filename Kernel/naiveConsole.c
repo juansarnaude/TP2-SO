@@ -1,21 +1,26 @@
 #include <naiveConsole.h>
 
+#define WIDTH 80
+#define HEIGHT 25
+#define VIDEOSTART 0xB8000
+
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 static char buffer[64] = {'0'};
-static uint8_t *const video = (uint8_t *)0xB8000;
-static uint8_t *currentVideo = (uint8_t *)0xB8000;
-uint8_t *initialLine;
-static const uint32_t width = 80;
-static const uint32_t height = 25;
+static uint8_t *const video = (uint8_t *)VIDEOSTART;
+static uint8_t *currentVideo = (uint8_t *)VIDEOSTART;
+static const uint32_t width = WIDTH;
+static const uint32_t height = HEIGHT;
 
 //Window currently writing to.
 static uint8_t currentWindow = 0;
 //Amount of windows
 static uint8_t windows = 1;
+//Starting point for windows
+static uint8_t *videoWindow[2] = {(uint8_t*)VIDEOSTART, (uint8_t*)VIDEOSTART + WIDTH};
 //Pointer to windows
-static uint8_t *currentVideoW[2] = {(uint8_t *)0xB8000, (uint8_t *)0xB8000 + 80};
+static uint8_t *currentVideoW[2] = {(uint8_t*)VIDEOSTART, (uint8_t*)VIDEOSTART + WIDTH};
 //Default format color
-static const uint8_t color = 0x07;
+static const uint8_t defaultFormat = 0x07;
 
 //Select amount of windows
 uint8_t ncWindows(uint8_t amount){
@@ -56,9 +61,17 @@ void ncPrintTime()
 	ncNewline();
 }
 void ncDeleteChar(){
-	if(currentVideo - 2 >= initialLine+2*14){
-		currentVideo-=2;
-		*currentVideo=' ';
+	if (windows == 1){
+		if (currentVideo-2 >= video){
+			currentVideo -= 2;
+			*currentVideo = ' ';
+		}
+		return;
+	} else {
+		if (currentVideoW[currentWindow]-2 >= videoWindow[currentWindow]){
+			currentVideoW[currentWindow] -= 2;
+			*(currentVideoW[currentWindow]) = ' ';
+		}
 	}
 }
 
@@ -69,9 +82,24 @@ void ncPrintFormat(const char* string,uint8_t format){
 }
 
 void ncPrintCharFormat(char character,uint8_t format){
+	switch (character)
+	{
+	case '\n':
+		ncNewline();
+		return;
+		break;
+	case '\b':
+		ncDeleteChar();
+		return;
+		break;
+	default:
+		break;
+	}
 	if (windows == 1){
 		*(currentVideo++) = character;
 		*(currentVideo++) = format;
+		if ((uint64_t)(currentVideo - video) / (2*width) >= height)
+			scrollUp();
 	} else {
 		*(currentVideoW[currentWindow]++) = character;
 		*(currentVideoW[currentWindow]++) = format;
@@ -79,6 +107,8 @@ void ncPrintCharFormat(char character,uint8_t format){
 			currentVideoW[currentWindow] += width;
 		} else if (!currentWindow && ((currentVideoW[currentWindow] - video) % (2*width) >= width))
 			currentVideoW[currentWindow] += width;
+		if ((uint64_t)(currentVideoW[currentWindow] - video) / (width*2) >= height)
+			scrollUp();
 	}
 }
 
@@ -92,7 +122,7 @@ void ncPrint(const char *string)
 
 void ncPrintChar(char character)
 {
-	ncPrintCharFormat(character, color);
+	ncPrintCharFormat(character, defaultFormat);
 }
 
 void ncNewline()
@@ -102,7 +132,6 @@ void ncNewline()
 		{
 			ncPrintChar(' ');
 		} while ((uint64_t)(currentVideo - video) % (width * 2) != 0);
-		initialLine=currentVideo-2;
 	} else {
 		do
 		{
@@ -200,4 +229,45 @@ static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 	}
 
 	return digits;
+}
+
+void scrollUp(){
+	// Scroll all
+	if (windows == 1){
+		uint64_t i;
+		for (i = 0; i <= width * (height-1); i++)
+		{
+			video[i*2] = video[(i+width)*2];
+		}
+		for (uint64_t j = i; j < width * height; j++)
+		{
+			video[j*2] = video[(i+width)*2];
+		}
+		currentVideo -= width*2;
+	} else {	// Scroll a window
+		uint64_t i = 0;
+		if (currentWindow == 0){	// Left window
+			for(; i < width * (height-1); i++){
+				if (((i * 2) / width) % 2 == 1)
+					i += width/2;
+				videoWindow[currentWindow][i*2] = videoWindow[currentWindow][(i+width)*2];
+			}
+			for (uint64_t j = i; j < i + width/2; j++)
+			{
+				videoWindow[currentWindow][j*2] = ' ';
+			}
+		} else {	// Right window
+			for (i = width/2; i < width * (height-1); i++)
+			{
+				if (((i*2) / width) % 2 == 0)
+					i += width/2;
+				videoWindow[currentWindow][i*2] = videoWindow[currentWindow][(i+width)*2];
+			}
+			for (uint64_t j = i+width/2; j < i + width; j++)
+			{
+				videoWindow[currentWindow][j*2] = ' ';
+			}
+		}
+		currentVideoW[currentWindow] -= width;
+	}
 }

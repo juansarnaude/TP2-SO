@@ -1,6 +1,6 @@
 /* sampleCodeModule.c */
 
-#include <syslib.h>
+#include <bash.h>
 
 char * v = (char*)0xB8000 + 79 * 2;
 

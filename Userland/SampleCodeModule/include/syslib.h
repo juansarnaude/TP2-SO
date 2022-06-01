@@ -1,15 +1,23 @@
 #ifndef SYSLIB_H
 #define SYSLIB_H
 
-void sys_write(int fd, void *buffer, int size);
+#define NULL (void*)0;
+
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
+
+#define EOF -1
+
+int sys_write(int fd, void *buffer, int size);
 int sys_read(int fd,void* buffer,int size);
 void sys_time();
-void bash();
+
 unsigned int strlen(const char *s);
-void puts(const char* s);
-void putChar(char);
+int puts(const char* s);
+int putChar(char);
 char getChar();
-unsigned int scanf(char *s,unsigned int size);
+char * gets(char * s);
 int strcmpBrazil (const char *p1, const char *p2);
 int strcmp (const char *p1, const char *p2);
 void getTime();
