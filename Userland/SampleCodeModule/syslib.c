@@ -157,13 +157,13 @@ void fibonacciNumbs(){
     int nextTerm = t1 + t2;
     puts("Fibonacci Series: 0, 1, ");
     while(1) {
-        if(nextTerm<0){
+        if(nextTerm<0){//por si se pasa del max integer
             puts("\b\b");
             return;
         }
         itoa(nextTerm,num);
         puts(num);
-        puts(", ");
+        puts(",\n");
         t1 = t2;
         t2 = nextTerm;
         nextTerm = t1 + t2;

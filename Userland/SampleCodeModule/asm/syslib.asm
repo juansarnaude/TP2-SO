@@ -1,5 +1,7 @@
 GLOBAL sys_write
 GLOBAL sys_read
+GLOBAL sys_windows
+GLOBAL sys_currentWindow
 GLOBAL sys_exit
 GLOBAL sys_execve
 GLOBAL sys_time
@@ -20,6 +22,24 @@ sys_read:
     push rbp
     mov rbp, rsp
     mov rax, 0
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_windows:
+    push rbp
+    mov rbp,rsp
+    mov rax,2
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_currentWindow:
+    push rbp
+    mov rbp,rsp
+    mov rax,3
     int 0x80
     mov rsp,rbp
     pop rbp

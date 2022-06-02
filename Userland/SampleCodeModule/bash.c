@@ -95,8 +95,29 @@ void pipeManager(){
         return;
     }
     //hago syscall de execve para ejecutar ambos
-    sys_execve(fun1);
-    sys_execve(fun2);
+    // sys_execve(fun1);
+    // sys_execve(fun2);
+    splitScreen(fun1,fun2);
+}
+
+void splitScreen(pm fun1,pm fun2){
+    //verifico q tipo de funcion son, ciclan infinitamente o no ciclan.
+    if((fun1 == &printPrime && fun2 == &fibonacciNumbs) || (fun2==&printPrime && fun1 == &fibonacciNumbs ) ){
+        //funcion especial q vaya iterando ambos de a uno, con pantalla dividida
+    }
+    //hago una syscall para dividir pantalla
+    //pantalla1=fun1 y pantalla2=fun2
+    //para las funciones que ciclan inf tienen q hacer sys_read para ver si se tira tecla de int.
+    sys_windows(2);
+    sys_currentWindow(0);
+    (*fun1)();
+    sys_currentWindow(1);
+    (*fun2)();
+    char c;
+    while((c = getChar()) != 'C'){//tecla especial para volver a pantalla unica
+        ;
+    }
+    sys_windows(1);
 }
 
 void help(){
