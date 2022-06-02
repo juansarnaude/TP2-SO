@@ -179,7 +179,7 @@ void inforeg(){
     for(int i=0;i<16;i++){
         puts(registers[i]);
         puts(": 0x");
-        uintToBase(registers[i], buffer, 16);
+        uintToBase(regvalues[i], buffer, 16);
         puts(buffer);
         putChar('\n');
     }
