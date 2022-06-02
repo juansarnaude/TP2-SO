@@ -53,6 +53,17 @@ char getChar(){
     return c;
 }
 
+//Retorna 1 si lo encuentra, 0 sino
+unsigned int charBelongs(char *s,char c){
+    while(*s != '\0'){
+        if(*s == c){
+            return 1;
+        }
+        s++;
+    }
+    return 0;
+}
+
 void excepDivZero(){
     int i=7/0;
 }
@@ -106,16 +117,16 @@ static void reverse(char s[]){
      }
 }
 
-//Devuelve 0 si es primo, 1 si no lo es.
+//Devuelve 1 si es primo, 0 si no lo es.
 int isPrime(int n)
 {
 	int i;
 	for(i=2;i<=n/2;i++)
 	{
 		if(n%i==0)
-			return 1;
+			return 0;
 	}
-	return 0;
+	return 1;
 }
 
 //Ciclo infinito que imprime numeros primos
@@ -125,14 +136,14 @@ void printPrime(){
     puts("Prime numbers: ");
     puts("1, ");
     while(1){
-        if(isPrime(i) == 0){
+        if(isPrime(i)){
             if(i<0){
             puts("\b\b");
             return;
             }   
             itoa(i,num);
             puts(num);
-            puts(", ");
+            puts(",\n");
         }
         i++;
     }

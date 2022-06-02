@@ -1,7 +1,7 @@
 #ifndef SYSLIB_H
 #define SYSLIB_H
 
-#define NULL (void*)0;
+#define NULL (void*)0
 
 #define STDIN 0
 #define STDOUT 1
@@ -16,13 +16,16 @@ int sys_read(int fd,char * buffer,int size);
 void sys_time();
 
 unsigned int strlen(const char *s);
+void excepDivZero();
+void excepInvalidOpcode();
 int puts(const char* s);
 int putChar(char);
 char getChar();
 int gets(char * s);
-int strcmpBrazil (const char *p1, const char *p2);
+unsigned int charBelongs(char *s,char c);
 int strcmp (const char *p1, const char *p2);
 void getTime();
+void printPrime();
 void fibonacciNumbs();
 void getRegisters(uint64_t * registers);
 void inforeg();

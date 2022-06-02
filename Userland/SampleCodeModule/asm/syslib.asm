@@ -28,7 +28,7 @@ sys_read:
 sys_exit:
     push rbp
     mov rbp,rsp
-    mov rax,2
+    mov rax,60
     int 0x80
     mov rsp,rbp
     pop rbp
@@ -37,7 +37,7 @@ sys_exit:
 sys_execve:
     push rbp
     mov rbp,rsp
-    mov rax,3
+    mov rax,11
     int 0x80
     mov rsp,rbp
     pop rbp
@@ -54,6 +54,8 @@ sys_time:
 
 inv_opcode:
     ud2
+    ret
+    
 getRegisters:
     push rbp
     mov rbp, rsp

@@ -1,5 +1,9 @@
 #include <bash.h>
 static char buffer[32];
+typedef void (*ptr)();
+typedef ptr (*pm)();
+
+ptr commandLine();
 
 void bash() {
     help();
@@ -16,30 +20,83 @@ int readInput(){
     if(strcmp(buffer,"exit") == 0){
         puts("\nGoodbye\n");
         return -1;
-    }else if(strcmp(buffer,"time") == 0){
+    }else if(charBelongs(buffer,'|')){
         putChar('\n');
-        getTime();
+        pipeManager();
+    }else{
+        pm fun = commandLine(buffer);
+        if(fun != NULL){
+            (*fun)();
+        }
+    }
+    //etc, para los distintos comandos a implementar
+    return sizeRead;
+}
+
+void unknownCommand(){
+    puts("\nUnknown command: ");
+    puts(buffer);
+    putChar('\n');
+}
+
+ptr commandLine(char* buffer){
+    if(strcmp(buffer,"time") == 0){
+        putChar('\n');
+        return &getTime;
     }else if(strcmp(buffer,"prime") == 0){
         putChar('\n');
-        printPrime();
+        return &printPrime;
     }else if(strcmp(buffer,"fibonazi") == 0){
         putChar('\n');
-        fibonacciNumbs();
+        return &fibonacciNumbs;
     }else if(strcmp(buffer,"inforeg") == 0){
         putChar('\n');
-        inforeg();
+        return &inforeg;
     }else if(strcmp(buffer,"div zero") == 0){
         putChar('\n');
-        excepDivZero();
+        return &excepDivZero;
+    }else if(strcmp(buffer,"help") == 0){
+        putChar('\n');
+        return &help;
     }else if(strcmp(buffer,"inv opcode") == 0){
         putChar('\n');
-        excepInvalidOpcode();
+        return &excepInvalidOpcode;
     }else{//el comando ingresado no existe.
-        puts("\nUnknown command: ");
-        puts(buffer);
-        putChar('\n');
-    }//etc, para los distintos comandos a implementar
-    return sizeRead;
+        unknownCommand();
+    }
+    return NULL;
+}
+
+void pipeManager(){
+    char cmd1[11],cmd2[11];
+    unsigned int i=0;
+    while(buffer[i] != '|' && i < 11){
+        cmd1[i] = buffer[i];
+        i++;
+    }
+    if(i == 11){
+        unknownCommand(cmd1);
+        return;
+    }
+    cmd1[i] = '\0';
+    i++;//como estoy parado en la '|' paso al siguiente
+    unsigned int j=0;
+    while(buffer[i] != '\0' && j < 11){
+        cmd2[j++] = buffer[i++];
+    }
+    if(j == 11){
+        unknownCommand(cmd2);
+        return;
+    }
+    cmd2[j] = '\0';
+    pm fun1 = commandLine(cmd1);
+    pm fun2 = commandLine(cmd2);
+    if(fun1 == NULL || fun2 == NULL){
+        return;
+    }
+    //hago syscall de execve para ejecutar ambos
+    sys_execve(fun1);
+    sys_execve(fun2);
 }
 
 void help(){
