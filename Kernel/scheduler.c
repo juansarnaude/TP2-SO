@@ -16,7 +16,7 @@ typedef struct {
 
 static TASK_CONTEXT tss[TASK_ARR_SIZE];    //Task array
 static int amount = 0;          //Amount of tasks currently running
-static int current = 0;         //Currently running task
+static int current = -1;         //Currently running task
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const userlandAddress = (void*)0x600000;
@@ -32,7 +32,7 @@ static void move(int a, int b);
 int executeTask(int (*program)()){
     //Adds a task to the task array.
     if (amount < TASK_ARR_SIZE){
-        int position = current+1;
+        int position = amount;
         tss[position].rip = (uint64_t)program;
         tss[position].rsp = (uint64_t) userlandAddress + (uint64_t) stepping * amount;
         //Return address for the program.
@@ -56,7 +56,7 @@ void pauseTask(unsigned int taskNum){
 }
 
 void nextTask(uint64_t * registers){
-    if (amount > 0){
+    if (amount > 1){
         int next = (current+1) % TASK_ARR_SIZE;
         if (! tss[next].active)
             return;
@@ -66,6 +66,8 @@ void nextTask(uint64_t * registers){
         loadContext(registers);
     } else if (amount == 0) {
         executeTask(sampleCodeModuleAddress);
+        current = 0;
+        loadContext(registers);
     }
 }
 
