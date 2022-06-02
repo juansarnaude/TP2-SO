@@ -86,10 +86,6 @@ int main()
 {	
 	ncClear();
 	load_idt();
-	executeTask(sampleCodeModuleAddress);
-	picMasterMask(0xFC);
-	
-	tick();
 	ncPrint("[Finished]");
 	return 0;
 }
