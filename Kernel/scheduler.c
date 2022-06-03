@@ -40,6 +40,7 @@ void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
         tasks[i].window = i;
         tasks[i].active = 1;
         tasks[i].finished = 0;
+        tasks[i].rflags = 0x0000000000000206;
     }
     amount = 2;
 
@@ -76,11 +77,6 @@ void exitTask(int retValue, uint64_t * registers){
         loadOrigin(registers);
     } else
         nextTask(registers);
-    // Wait for the next timer tick.
-    // while (1)
-    // {
-    //     ;
-    // }
 }
 
 static void saveContext(uint64_t * registers){
@@ -108,9 +104,9 @@ static void saveOrigin(uint64_t * registers){
     {
         origin.registers[i] = registers[i];
     }
-    origin.rsp = registers[18];
     origin.rip = registers[15];
     origin.rflags = registers[17];
+    origin.rsp = registers[18];
 }
 
 static void loadOrigin(uint64_t * registers){

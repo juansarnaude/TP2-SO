@@ -29,8 +29,7 @@ uint8_t ncWindows(uint8_t amount){
 			ncClear();
 		return windows = 2;
 	}
-	if (windows != 1)
-		ncClear();
+	ncClear();
 	return windows = 1;
 }
 
