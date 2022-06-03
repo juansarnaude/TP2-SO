@@ -171,6 +171,30 @@ void fibonacciNumbs(){
     }
 }
 
+static char valueToHexChar(unsigned char value);
+
+void printmem(unsigned char *source)
+{
+    for(int i=0; i<32 ; i++){
+        if(i%4==0){
+            if(i%8==0){
+                putChar('\n');
+            }else{
+                putChar('\t');
+            }
+        }
+        putChar(valueToHexChar(source[i]>>4));
+        putChar(valueToHexChar(source[i]&0x0F));
+        putChar(' ');
+        putChar(' ');
+    }
+    putChar('\n');
+}
+
+static char valueToHexChar(unsigned char value) {
+    return value >= 10 ? (value - 10 + 'A') : (value + '0');
+}
+
 void inforeg(){
     static char* registers[] = { "RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "RSP", "R8 ", "R9 ", "R10", "R11", "R12", "R13", "R14", "R15"};
     uint64_t regvalues[16];

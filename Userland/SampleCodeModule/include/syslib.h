@@ -27,6 +27,7 @@ int strcmp (const char *p1, const char *p2);
 void getTime();
 void printPrime();
 void fibonacciNumbs();
+void printmem(unsigned char *source);
 void getRegisters(uint64_t * registers);
 void inforeg();
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
