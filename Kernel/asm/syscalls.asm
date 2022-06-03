@@ -4,6 +4,7 @@ EXTERN syscallDispatcher
 SECTION .text
 
 _syscallHandler:
+	push rax
 	push rbx
 	push rcx
 	push rdx
@@ -23,9 +24,14 @@ _syscallHandler:
 
 	;rdi, rsi, rdx, rcx |||, r8 y r9
 	mov rcx, rax
+	mov r8, rsp
     call syscallDispatcher
 
-    pop r15
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+
+	pop r15
 	pop r14
 	pop r13
 	pop r12
@@ -39,5 +45,6 @@ _syscallHandler:
 	pop rdx
 	pop rcx
 	pop rbx
+	pop rax
 
     iretq

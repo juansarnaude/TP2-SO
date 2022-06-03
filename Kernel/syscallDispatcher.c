@@ -4,11 +4,11 @@ static uint64_t sys_read(unsigned int fd,char* output, uint64_t count);
 static void sys_write(unsigned fd,const char* buffer, uint64_t count);
 static uint64_t sys_windows(unsigned int windows);
 static uint64_t sys_currentWindow(unsigned int window);
-static int sys_exec(int (*function)());
-static void sys_exit();
+static int sys_exec(int (*program1)(), int (*program2)(), uint64_t * registers);
+static void sys_exit(int retValue, uint64_t * registers);
 static void sys_time();
 
-uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax){
+uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t * registers){
     //TODO: Aumentar la cantidad de registros que nos pasan a 6.
     //TODO: Fijarse si las interrupciones son atendidas mientras esta atendiendo a una syscall.
     switch(rax){
@@ -24,12 +24,14 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         case 3:
             return sys_currentWindow((unsigned int)rdi);//selecciona la window para printear
         case 11:
-            return sys_exec((void (*)())rdi);
+            return sys_exec((int(*)()) rdi, (int(*)()) rsi, registers);
             break;
         case 60:
-            sys_exit();
+            sys_exit(rdi, registers);
+            break;
         case 100:
             sys_time();
+            break;
     }
     return 0;
 }
@@ -46,44 +48,22 @@ static uint64_t sys_read(unsigned int fd,char* output, uint64_t count){
     }
 }
 
-#define STRING_SIZE 100
-static char string[STRING_SIZE] = {0};
-
 static void sys_write(unsigned fd,const char* buffer, uint64_t count){
-    uint64_t i, j;
-    for (i = 0, j=0; i < count;i++)
+    uint64_t i = 0;
+    while (i < count)
     {
-        if (j == STRING_SIZE){
-            switch (fd)
-            {
+        switch(fd){
             case STDOUT:
-                ncPrint(string);
+                ncPrintChar(buffer[i]);
                 break;
-    
             case STDERR:
-                ncPrintFormat(string, ERROR_FORMAT);
+                ncPrintCharFormat(buffer[i], ERROR_FORMAT);
                 break;
             default:
                 return;
-            }
-            j=0;
         }
-        string[j++] = buffer[i];
-        
+        i++;
     }
-    string[j] = '\0';
-    switch (fd)
-    {
-    case STDOUT:
-        ncPrint(string);
-        break;
-
-    case STDERR:
-        ncPrintFormat(string, ERROR_FORMAT);
-        break;
-    default:
-        return;
-    } 
 }
 
 static uint64_t sys_windows(unsigned int windows){
@@ -94,12 +74,13 @@ static uint64_t sys_currentWindow(unsigned int window){
     return ncCurrentWindow(window);
 }
 
-static int sys_exec(int (*function)()){    
-    return executeTask(function);
+static int sys_exec(int (*program1)(), int (*program2)(), uint64_t * registers){
+    loadTasks(program1, program2, registers);
+    return 0;
 }
 
-static void sys_exit(){
-    exitTask();
+static void sys_exit(int retValue, uint64_t * registers){
+    exitTask(retValue, registers);
 }
 
 static void sys_time(){

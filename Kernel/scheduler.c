@@ -7,113 +7,118 @@
 typedef struct {
     uint64_t registers[15]; // Registers: R15, ..., RBX, RAX
     uint64_t rsp, rip, rflags;
-    uint8_t window, active;
+    uint8_t window, active, finished;
 } TASK_CONTEXT;
 
 #pragma pack(pop)   /* Reestablece la alineación actual */
 
 #define TASK_ARR_SIZE 2
 
-static TASK_CONTEXT tss[TASK_ARR_SIZE];    //Task array
+static TASK_CONTEXT origin;     //Backup del caller.
+static TASK_CONTEXT tasks[TASK_ARR_SIZE];    //Task array
 static int amount = 0;          //Amount of tasks currently running
 static int current = -1;         //Currently running task
 
-static void * const sampleCodeModuleAddress = (void*)0x400000;
-static void * const userlandAddress = (void*)0x600000;
+static void * const userlandAddress = (void*)0x700000;
 static void * const stepping = (void*)0x100000;
 
 
 static void saveContext(uint64_t * registers);
 static void loadContext(uint64_t * registers);
-static void move(int a, int b);
+static void saveOrigin(uint64_t * registers);
+static void loadOrigin(uint64_t * registers);
 
-
-
-int executeTask(int (*program)()){
-    //Adds a task to the task array.
-    if (amount < TASK_ARR_SIZE){
-        int position = amount;
-        tss[position].rip = (uint64_t)program;
-        tss[position].rsp = (uint64_t) userlandAddress + (uint64_t) stepping * amount;
-        //Return address for the program.
-        *((uint64_t*)tss[position].rsp) = (uint64_t) exitTask;
-        tss[position].window = 0;
-        tss[position].active = 1;
-        if (amount){
-            tss[position].window = 1;
-            ncWindows(2);
-        } else {
-            ncWindows(1);
-        }
-        amount++;
-        return 1;
+void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
+    ncWindows(2);
+    tasks[0].rip = (uint64_t) program1;
+    tasks[1].rip = (uint64_t) program2;
+    for (int i = 0; i < TASK_ARR_SIZE; i++)
+    {
+        tasks[i].rsp = (uint64_t) userlandAddress + (uint64_t) stepping * i;
+        //Return address
+        *((uint64_t*)tasks[i].rsp) = (uint64_t) _defaultExit;
+        tasks[i].window = i;
+        tasks[i].active = 1;
+        tasks[i].finished = 0;
     }
-    return 0;
+    amount = 2;
+
+    //Save origin context
+    saveOrigin(registers);
+    nextTask(registers);
 }
 
 void pauseTask(unsigned int taskNum){
-    tss[taskNum % TASK_ARR_SIZE].active = ! tss[taskNum % TASK_ARR_SIZE].active;
+    tasks[taskNum % TASK_ARR_SIZE].active = ! tasks[taskNum % TASK_ARR_SIZE].active;
 }
 
 void nextTask(uint64_t * registers){
-    if (amount > 1){
-        int next = (current+1) % TASK_ARR_SIZE;
-        if (! tss[next].active)
-            return;
+    if (amount == 0)
+        return;
+    int next = (current+1) % TASK_ARR_SIZE;
+    if (! tasks[next].active || tasks[next].finished)
+        return;
+    if (current != -1 && tasks[current].finished != 1)
         saveContext(registers);
-        current = next;
-        ncCurrentWindow(tss[current].window);
-        loadContext(registers);
-    } else if (amount == 0) {
-        executeTask(sampleCodeModuleAddress);
-        current = 0;
-        loadContext(registers);
-    }
+    current = next;
+    ncCurrentWindow(tasks[current].window);
+    loadContext(registers);
 }
 
-void exitTask(int retValue){
-    for (int i = current; i < TASK_ARR_SIZE - 1; i++)
-    {
-        move(i, i+1);
-    }
+void exitTask(int retValue, uint64_t * registers){
+    tasks[current].finished = 1;
     amount--;
     ncNewline();
     ncPrint("Program returned ");
     ncPrintDec(retValue);
+    if (amount == 0){
+        ncWindows(1);
+        loadOrigin(registers);
+    } else
+        nextTask(registers);
     // Wait for the next timer tick.
-    while (1)
-    {
-        ;
-    }
+    // while (1)
+    // {
+    //     ;
+    // }
 }
 
 static void saveContext(uint64_t * registers){
     for (int i = 0; i < 15; i++)
     {
-        tss[current].registers[i] = registers[i];
+        tasks[current].registers[i] = registers[i];
     }
-    tss[current].rsp = registers[18];
-    tss[current].rip = registers[15];
-    tss[current].rflags = registers[17];
+    tasks[current].rip = registers[15];
+    tasks[current].rflags = registers[17];
+    tasks[current].rsp = registers[18];
 }
 
 static void loadContext(uint64_t * registers){
     for (int i = 0; i < 15; i++)
     {
-        registers[i] = tss[current].registers[i];
+        registers[i] = tasks[current].registers[i];
     }
-    registers[18] = tss[current].rsp;
-    registers[15] = tss[current].rip;
-    registers[17] = tss[current].rflags;
+    registers[15] = tasks[current].rip;
+    registers[17] = tasks[current].rflags;
+    registers[18] = tasks[current].rsp;
 }
 
-static void move(int a, int b){
+static void saveOrigin(uint64_t * registers){
     for (int i = 0; i < 15; i++)
     {
-        tss[a].registers[i] = tss[b].registers[i];
+        origin.registers[i] = registers[i];
     }
-    tss[a].rsp = tss[b].rsp;
-    tss[a].rip = tss[b].rip;
-    tss[a].rflags = tss[b].rflags;
-    tss[a].window = tss[b].window;
+    origin.rsp = registers[18];
+    origin.rip = registers[15];
+    origin.rflags = registers[17];
+}
+
+static void loadOrigin(uint64_t * registers){
+    for (int i = 0; i < 15; i++)
+    {
+        registers[i] = origin.registers[i];
+    }
+    registers[15] = origin.rip;
+    registers[17] = origin.rflags;
+    registers[18] = origin.rsp;
 }
