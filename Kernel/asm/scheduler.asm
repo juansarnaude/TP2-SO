@@ -4,5 +4,5 @@ section .text
 
 _defaultExit:
     mov rdi, rax
-    mov rax, 60
+    mov rax, 4
     int 80h
