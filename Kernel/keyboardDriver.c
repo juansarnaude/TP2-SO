@@ -119,6 +119,8 @@ void keyboard_handler()
       case 0x13:  //Pause right window
         pauseTask(1);
         break;
+      case 0x1:
+        terminateTasks();
       default:
         break;
       }

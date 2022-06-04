@@ -15,4 +15,6 @@ void pauseTask(unsigned int taskNum);
 
 void exitTask(int retValue, uint64_t * registers);
 
+void terminateTasks();
+
 #endif //SCHEDULER_H

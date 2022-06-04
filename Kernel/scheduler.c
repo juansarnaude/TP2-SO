@@ -1,23 +1,34 @@
 #include <scheduler.h>
 
+#define DEFAULT_CURRENT -1
+#define RIP_POS 15
+#define RFLAGS_POS 17
+#define RSP_POS 18
+#define REG_AMOUNT 15
+#define TASK_ARR_SIZE 2
+#define DEFAULT_FLAGS 0x202 // Interrupts and Intel reserved bits: 1000000010b = 0x202
+
 #pragma pack(push)  /* Push de la alineación actual */
 #pragma pack (1)    /* Alinear las siguientes estructuras a 1 byte */
 
 /* Contexto de cada task */
 typedef struct {
-    uint64_t registers[15]; // Registers: R15, ..., RBX, RAX
+    uint64_t registers[REG_AMOUNT]; // Registers: R15, ..., RBX, RAX
     uint64_t rsp, rip, rflags;
+    uint64_t buRIP;
     uint8_t window, active, finished;
 } TASK_CONTEXT;
 
 #pragma pack(pop)   /* Reestablece la alineación actual */
 
-#define TASK_ARR_SIZE 2
 
 static TASK_CONTEXT origin;     //Backup del caller.
 static TASK_CONTEXT tasks[TASK_ARR_SIZE];    //Task array
-static int amount = 0;          //Amount of tasks currently running
-static int current = -1;         //Currently running task
+
+//Amount of tasks currently running
+//If amount == -1, then tasks where terminated and original context must be reloaded
+static int amount = 0;
+static int current = DEFAULT_CURRENT;         //Currently running task
 
 static void * const userlandAddress = (void*)0x700000;
 static void * const stepping = (void*)0x100000;
@@ -27,6 +38,7 @@ static void saveContext(uint64_t * registers);
 static void loadContext(uint64_t * registers);
 static void saveOrigin(uint64_t * registers);
 static void loadOrigin(uint64_t * registers);
+static void doNothing();
 
 void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
     ncWindows(2);
@@ -40,7 +52,7 @@ void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
         tasks[i].window = i;
         tasks[i].active = 1;
         tasks[i].finished = 0;
-        tasks[i].rflags = 0x0000000000000206;
+        tasks[i].rflags = DEFAULT_FLAGS;
     }
     amount = 2;
 
@@ -50,16 +62,37 @@ void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
 }
 
 void pauseTask(unsigned int taskNum){
-    tasks[taskNum % TASK_ARR_SIZE].active = ! tasks[taskNum % TASK_ARR_SIZE].active;
+    int i = taskNum % TASK_ARR_SIZE;
+    if (tasks[i].active == 1){
+        tasks[i].buRIP = tasks[i].rip;
+        tasks[i].rip = haltcpu;
+        tasks[i].active = 0;
+    } else {
+        tasks[i].rip = tasks[i].buRIP;
+        tasks[i].active = 1;
+    }
 }
 
 void nextTask(uint64_t * registers){
     if (amount == 0)
         return;
-    int next = (current+1) % TASK_ARR_SIZE;
-    if (! tasks[next].active || tasks[next].finished)
+    if (amount == -1){
+        ncWindows(1);
+        loadOrigin(registers);
         return;
-    if (current != -1 && tasks[current].finished != 1)
+    }
+    int next = (current+1) % TASK_ARR_SIZE;
+
+    if (tasks[next].finished == 1){
+        if (tasks[current].finished == 1){
+            ncWindows(1);
+            loadContext(registers);
+            return;
+        } else
+            return;
+    }
+
+    if (current != DEFAULT_CURRENT && tasks[current].finished != 1)
         saveContext(registers);
     current = next;
     ncCurrentWindow(tasks[current].window);
@@ -67,12 +100,15 @@ void nextTask(uint64_t * registers){
 }
 
 void exitTask(int retValue, uint64_t * registers){
+    if (amount == 0)
+        return;
     tasks[current].finished = 1;
     amount--;
     ncNewline();
     ncPrint("Program returned ");
     ncPrintDec(retValue);
     if (amount == 0){
+        current = DEFAULT_CURRENT;
         ncWindows(1);
         loadOrigin(registers);
     } else
@@ -80,41 +116,58 @@ void exitTask(int retValue, uint64_t * registers){
 }
 
 static void saveContext(uint64_t * registers){
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < REG_AMOUNT; i++)
     {
         tasks[current].registers[i] = registers[i];
     }
-    tasks[current].rip = registers[15];
-    tasks[current].rflags = registers[17];
-    tasks[current].rsp = registers[18];
+    tasks[current].rip = registers[RIP_POS];
+    tasks[current].rflags = registers[RFLAGS_POS];
+    tasks[current].rsp = registers[RSP_POS];
 }
 
 static void loadContext(uint64_t * registers){
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < REG_AMOUNT; i++)
     {
         registers[i] = tasks[current].registers[i];
     }
-    registers[15] = tasks[current].rip;
-    registers[17] = tasks[current].rflags;
-    registers[18] = tasks[current].rsp;
+    registers[RIP_POS] = tasks[current].rip;
+    registers[RFLAGS_POS] = tasks[current].rflags;
+    registers[RSP_POS] = tasks[current].rsp;
 }
 
 static void saveOrigin(uint64_t * registers){
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < REG_AMOUNT; i++)
     {
         origin.registers[i] = registers[i];
     }
-    origin.rip = registers[15];
-    origin.rflags = registers[17];
-    origin.rsp = registers[18];
+    origin.rip = registers[RIP_POS];
+    origin.rflags = registers[RFLAGS_POS];
+    origin.rsp = registers[RSP_POS];
 }
 
 static void loadOrigin(uint64_t * registers){
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < REG_AMOUNT; i++)
     {
         registers[i] = origin.registers[i];
     }
-    registers[15] = origin.rip;
-    registers[17] = origin.rflags;
-    registers[18] = origin.rsp;
+    registers[RIP_POS] = origin.rip;
+    registers[RFLAGS_POS] = origin.rflags;
+    registers[RSP_POS] = origin.rsp;
+}
+
+void terminateTasks(){
+    for (int i = 0; i < TASK_ARR_SIZE; i++)
+    {
+        tasks[i].finished = 1;
+    } 
+    current = DEFAULT_CURRENT;
+    amount = -1;
+}
+
+void doNothing(){
+    while (1)
+    {
+        _hlt();
+    }
+    
 }

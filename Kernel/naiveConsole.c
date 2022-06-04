@@ -29,7 +29,8 @@ uint8_t ncWindows(uint8_t amount){
 			ncClear();
 		return windows = 2;
 	}
-	ncClear();
+	if (windows != 1)
+		ncClear();
 	return windows = 1;
 }
 
@@ -255,10 +256,10 @@ void scrollUp(){
 			i=width/2 ;
 		}
 			
-		while(i < (height-1)*width){
-			video[i*2]=video[(i+width)*2];
+		while(i < (HEIGHT-1)*WIDTH){
+			video[i*2]=video[(i+WIDTH)*2];
 			if (i && (i+1)%widthW==0)
-				i+=width/2;
+				i+=WIDTH/2;
 			i++;
 		}
 		while (i < height*width)

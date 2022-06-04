@@ -157,9 +157,9 @@ _exception6Handler:
 	exceptionHandler 6
 
 haltcpu:
-	cli
+	sti
 	hlt
-	ret
+	jmp haltcpu
 
 
 
