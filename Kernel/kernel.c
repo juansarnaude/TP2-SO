@@ -5,6 +5,7 @@
 #include <naiveConsole.h>
 #include <idtLoader.h>
 #include <scheduler.h>
+#include <inforeg.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -86,6 +87,7 @@ int main()
 {	
 	ncClear();
 	load_idt();
+	loadUserland(sampleCodeModuleAddress, 0x800000);
 	ncPrint("[Finished]");
 	return 0;
 }

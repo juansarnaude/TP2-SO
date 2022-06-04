@@ -14,5 +14,6 @@ uint8_t getYear();
 uint8_t read_port(uint8_t key);
 char *cpuVendor(char *result);
 void tick();
+void loadUserland(uint64_t * address, uint64_t * rsp);
 
 #endif
