@@ -4,6 +4,7 @@ GLOBAL _sti
 GLOBAL picMasterMask
 GLOBAL picSlaveMask
 GLOBAL haltcpu
+GLOBAL _endhaltcpu
 GLOBAL _hlt
 
 GLOBAL _irq00Handler
@@ -159,9 +160,6 @@ _exception6Handler:
 haltcpu:
 	sti
 	hlt
+_endhaltcpu:
 	jmp haltcpu
 
-
-
-SECTION .bss
-	aux resq 1

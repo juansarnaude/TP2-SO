@@ -29,12 +29,12 @@ static int current = DEFAULT_CURRENT;         //Currently running task
 static void * const userlandAddress = (void*)0x700000;
 static void * const stepping = (void*)0x100000;
 
-
+static void activateTask(unsigned int task);
+static void pauseTask(unsigned int task);
 static void saveContext(uint64_t * registers);
 static void loadContext(uint64_t * registers);
 static void saveOrigin(uint64_t * registers);
 static void loadOrigin(uint64_t * registers);
-static void doNothing();
 
 void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
     ncWindows(2);
@@ -57,16 +57,24 @@ void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
     nextTask(registers);
 }
 
-void pauseTask(unsigned int taskNum){
+void changeStatus(unsigned int taskNum){
     int i = taskNum % TASK_ARR_SIZE;
-    if (tasks[i].active == 1){
-        tasks[i].buRIP = tasks[i].rip;
-        tasks[i].rip = haltcpu;
-        tasks[i].active = 0;
-    } else {
-        tasks[i].rip = tasks[i].buRIP;
-        tasks[i].active = 1;
-    }
+    if (tasks[i].active == 1)
+        pauseTask(i);
+    else
+        activateTask(i);
+}
+
+static void pauseTask(unsigned int task){
+    if (!(tasks[task].rip >= (uint64_t) haltcpu && tasks[task].rip <= (uint64_t) _endhaltcpu))
+        tasks[task].buRIP = tasks[task].rip;
+    tasks[task].rip = haltcpu;
+    tasks[task].active = 0;
+}
+
+static void activateTask(unsigned int task){
+    tasks[task].rip = tasks[task].buRIP;
+    tasks[task].active = 1;
 }
 
 void nextTask(uint64_t * registers){
@@ -159,12 +167,4 @@ void terminateTasks(){
     } 
     current = DEFAULT_CURRENT;
     amount = -1;
-}
-
-void doNothing(){
-    while (1)
-    {
-        _hlt();
-    }
-    
 }

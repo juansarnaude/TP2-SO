@@ -114,10 +114,10 @@ void keyboard_handler(uint64_t * registers)
       switch (key)
       {
       case 0x26:  //Ctrl+L = Pause left window
-        pauseTask(0);
+        changeStatus(0);
         break;
       case 0x13:  //Ctrl+R = Pause right window
-        pauseTask(1);
+        changeStatus(1);
         break;
       case 0x1:   //Ctrl+esc = Terminate both tasks
         terminateTasks();
