@@ -5,6 +5,7 @@
 #ifndef _defs_
 #define _defs_
 
+#define NULL (void*)0
 
 /* Flags para derechos de acceso de los segmentos */
 #define ACS_PRESENT     0x80            /* segmento presente en memoria */
@@ -21,5 +22,10 @@
 #define ACS_DATA        (ACS_PRESENT | ACS_DSEG | ACS_WRITE)
 #define ACS_STACK       (ACS_PRESENT | ACS_DSEG | ACS_WRITE)
 
+/* Registros en memoria en las syscalls */
+#define REG_AMOUNT 15
+#define RIP_POS REG_AMOUNT
+#define RFLAGS_POS (REG_AMOUNT+2)
+#define RSP_POS (REG_AMOUNT+3)
 
 #endif

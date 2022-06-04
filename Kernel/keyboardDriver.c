@@ -102,7 +102,7 @@ static void add(char key);
 static char translate(uint16_t key);
 static uint8_t pressed(uint16_t scancode, uint16_t key);
 
-void keyboard_handler()
+void keyboard_handler(uint64_t * registers)
 {
   if (!read_port(0x64) & 0x01)
     return;
@@ -113,14 +113,18 @@ void keyboard_handler()
     if (control){
       switch (key)
       {
-      case 0x26:  //Pause left window
+      case 0x26:  //Ctrl+L = Pause left window
         pauseTask(0);
         break;
-      case 0x13:  //Pause right window
+      case 0x13:  //Ctrl+R = Pause right window
         pauseTask(1);
         break;
       case 0x1:
         terminateTasks();
+        break;
+      case 0x2e:  //Ctrl+C = copy registers
+        setRegisters(registers);
+        break;
       default:
         break;
       }

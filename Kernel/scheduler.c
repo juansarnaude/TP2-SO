@@ -1,10 +1,6 @@
 #include <scheduler.h>
 
 #define DEFAULT_CURRENT -1
-#define RIP_POS 15
-#define RFLAGS_POS 17
-#define RSP_POS 18
-#define REG_AMOUNT 15
 #define TASK_ARR_SIZE 2
 #define DEFAULT_FLAGS 0x202 // Interrupts and Intel reserved bits: 1000000010b = 0x202
 

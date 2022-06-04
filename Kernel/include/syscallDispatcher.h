@@ -6,6 +6,8 @@
 #include <lib.h>
 #include <keyboardDriver.h>
 #include <scheduler.h>
+#include <inforeg.h>
+#include <defs.h>
 
 #define STDIN 0
 #define STDOUT 1

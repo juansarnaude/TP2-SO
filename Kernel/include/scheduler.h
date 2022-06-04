@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <naiveConsole.h>
 #include <interrupts.h>
+#include <defs.h>
 
 void _defaultExit();
 
