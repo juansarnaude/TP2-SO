@@ -19,7 +19,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
             sys_write((unsigned int)rdi, (char*)rsi,rdx);
             break;
         case 2:
-            return (uint64_t) getRegisters();
+            return (uint64_t) getRegisters((uint64_t *)rdi);
             break;
         case 3:
             return sys_exec((int(*)()) rdi, (int(*)()) rsi, registers);

@@ -16,7 +16,7 @@
 int sys_write(int fd, const char *buffer, int size);
 int sys_read(int fd,char * buffer,int size);
 void sys_time();
-uint64_t * sys_getregs();
+int sys_getregs(uint64_t * registers);
 void inv_opcode();
 void sys_execve(int (*f1)(), int (*f2)());
 
