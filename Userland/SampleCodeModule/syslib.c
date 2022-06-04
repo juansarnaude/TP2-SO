@@ -172,6 +172,62 @@ void fibonacciNumbs(){
 
 static char valueToHexChar(unsigned char value);
 
+//Checks the first occurence of p2 inside p1, return the index where p2 appears inside p1 or -1
+//if p2 isnt found inside p1
+int containsString(const char *p1,const char *p2){
+    const unsigned char *s1 = (const unsigned char *) p1;
+    const unsigned char *s2 = (const unsigned char *) p2;
+    if(s2 == NULL)//if s2 is empty
+        return -1;
+    unsigned int i=0;
+    unsigned char flag=0;
+    while(*s1 != '\0' && !flag){
+        if(*s1 == *s2){
+            flag =1;
+        }
+        i++;s1++;
+    }
+    if(!flag){
+        return -1;
+    }
+    while(*s1 != '\0' && *s2 != '\0'){
+        if(*s1 != *s2){
+            return -1;
+        }
+        s1++;s2++;
+    }
+    if(*s2 == '\0'){
+        return i;
+    }
+    return -1;
+}
+
+static char address[18];
+
+//Wrapper function for printMem
+int checkPrintMemParams(char *s){
+    s += 8;//me paro despues del "printmem"
+    unsigned int i=0;
+    while(*s != '\0' && i < 18){
+        address[i++] = *s;
+        s++;
+    }
+    if(i == 18){
+        unknownCommand();
+        return -1;
+    }
+    int j=0;
+    while(j < i){
+        if((address[j] < '0' || address[j] > '9') && (address[j] < 'a' || address[j] > 'f')){
+            puts("Address can't be accesed");
+            return -1;
+        }
+        j++;
+    }
+    return 1;
+}
+
+
 void printmem(unsigned char *source)
 {
     for(int i=0; i<32 ; i++){

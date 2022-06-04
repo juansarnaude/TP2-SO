@@ -48,15 +48,23 @@ ptr commandLine(char* buffer){
     }else if(strcmp(buffer,"inforeg") == 0){
         putChar('\n');
         return &inforeg;
-    }else if(strcmp(buffer,"div zero") == 0){
+    }else if(strcmp(buffer,"divzero") == 0){
         putChar('\n');
         return &excepDivZero;
     }else if(strcmp(buffer,"help") == 0){
         putChar('\n');
         return &help;
-    }else if(strcmp(buffer,"inv opcode") == 0){
+    }else if(strcmp(buffer,"invopcode") == 0){
         putChar('\n');
         return &excepInvalidOpcode;
+    }else if(containsString(buffer,"printmem") >= 0){
+        putChar('\n');
+        if(checkPrintMemParams(buffer) == 1){
+            return &printmem;
+        }
+    }else if( (strcmp(buffer,"inforeg")) == 0){
+        putChar('\n');
+        return &inforeg;
     }else{//el comando ingresado no existe.
         unknownCommand();
     }
@@ -90,6 +98,7 @@ void pipeManager(){
     if(fun1 == NULL || fun2 == NULL){
         return;
     }
+    sys_execve(fun1,fun2);
 }
 
 void help(){
