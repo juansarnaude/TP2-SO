@@ -41,6 +41,7 @@ _syscallHandler:
 	pop rdx
 	pop rcx
 	pop rbx
-	pop rax
+	; Instead of pop rax
+	add rsp, 8
 
     iretq

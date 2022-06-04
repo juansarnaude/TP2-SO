@@ -208,7 +208,7 @@ void inforeg(){
 }
 
 //Tomado de x86-Barebones
-static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
+uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 {
 	char *p = buffer;
 	char *p1, *p2;

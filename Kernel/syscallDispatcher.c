@@ -19,7 +19,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
             sys_write((unsigned int)rdi, (char*)rsi,rdx);
             break;
         case 2:
-            return getRegisters();
+            return (uint64_t) getRegisters();
             break;
         case 3:
             return sys_exec((int(*)()) rdi, (int(*)()) rsi, registers);
@@ -62,14 +62,6 @@ static void sys_write(unsigned fd,const char* buffer, uint64_t count){
         }
         i++;
     }
-}
-
-static uint64_t sys_windows(unsigned int windows){
-    return ncWindows(windows);
-}
-
-static uint64_t sys_currentWindow(unsigned int window){
-    return ncCurrentWindow(window);
 }
 
 static int sys_exec(int (*program1)(), int (*program2)(), uint64_t * registers){

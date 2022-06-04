@@ -90,10 +90,6 @@ void pipeManager(){
     if(fun1 == NULL || fun2 == NULL){
         return;
     }
-    //hago syscall de execve para ejecutar ambos
-    // sys_execve(fun1);
-    // sys_execve(fun2);
-    splitScreen(fun1,fun2);
 }
 
 void help(){

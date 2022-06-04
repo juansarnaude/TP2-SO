@@ -17,6 +17,7 @@ int sys_write(int fd, const char *buffer, int size);
 int sys_read(int fd,char * buffer,int size);
 void sys_time();
 uint64_t * sys_getregs();
+void inv_opcode();
 
 unsigned int strlen(const char *s);
 void excepDivZero();
@@ -32,6 +33,6 @@ void printPrime();
 void fibonacciNumbs();
 void printmem(unsigned char *source);
 void inforeg();
-static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
+uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 
 #endif
