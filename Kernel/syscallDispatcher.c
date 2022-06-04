@@ -19,21 +19,15 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
             sys_write((unsigned int)rdi, (char*)rsi,rdx);
             break;
         case 2:
-            return sys_windows((unsigned int)rdi);//setea la cantidad de windows
-            break;
-        case 3:
-            return sys_currentWindow((unsigned int)rdi);//selecciona la window para printear
-            break;
-        case 4:
             return getRegisters();
             break;
-        case 11:
+        case 3:
             return sys_exec((int(*)()) rdi, (int(*)()) rsi, registers);
             break;
-        case 60:
+        case 4:
             sys_exit(rdi, registers);
             break;
-        case 100:
+        case 5:
             sys_time();
             break;
     }

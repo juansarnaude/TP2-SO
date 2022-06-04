@@ -1,6 +1,8 @@
 #ifndef SYSLIB_H
 #define SYSLIB_H
 
+#include <stdint.h>
+
 #define NULL (void*)0
 
 #define STDIN 0
@@ -14,6 +16,7 @@
 int sys_write(int fd, const char *buffer, int size);
 int sys_read(int fd,char * buffer,int size);
 void sys_time();
+uint64_t * sys_getregs();
 
 unsigned int strlen(const char *s);
 void excepDivZero();
@@ -28,7 +31,6 @@ void getTime();
 void printPrime();
 void fibonacciNumbs();
 void printmem(unsigned char *source);
-void getRegisters(uint64_t * registers);
 void inforeg();
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 

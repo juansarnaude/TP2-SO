@@ -1,5 +1,4 @@
 #include <syslib.h>
-#include <stdint.h>
 
 unsigned int strlen(const char *str){
     unsigned int len = 0;
@@ -196,11 +195,10 @@ static char valueToHexChar(unsigned char value) {
 }
 
 void inforeg(){
-    static char* registers[] = { "RAX", "RBX", "RCX", "RDX", "RSI", "RDI", "RBP", "RSP", "R8 ", "R9 ", "R10", "R11", "R12", "R13", "R14", "R15"};
-    uint64_t regvalues[16];
-    getRegisters(regvalues);
+    static char* registers[18] = { "RSP", "RFL", "RIP", "R15", "R14", "R13", "R12", "R11", "R10", "R9 ", "R8 ", "RSI", "RDI", "RBP", "RDX", "RCX", "RBX", "RAX"};
+    uint64_t * regvalues = sys_getregs();
     char buffer[64] = {'0'};
-    for(int i=0;i<16;i++){
+    for(int i=0;i<18;i++){
         puts(registers[i]);
         puts(": 0x");
         uintToBase(regvalues[i], buffer, 16);
