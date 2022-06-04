@@ -29,9 +29,12 @@ uint8_t ncWindows(uint8_t amount){
 			ncClear();
 		return windows = 2;
 	}
-	if (windows != 1)
+	ncCurrentWindow(0);
+	if (windows != 1){
+		windows = 1;
 		ncClear();
-	return windows = 1;
+	}
+	return windows;
 }
 
 //Select windows to write to
