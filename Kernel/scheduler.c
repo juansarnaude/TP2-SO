@@ -58,6 +58,8 @@ void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
 }
 
 void changeStatus(unsigned int taskNum){
+    if (amount <= 0)    // Do nothing if no tasks are running or they were terminated.
+        return;
     int i = taskNum % TASK_ARR_SIZE;
     if (tasks[i].active == 1)
         pauseTask(i);
@@ -161,6 +163,9 @@ static void loadOrigin(uint64_t * registers){
 }
 
 void terminateTasks(){
+    // Do nothing if no tasks are running, or they were already terminated.
+    if (amount <= 0)
+        return;
     for (int i = 0; i < TASK_ARR_SIZE; i++)
     {
         tasks[i].finished = 1;

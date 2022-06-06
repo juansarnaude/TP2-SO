@@ -1,11 +1,8 @@
 #include <stdint.h>
-#include <string.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 #include <idtLoader.h>
-#include <scheduler.h>
-#include <inforeg.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -40,46 +37,46 @@ void * initializeKernelBinary()
 {
 	char buffer[10];
 
-	ncPrint("[x64BareBones]");
-	ncNewline();
+	// ncPrint("[x64BareBones]");
+	// ncNewline();
 
-	ncPrint("CPU Vendor:");
-	ncPrint(cpuVendor(buffer));
-	ncNewline();
+	// ncPrint("CPU Vendor:");
+	// ncPrint(cpuVendor(buffer));
+	// ncNewline();
 
-	ncPrint("[Loading modules]");
-	ncNewline();
+	// ncPrint("[Loading modules]");
+	// ncNewline();
 	void * moduleAddresses[] = {
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
+	// ncPrint("[Done]");
+	// ncNewline();
+	// ncNewline();
 
-	ncPrint("[Initializing kernel's binary]");
-	ncNewline();
+	// ncPrint("[Initializing kernel's binary]");
+	// ncNewline();
 
 	clearBSS(&bss, &endOfKernel - &bss);
 
-	ncPrint("  text: 0x");
-	ncPrintHex((uint64_t)&text);
-	ncNewline();
-	ncPrint("  rodata: 0x");
-	ncPrintHex((uint64_t)&rodata);
-	ncNewline();
-	ncPrint("  data: 0x");
-	ncPrintHex((uint64_t)&data);
-	ncNewline();
-	ncPrint("  bss: 0x");
-	ncPrintHex((uint64_t)&bss);
-	ncNewline();
+	// ncPrint("  text: 0x");
+	// ncPrintHex((uint64_t)&text);
+	// ncNewline();
+	// ncPrint("  rodata: 0x");
+	// ncPrintHex((uint64_t)&rodata);
+	// ncNewline();
+	// ncPrint("  data: 0x");
+	// ncPrintHex((uint64_t)&data);
+	// ncNewline();
+	// ncPrint("  bss: 0x");
+	// ncPrintHex((uint64_t)&bss);
+	// ncNewline();
 
-	ncPrint("[Done]");
-	ncNewline();
-	ncNewline();
+	// ncPrint("[Done]");
+	// ncNewline();
+	// ncNewline();
 	return getStackBase();
 }
 
