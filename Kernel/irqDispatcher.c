@@ -4,15 +4,10 @@
 static void int_20(uint64_t * registers);
 static void int_21(uint64_t * registers);
 
+static void (*irq_handlers[])(uint64_t *) = { int_20, int_21};
+
 void irqDispatcher(uint64_t irq, uint64_t * registers) {
-	switch (irq) {
-		case 0:
-			int_20(registers);
-			break;
-		case 1:
-			int_21(registers);
-			break;
-	}
+	(*irq_handlers[irq])(registers);
 	return;
 }
 

@@ -2,8 +2,6 @@
 
 static uint64_t sys_read(unsigned int fd,char* output, uint64_t count);
 static void sys_write(unsigned fd,const char* buffer, uint64_t count);
-static uint64_t sys_windows(unsigned int windows);
-static uint64_t sys_currentWindow(unsigned int window);
 static int sys_exec(int (*program1)(), int (*program2)(), uint64_t * registers);
 static void sys_exit(int retValue, uint64_t * registers);
 static void sys_time();
