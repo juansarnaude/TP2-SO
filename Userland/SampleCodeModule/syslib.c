@@ -255,7 +255,8 @@ static char valueToHexChar(unsigned char value) {
 }
 
 void inforeg(){
-    static char* registers[18] = { "RSP", "RFL", "RIP", "R15", "R14", "R13", "R12", "R11", "R10", "R9 ", "R8 ", "RSI", "RDI", "RBP", "RDX", "RCX", "RBX", "RAX"};
+    static char* registers[18] = { "R15", "R14", "R13", "R12", "R11", "R10", "R9 ", "R8 ", "RSI", "RDI", "RBP", "RDX", "RCX", "RBX", "RAX", "RIP", "RFL", "RSP" };
+
     uint64_t regval[18];
     int sysret = sys_getregs(regval);
     if (sysret == 0){
