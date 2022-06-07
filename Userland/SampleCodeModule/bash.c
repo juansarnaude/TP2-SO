@@ -1,4 +1,5 @@
 #include <bash.h>
+#define MAX_SIZE_CMD 32
 static char buffer[32];
 
 void bash() {
@@ -39,10 +40,10 @@ ptr commandLine(char* buffer){
     if(strcmp(buffer,"time") == 0){
         putChar('\n');
         return &getTime;
-    }else if(strcmp(buffer,"primenumbs") == 0){
+    }else if(strcmp(buffer,"prime") == 0){
         putChar('\n');
         return &printPrime;
-    }else if(strcmp(buffer,"fibonaccinumbs") == 0){
+    }else if(strcmp(buffer,"fibonacci") == 0){
         putChar('\n');
         return &fibonacciNumbs;
     }else if(strcmp(buffer,"inforeg") == 0){
@@ -72,23 +73,23 @@ ptr commandLine(char* buffer){
 }
 
 void pipeManager(){
-    char cmd1[11],cmd2[11];
+    char cmd1[MAX_SIZE_CMD],cmd2[MAX_SIZE_CMD];
     unsigned int i=0;
-    while(buffer[i] != '|' && i < 11){
+    while(buffer[i] != '|' && i < MAX_SIZE_CMD){
         cmd1[i] = buffer[i];
         i++;
     }
-    if(i == 11){
+    if(i == MAX_SIZE_CMD){
         unknownCommand(cmd1);
         return;
     }
     cmd1[i] = '\0';
     i++;//como estoy parado en la '|' paso al siguiente
     unsigned int j=0;
-    while(buffer[i] != '\0' && j < 11){
+    while(buffer[i] != '\0' && j < MAX_SIZE_CMD){
         cmd2[j++] = buffer[i++];
     }
-    if(j == 11){
+    if(j == MAX_SIZE_CMD){
         unknownCommand(cmd2);
         return;
     }
@@ -112,6 +113,8 @@ void help(){
     "                     screen the value of all registers screenshoted.\n"
 	"printmem             Receives as argument a pointer and performs a memory dump\n"
     "                     of 32 bytes from the address received as an argument.\n"
+    "                     Format for address has to start with 0x and be followed up\n"
+    "                     with the actual address written in hex.\n"
 	"time                 Command to display the system day and time.\n"
     "primenumbs           Dispalys prime numbers starting from 1.\n"
     "fibonaccinumbs       Dispalys fibonacci series numbers.\n"

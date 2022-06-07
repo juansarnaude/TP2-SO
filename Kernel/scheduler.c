@@ -81,9 +81,9 @@ void nextTask(uint64_t * registers){
     if (amount == 0)
         return;
     if (amount == -1){
-        amount == 0;
+        amount = 0;
         ncWindows(1);
-        loadContext(&origin, registers);
+        loadContext(registers,&origin);
         return;
     }
     int next = (current+1) % TASK_ARR_SIZE;

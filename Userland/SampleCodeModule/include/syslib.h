@@ -12,13 +12,14 @@
 #define EOF -1
 
 #include <stdint.h>
+#include <bash.h>
 
 int sys_write(int fd, const char *buffer, int size);
 int sys_read(int fd,char * buffer,int size);
 void sys_time();
 int sys_getregs(uint64_t * registers);
 void inv_opcode();
-void sys_execve(int (*f1)(), int (*f2)());
+void sys_execve(void (*f1)(), void (*f2)());
 
 unsigned int strlen(const char *s);
 void excepDivZero();
@@ -28,6 +29,8 @@ int putChar(char);
 char getChar();
 int gets(char * s);
 unsigned int charBelongs(char *s,char c);
+int containsString(const char *p1,const char *p2);
+int checkPrintMemParams(char *s);
 int strcmp (const char *p1, const char *p2);
 void getTime();
 void printPrime();
