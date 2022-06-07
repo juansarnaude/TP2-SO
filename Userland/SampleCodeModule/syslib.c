@@ -44,11 +44,11 @@ void getTime(){
 
 char getChar(){
     char c;
-    while (sys_read(STDIN, &c, 1) == 0)
-    {
-        ;
-    }
-    
+    // while (sys_read(STDIN, &c, 1) == 0)
+    // {
+    //     ;
+    // }
+    sys_read(STDIN, &c, 1);
     return c;
 }
 

@@ -212,17 +212,15 @@ uint64_t readBuffer(char *output, uint64_t count)
   {
     realDim = last = 0;
   }
-  // while (i < count)
-  // {
-  //   if (read_port(0x64) & 0x01)
-  //   {
-  //     uint16_t scancode = read_port(0x60);
-  //     uint16_t key = scancode & 0x7F;
-  //     if (pressed(scancode, key))
-  //     {
-  //       output[i++] = translate(key);
-  //     }
-  //   }
-  //   }
+
+  _sti();
+  while (i < count)
+  {
+    if (last < realDim){
+      output[i++] = buffer[last++];
+    }
+  }
+  _cli();
+
   return i;
 } 
