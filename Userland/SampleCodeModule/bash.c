@@ -39,22 +39,22 @@ ptr commandLine(char* buffer){
     if(strcmp(buffer,"time") == 0){
         putChar('\n');
         return &getTime;
-    }else if(strcmp(buffer,"prime") == 0){
+    }else if(strcmp(buffer,"primenumbs") == 0){
         putChar('\n');
         return &printPrime;
-    }else if(strcmp(buffer,"fibonazi") == 0){
+    }else if(strcmp(buffer,"fibonaccinumbs") == 0){
         putChar('\n');
         return &fibonacciNumbs;
     }else if(strcmp(buffer,"inforeg") == 0){
         putChar('\n');
         return &inforeg;
-    }else if(strcmp(buffer,"divzero") == 0){
+    }else if(strcmp(buffer,"dividebyzero") == 0){
         putChar('\n');
         return &excepDivZero;
     }else if(strcmp(buffer,"help") == 0){
         putChar('\n');
         return &help;
-    }else if(strcmp(buffer,"invopcode") == 0){
+    }else if(strcmp(buffer,"invalidopcode") == 0){
         putChar('\n');
         return &excepInvalidOpcode;
     }else if(containsString(buffer,"printmem") >= 0){
