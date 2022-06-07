@@ -116,8 +116,8 @@ void help(){
     "                     Format for address has to start with 0x and be followed up\n"
     "                     with the actual address written in hex.\n"
 	"time                 Command to display the system day and time.\n"
-    "primenumbs           Dispalys prime numbers starting from 1.\n"
-    "fibonaccinumbs       Dispalys fibonacci series numbers.\n"
+    "prime                Dispalys prime numbers starting from 1.\n"
+    "fibonacci            Dispalys fibonacci series numbers.\n"
     "COMMAND1 | COMMAND2  The \"|\" operand allows the execution of multiple commands\n"
     "                     at the same time. CTRL+L and CTRL+R stops and resumes left\n"
     "                     and right windows.\n";
