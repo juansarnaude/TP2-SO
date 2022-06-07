@@ -252,12 +252,17 @@ static char valueToHexChar(unsigned char value) {
 
 void inforeg(){
     static char* registers[18] = { "RSP", "RFL", "RIP", "R15", "R14", "R13", "R12", "R11", "R10", "R9 ", "R8 ", "RSI", "RDI", "RBP", "RDX", "RCX", "RBX", "RAX"};
-    uint64_t * regvalues = sys_getregs();
+    uint64_t regval[18];
+    int sysret = sys_getregs(regval);
+    if (sysret == 0){
+        puts("No registers to print.\n");
+        return;
+    } 
     char buffer[64] = {'0'};
     for(int i=0;i<18;i++){
         puts(registers[i]);
         puts(": 0x");
-        uintToBase(regvalues[i], buffer, 16);
+        uintToBase(regval[i], buffer, 16);
         puts(buffer);
         putChar('\n');
     }

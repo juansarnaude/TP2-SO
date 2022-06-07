@@ -15,8 +15,13 @@ void setRegisters(uint64_t * registers){
     set = 1;
 }
 
-uint64_t * getRegisters(){
+int getRegisters(uint64_t * output){
     if (! set)
-        return NULL;
+        return 0;
+    
+    for (int i = 0; i < REG_AMOUNT+3; i++)
+    {
+        output[i] = genRegs[i];
+    }
     return genRegs;
 }

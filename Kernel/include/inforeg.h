@@ -6,6 +6,6 @@
 
 void setRegisters(uint64_t * registers);
 
-uint64_t * getRegisters(); 
+int getRegisters(uint64_t * output); 
 
 #endif

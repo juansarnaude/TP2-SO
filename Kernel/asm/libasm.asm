@@ -7,6 +7,8 @@ GLOBAL getDay
 GLOBAL getMonth
 GLOBAL getYear
 GLOBAL tick
+GLOBAL loadUserland
+
 section .text
 	
 cpuVendor:
@@ -126,6 +128,18 @@ tick:
     push rbp
     mov rbp, rsp
     int 20h
+    mov rsp, rbp
+    pop rbp
+    ret
+
+loadUserland:
+    push rbp
+    mov rbp, rsp
+
+    mov rsp, rsi
+    push .return
+    jmp rdi
+.return:
     mov rsp, rbp
     pop rbp
     ret
