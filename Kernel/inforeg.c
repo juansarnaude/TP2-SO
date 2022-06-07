@@ -23,5 +23,5 @@ int getRegisters(uint64_t * output){
     {
         output[i] = genRegs[i];
     }
-    return genRegs;
+    return 1;
 }
