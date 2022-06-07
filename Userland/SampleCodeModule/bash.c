@@ -109,15 +109,15 @@ void help(){
     "invalidopcode        Command to verify the operation of the exception routine\n"
     "                     \"Invalid Opcode\"\n"
 	"inforeg              CTRL+C takes a screenshot of registers, inforeg prints on\n"
-    "                     screen the value of all registers.\n"
+    "                     screen the value of all registers screenshoted.\n"
 	"printmem             Receives as argument a pointer and performs a memory dump\n"
     "                     of 32 bytes from the address received as an argument.\n"
 	"time                 Command to display the system day and time.\n"
     "primenumbs           Dispalys prime numbers starting from 1.\n"
     "fibonaccinumbs       Dispalys fibonacci series numbers.\n"
-    "COMAND1 | COMAND2    The \"|\" operand allows the execution of multimple comands\n"
+    "COMMAND1 | COMMAND2  The \"|\" operand allows the execution of multiple commands\n"
     "                     at the same time. CTRL+L and CTRL+R stops and resumes left\n"
-    "                     and right window.\n";
+    "                     and right windows.\n";
     
     puts(helpstring);
 }
