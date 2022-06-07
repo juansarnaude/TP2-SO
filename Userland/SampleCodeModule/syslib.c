@@ -184,8 +184,9 @@ int containsString(const char *p1,const char *p2){
     while(*s1 != '\0' && !flag){
         if(*s1 == *s2){
             flag =1;
+        }else{
+            i++;s1++;
         }
-        i++;s1++;
     }
     if(!flag){
         return -1;
@@ -202,7 +203,7 @@ int containsString(const char *p1,const char *p2){
     return -1;
 }
 
-static char address[18];
+static unsigned char address[18];
 
 //Wrapper function for printMem
 int checkPrintMemParams(char *s){
@@ -224,11 +225,14 @@ int checkPrintMemParams(char *s){
         }
         j++;
     }
+    while(j < 18){//relleno con 0s para "borrar" el address ingresado anteiormente
+        address[j++]='0';
+    }
     return 1;
 }
 
 
-void printmem(unsigned char *source)
+void printmem()
 {
     for(int i=0; i<32 ; i++){
         if(i%4==0){
@@ -238,8 +242,8 @@ void printmem(unsigned char *source)
                 putChar('\t');
             }
         }
-        putChar(valueToHexChar(source[i]>>4));
-        putChar(valueToHexChar(source[i]&0x0F));
+        putChar(valueToHexChar(address[i]>>4));
+        putChar(valueToHexChar(address[i]&0x0F));
         putChar(' ');
         putChar(' ');
     }
