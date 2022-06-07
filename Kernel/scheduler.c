@@ -31,10 +31,8 @@ static void * const stepping = (void*)0x100000;
 
 static void activateTask(unsigned int task);
 static void pauseTask(unsigned int task);
-static void saveContext(uint64_t * registers);
-static void loadContext(uint64_t * registers);
-static void saveOrigin(uint64_t * registers);
-static void loadOrigin(uint64_t * registers);
+static void saveContext(TASK_CONTEXT * context, uint64_t * registers);
+static void loadContext(uint64_t * registers, TASK_CONTEXT * context);
 
 void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
     ncWindows(2);
@@ -53,7 +51,7 @@ void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
     amount = 2;
 
     //Save origin context
-    saveOrigin(registers);
+    saveContext(&origin, registers);
     nextTask(registers);
 }
 
@@ -70,7 +68,7 @@ void changeStatus(unsigned int taskNum){
 static void pauseTask(unsigned int task){
     if (!(tasks[task].rip >= (uint64_t) haltcpu && tasks[task].rip <= (uint64_t) _endhaltcpu))
         tasks[task].buRIP = tasks[task].rip;
-    tasks[task].rip = haltcpu;
+    tasks[task].rip = (uint64_t)haltcpu;
     tasks[task].active = 0;
 }
 
@@ -85,7 +83,7 @@ void nextTask(uint64_t * registers){
     if (amount == -1){
         amount == 0;
         ncWindows(1);
-        loadOrigin(registers);
+        loadContext(&origin, registers);
         return;
     }
     int next = (current+1) % TASK_ARR_SIZE;
@@ -93,17 +91,17 @@ void nextTask(uint64_t * registers){
     if (tasks[next].finished == 1){
         if (tasks[current].finished == 1){
             ncWindows(1);
-            loadContext(registers);
+            loadContext(registers, &origin);
             return;
         } else
             return;
     }
 
     if (current != DEFAULT_CURRENT && tasks[current].finished != 1)
-        saveContext(registers);
+        saveContext(&(tasks[current]), registers);
     current = next;
     ncCurrentWindow(tasks[current].window);
-    loadContext(registers);
+    loadContext(registers, &(tasks[current]));
 }
 
 void exitTask(int retValue, uint64_t * registers){
@@ -117,49 +115,29 @@ void exitTask(int retValue, uint64_t * registers){
     if (amount == 0){
         current = DEFAULT_CURRENT;
         ncWindows(1);
-        loadOrigin(registers);
+        loadContext(registers, &origin);
     } else
         nextTask(registers);
 }
 
-static void saveContext(uint64_t * registers){
+static void saveContext(TASK_CONTEXT * context, uint64_t * registers){
     for (int i = 0; i < REG_AMOUNT; i++)
     {
-        tasks[current].registers[i] = registers[i];
+        context->registers[i] = registers[i];
     }
-    tasks[current].rip = registers[RIP_POS];
-    tasks[current].rflags = registers[RFLAGS_POS];
-    tasks[current].rsp = registers[RSP_POS];
+    context->rip = registers[RIP_POS];
+    context->rflags = registers[RFLAGS_POS];
+    context->rsp = registers[RSP_POS];
 }
 
-static void loadContext(uint64_t * registers){
+static void loadContext(uint64_t * registers, TASK_CONTEXT * context){
     for (int i = 0; i < REG_AMOUNT; i++)
     {
-        registers[i] = tasks[current].registers[i];
+        registers[i] = context->registers[i];
     }
-    registers[RIP_POS] = tasks[current].rip;
-    registers[RFLAGS_POS] = tasks[current].rflags;
-    registers[RSP_POS] = tasks[current].rsp;
-}
-
-static void saveOrigin(uint64_t * registers){
-    for (int i = 0; i < REG_AMOUNT; i++)
-    {
-        origin.registers[i] = registers[i];
-    }
-    origin.rip = registers[RIP_POS];
-    origin.rflags = registers[RFLAGS_POS];
-    origin.rsp = registers[RSP_POS];
-}
-
-static void loadOrigin(uint64_t * registers){
-    for (int i = 0; i < REG_AMOUNT; i++)
-    {
-        registers[i] = origin.registers[i];
-    }
-    registers[RIP_POS] = origin.rip;
-    registers[RFLAGS_POS] = origin.rflags;
-    registers[RSP_POS] = origin.rsp;
+    registers[RIP_POS] = context->rip;
+    registers[RFLAGS_POS] = context->rflags;
+    registers[RSP_POS] = context->rsp;
 }
 
 void terminateTasks(){

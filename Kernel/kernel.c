@@ -35,7 +35,7 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
-	char buffer[10];
+	// char buffer[10];
 
 	// ncPrint("[x64BareBones]");
 	// ncNewline();
@@ -84,7 +84,7 @@ int main()
 {	
 	ncClear();
 	load_idt();
-	loadUserland(sampleCodeModuleAddress, 0x900000);
+	loadUserland(sampleCodeModuleAddress, (uint64_t*) 0x900000);
 	ncPrint("[Finished]");
 	return 0;
 }
