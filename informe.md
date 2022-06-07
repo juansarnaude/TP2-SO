@@ -1,6 +1,20 @@
 
+- [Diseño](#diseño)
+  - [Funciones Kernel](#funciones-kernel)
+  - [Funciones Userland](#funciones-userland)
+- [Dificultades Encontradas](#dificultades-encontradas)
+  - [Scheduler](#scheduler)
+    - [Interrupciones](#interrupciones)
+    - [Pausado de un Programa](#pausado-de-un-programa)
+    - [Terminado de un Programa](#terminado-de-un-programa)
+  - [Naive Console](#naive-console)
+  - [Newline](#newline)
+  - [Scroll Up](#scroll-up)
+- [Partición del Trabajo](#partición-del-trabajo)
+- [Herramientas Utilizadas](#herramientas-utilizadas)
+- [Limitaciones del Trabajo](#limitaciones-del-trabajo)
 - [Userland](#userland)
-- [Interrupciones](#interrupciones)
+- [Interrupciones](#interrupciones-1)
   - [Handler](#handler)
   - [Timer Tick](#timer-tick)
   - [Keyboard](#keyboard)
@@ -13,9 +27,75 @@
   - [4 - Exit](#4---exit)
   - [5 - Time](#5---time)
 - [Excepciones](#excepciones)
-- [Scheduler](#scheduler)
+- [Scheduler](#scheduler-1)
   - [Estructura](#estructura)
   - [Cargado de Tareas](#cargado-de-tareas)
+
+## Diseño
+
+### Funciones Kernel
+
+Decidimos que el Kernel se encargue de poder paralelizar las funciones para el uso del pipe mediante un Scheduler, dado que esto nos permitia un mejor control mediante el uso de interrupciones, y tambien nos permite abstraer de los programas donde deben escribir, pues el Scheduler decide en que lado de la pantalla escriben, las funciones solo saben que estan haciendo un write a `STDOUT`.
+
+Tambien modificamos el naiveConsole original para que los caracters `'\b'` y `'\n'` los interprete como comandos especificos para borrar un caracter y hacer un salto de linea, asi el usuario puede eliminar o saltar con el mismo syscall de write. Aparte de esto, lo modificamos para que pueda dividirse en dos pantallas mediante las funciones `ncWindows`, y que se pueda elegir la pantalla a utilizar mediante `ncCurrentWindow`.
+
+Para poder implementar inforeg, decidimos utilizar la combinación de teclas Ctrl+C, asi mediante la interrupción de teclado ya teniamos los registros lindos para copiar en la memoria, y luego mediante una syscall, el usuario le pasa un vector de `uint64_t` de dieciocho posiciones, para que el Kernel copie los registros a este. Decidimos hacer que el usuario pase un registro para evitar que este tenga un puntero a algún punto de la memoria en el kernel.
+
+El kernel tambien se encarga, de setear la IDT, manejar las interrupciones y las excepciones, y aparte tiene una interrupción para las syscalls, que decidimos fuera la `0x80` para copiar a Linux.
+
+### Funciones Userland
+
+Bash decidimos hacerlo de Userland porque decidimos que no necesitaba acceso a nada más que lo que las syscalls le permiten.
+
+***
+
+## Dificultades Encontradas
+
+### Scheduler
+
+#### Interrupciones
+
+Pese a que el Scheduler funcionaba a la hora de cargar los programas, estuvimos un tiempo largo con el problema de que las interrupciones no funcionaban al entrar en este, y dado que usamos el timer tick para cambiar de tareas, se quedaba siempre en una hasta terminar con la otra.
+
+Despues de recrear el scheduler desde cero, con el mismo problema, fue que nos enteramos de que el problema venia de que como estabamos resguardando el registro `RFLAGS` entre funciones, y el valor que le seteamos por default era cero, las interrupciones no andaban por que el bit de interrupciones quedaba en cero. Despues de ver la estructura del registro `RFLAGS`, decidimos ponerles por valor default `0x202`, pues el bit nueve es el bit de interrupciones, y el bit uno es "Intel reserved" y debe quedar encendido.
+
+#### Pausado de un Programa
+
+Decidimos que cuando pausaramos un programa, decidimos tomar un backup del registro RIP, y despues cambiar el de la función a pausar por uno de una función `haltcpu`, que se encarga de setear los interrupts (por si las dudas), y luego ejecuta el comando `hlt`, asi se queda en su lugar.
+
+El problema con el que nos encontrabamos es que al volver de la otra función a la pausada, se salteaba el hlt y se seguia corriendo codigo sin control, por lo que terminaba tirando excepción de Pure64. Despues nos dimos cuenta que en vez de un solo comando de halt, teniamos que envolverlo en un ciclo incondicional para que se siga realizando.
+
+#### Terminado de un Programa
+
+Al inicio, nos olvidamos de ponerle un valor de retorno en el stack a las funciones que llamabamos, pese a que cambiabamos el valor de `RSP`. Esto, claramente, llevo a errores, asi que finalmente decidimos hacer una función de exit default.
+
+Tambien, como decidimos utilizar los registros guardados en el stack a la hora de hacer una syscall o interrupción para modificar el contexto, en vez de hacer un loop similar al `haltcpu` que usamos para pausar las funciones, decidimos simplemente hacer un syscall exit, que es especificamente para el Scheduler, para que termine en el momento.
+
+### Naive Console
+
+### Newline
+
+Tomo un rato conseguir una función de newline que funcionara en el modo de dos ventanas, pues teniamos que asegurarnos que estuviera limitada a la pantalla correcta.
+
+### Scroll Up
+
+Despues de un rato de intentar crear cosas nuevas, nos dimos cuenta que podiamos reutilizar el codigo que usamos para el newline de pantallas separadas y modificarlo para que en vez de reemplazar caracteres por `' '`, los reemplazara por los de la proxima fila.
+
+## Partición del Trabajo
+
+
+
+## Herramientas Utilizadas
+
+Para poder trabajar de forma grupal asincronicamente, usamos Git para llevar control de lo que ibamos cambiando, y GitHub para sincronizar lo que teniamos instantaneamente.
+
+Tambien hicimos uso de Discord para juntarnos de forma remota y debatir sobre las deciciones a tomar.
+
+## Limitaciones del Trabajo
+
+El Scheduler no es realmente util más que para completar con lo pedido por el enunciado, ni siquiera es capaz de recibir argumentos para las funciones que corre, a parte de que no corre programas completos, si no que el usuario le debe mandar un lugar donde ya este cargada en la memoria.
+
+***
 
 ## Userland
 
