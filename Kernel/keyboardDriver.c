@@ -197,7 +197,7 @@ static void add(char key)
   if (realDim + 1 == BUFFER_LENGTH)
   {
     realDim = 0;
-    last = -1;
+    last = 0;
   }
 }
 
