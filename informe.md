@@ -19,7 +19,7 @@
 
 ## Userland
 
-Decidimos dejar la dirección de Userland en la dirección en la que vino, es decir, `0x400000`, pero `RSP` lo seteamos a `0x800000`, asi dejamos 2MB para codigo de Userland, y luego las funciones del Scheduler empiezan en `0x600000`, y asi cada una tiene 1MB y Userland puede crecer en memoria todo lo que quiera.
+Decidimos dejar la dirección de Userland en la dirección en la que vino, es decir, `0x400000`, pero `RSP` lo seteamos a `0x900000`, asi dejamos 1MB para el stack de Userland, respecto de las funciones del Scheduler.
 
 ## Interrupciones
 
@@ -110,7 +110,7 @@ Luego de imprimirse los registros, entra en un loop llamado `haltcpu` que setea 
 
 ## Scheduler
 
-Luego de mirar al mapa de memoria de Pure64, decidimos que las variables "paralelizadas" empiecen su stack en la posición `0x700000`, y a cada una le reservamos 1MB de memoria en el stack.
+Luego de mirar al mapa de memoria de Pure64, decidimos que las variables "paralelizadas" empiecen su stack en la posición `0x700000`, con un stepping de `0x100000`. De esta forma, la función en la pantalla izquierda tiene espacio hasta encontrarse con el SampleDataModule, cargado en la dirección `0x500000`, y asumiendo que este va a ocupar menos de 1MB, entonces tiene al menos 1MB para crecer el stack. Lo mismo con la función de la pantalla derecha, solo que esta si tiene 1MB justo, pues si sigue creciendo se encuentra con el stack de la función de la pantalla derecha.
 
 Tambien tenemos un valor inicial default para el registro `RFLAGS` de cada tarea, `0x202`, ya que necesitamos que las interrupciones esten activadas, e Intel requiere que el bit uno este activado.
 

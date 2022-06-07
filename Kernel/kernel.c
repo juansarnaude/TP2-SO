@@ -84,7 +84,7 @@ int main()
 {	
 	ncClear();
 	load_idt();
-	loadUserland(sampleCodeModuleAddress, 0x800000);
+	loadUserland(sampleCodeModuleAddress, 0x900000);
 	ncPrint("[Finished]");
 	return 0;
 }
