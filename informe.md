@@ -83,7 +83,15 @@ Despues de un rato de intentar crear cosas nuevas, nos dimos cuenta que podiamos
 
 ## Partición del Trabajo
 
+Keyboard Driver: Juan Castro y Andres Carrlo Wetzler
+Naive Console: Juan Castro y Matias Wodtke
+Syscalls: entre todos
+Interupciones: Juan Castro
+Schelduler: Juan Castro
+Bash: Juan Segundo Arnaude, Matias Wodtke y Andres Carro Wetzler
+Syslib: Juan Segundo Arnaude, Matias Wodtke y Andres Carro Wetzler
 
+Las otras partes del trabajo fueron hechas entre todos.
 
 ## Herramientas Utilizadas
 
