@@ -153,7 +153,7 @@ void fibonacciNumbs(){
     char num[30];
     int i=3;
     int t1 = 0, t2 = 1;
-    int nextTerm = t1 + t2;
+    long nextTerm = t1 + t2;
     puts("Fibonacci Series: 0, 1, ");
     while(1) {
         if(nextTerm<0){//por si se pasa del max integer
@@ -203,30 +203,31 @@ int containsString(const char *p1,const char *p2){
     return -1;
 }
 
-static unsigned char address[18];
+static uint8_t address;
 
 //Wrapper function for printMem
 int checkPrintMemParams(char *s){
-    s += 8;//me paro despues del "printmem"
-    unsigned int i=0;
-    while(*s != '\0' && i < 18){
-        address[i++] = *s;
-        s++;
+    s+=8;
+    uint64_t size = strlen(s);//le resto el "printmem"
+    if(size<3 || size>18 || s[0]!='0' || s[1]!='x'){
+        puts("Incorrect address format\n");
+        return 0;
+    }	
+    unsigned int i=2;
+    while(s[i] != '\0' && i < 18){
+        if((s[i] < '0' || s[i] > '9') && (s[i] < 'a' || s[i] > 'f')){
+            puts("Address can't be accesed");
+            return -1;
+        }
+        if(s[i]>='0' && s[i]<='9')
+			address = 16*address + s[i]-'0';
+		else if(s[i]>='a' && s[i]<='f')
+			address = 16*address + s[i]-'a';
+        i++;
     }
     if(i == 18){
         unknownCommand();
         return -1;
-    }
-    int j=0;
-    while(j < i){
-        if((address[j] < '0' || address[j] > '9') && (address[j] < 'a' || address[j] > 'f')){
-            puts("Address can't be accesed");
-            return -1;
-        }
-        j++;
-    }
-    while(j < 18){//relleno con 0s para "borrar" el address ingresado anteiormente
-        address[j++]='0';
     }
     return 1;
 }
@@ -234,6 +235,7 @@ int checkPrintMemParams(char *s){
 
 void printmem()
 {
+    uint8_t* source = (uint8_t*) address;
     for(int i=0; i<32 ; i++){
         if(i%4==0){
             if(i%8==0){
@@ -242,8 +244,8 @@ void printmem()
                 putChar('\t');
             }
         }
-        putChar(valueToHexChar(address[i]>>4));
-        putChar(valueToHexChar(address[i]&0x0F));
+        putChar(valueToHexChar(source[i]>>4));
+        putChar(valueToHexChar(source[i]&0x0F));
         putChar(' ');
         putChar(' ');
     }
