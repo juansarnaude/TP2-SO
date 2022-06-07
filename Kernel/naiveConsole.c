@@ -3,6 +3,7 @@
 #define WIDTH 80
 #define HEIGHT 25
 #define VIDEOSTART 0xB8000
+#define WINDOWS 2
 
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 static char buffer[64] = {'0'};
@@ -13,12 +14,16 @@ static const uint32_t height = HEIGHT;
 
 //Window currently writing to.
 static uint8_t currentWindow = 0;
+
 //Amount of windows
 static uint8_t windows = 1;
+
 //Starting point for windows
 static uint8_t *videoWindow[2] = {(uint8_t*)VIDEOSTART, (uint8_t*)VIDEOSTART + WIDTH};
+
 //Pointer to windows
 static uint8_t *currentVideoW[2] = {(uint8_t*)VIDEOSTART, (uint8_t*)VIDEOSTART + WIDTH};
+
 //Default format color
 static const uint8_t defaultFormat = 0x07;
 
@@ -32,7 +37,13 @@ uint8_t ncWindows(uint8_t amount){
 	ncCurrentWindow(0);
 	if (windows != 1){
 		windows = 1;
-		ncClear();
+		currentVideo = (currentVideoW[0] > currentVideoW[1]) ? currentVideoW[0] : currentVideoW[1];
+		for (int i = 0; i < WINDOWS; i++)
+		{
+			currentVideoW[i] = videoWindow[i];
+		}
+		ncNewline();
+		ncNewline();
 	}
 	return windows;
 }
