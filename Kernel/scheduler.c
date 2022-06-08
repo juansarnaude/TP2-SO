@@ -93,8 +93,21 @@ void nextTask(uint64_t * registers){
             ncWindows(1);
             loadContext(registers, &origin);
             return;
-        } else
-            return;
+        }
+        if (tasks[current].active == 0){
+            if (!(tasks[current].rip >= (uint64_t) haltcpu && tasks[current].rip <= (uint64_t) _endhaltcpu))
+                tasks[current].buRIP = registers[RIP_POS];
+            saveContext(&tasks[current], registers);
+            tasks[current].rip = (uint64_t) haltcpu;
+            loadContext(registers, &tasks[current]);
+        } else {
+            if ((registers[RIP_POS] >= (uint64_t) haltcpu && registers[RIP_POS] <= (uint64_t) _endhaltcpu)){
+                saveContext(&tasks[current], registers);
+                tasks[current].rip = tasks[current].buRIP;
+                loadContext(registers, &tasks[current]);
+            }
+        }
+        return;
     }
 
     if (current != DEFAULT_CURRENT && tasks[current].finished != 1)
