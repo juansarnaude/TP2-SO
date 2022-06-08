@@ -51,6 +51,11 @@ Bash decidimos hacerlo de Userland porque decidimos que no necesitaba acceso a n
 
 ## Dificultades Encontradas
 
+Tuvimos problemas con la implementacion del schelduler, problemas con el manejo de registros que hacian que este falle.
+
+En el keboard driver tuvimos muchos problemas con el buffer resultando que se copiase doble en el buffer o que no se copie nada. Luego de debuggear nos dimos cuenta que el problema estaba em la funcion readBuffer y que podia ser arreglada usando un segundo ciclo (el while(i<count))
+
+
 ### Scheduler
 
 #### Interrupciones
