@@ -118,9 +118,10 @@ void help(){
 	"time                 Command to display the system day and time.\n"
     "prime                Dispalys prime numbers starting from 1.\n"
     "fibonacci            Dispalys fibonacci series numbers.\n"
-    "COMMAND1 | COMMAND2  The \"|\" operand allows the execution of multiple commands\n"
+    "COMMAND1|COMMAND2    The \"|\" operand allows the execution of multiple commands\n"
     "                     at the same time. CTRL+L and CTRL+R stops and resumes left\n"
-    "                     and right windows.\n";
+    "                     and right windows. CTRL+E stops both windows and returns\n"
+    "                     to console.\n";
     
     puts(helpstring);
 }
