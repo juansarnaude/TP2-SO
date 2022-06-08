@@ -1,3 +1,61 @@
+- [Bash](#bash)
+  - [Help](#help)
+  - [Fibonacci](#fibonacci)
+  - [Prime](#prime)
+  - [Inforeg](#inforeg)
+  - [Divide by Zero](#divide-by-zero)
+  - [Invalid Opcode](#invalid-opcode)
+  - [Printmem](#printmem)
+  - [Time](#time)
+  - [Pipe](#pipe)
+- [Syscalls](#syscalls)
+  - [Read](#read)
+  - [Write](#write)
+  - [getRegisters](#getregisters)
+  - [Exec](#exec)
+  - [Exit](#exit)
+  - [Time](#time-1)
+
+## Bash
+
+### Help
+
+Imprime un mensaje indicando los comandos y lo que realizan.
+
+### Fibonacci
+
+Imprime los numberos de la serie de fibonacci, hasta que ocurre overflow.
+
+### Prime
+
+Calcula e imprime los numeros primos, hasta que ocurre overflow.
+
+### Inforeg
+
+Al apretar las teclas Ctrl+C, se guardan los registros en el momento, y al llamar a printreg, estos se imprimen. Si no se apretaron antes, da un aviso de que todavia no fueron guardados.
+
+### Divide by Zero
+
+Un programa que hace una division por cero para testear las excepciones.
+
+### Invalid Opcode
+
+Trata de procesar una instrucción erronea para testear las excepciones.
+
+### Printmem
+
+Recibe un address escrito en formato "printmem0x------------------", y lee de esa ubicación de memoria e imprime los 32 bytes siguientes.
+
+### Time
+
+Imprime el tiempo local en pantalla
+
+### Pipe
+
+Sirve para paralelizar dos funciones. Mediante el uso de Ctrl+L se puede parar la función de la ventana izquierda, y usando Ctrl+R se para la de la ventana derecha.
+
+Con Ctrl+E se terminan ambas funciones y vuelve al bash.
+
 ## Syscalls
 
 |Numero|Nombre|`RAX`|`RDI`|`RSI`|`RDX`|
