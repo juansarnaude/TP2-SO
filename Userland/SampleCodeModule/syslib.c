@@ -150,7 +150,6 @@ void printPrime(){
 //Ciclo infinito que imprime numeros de secuencia de fibonacci
 void fibonacciNumbs(){
     char num[30];
-    int i=3;
     int t1 = 0, t2 = 1;
     long nextTerm = t1 + t2;
     puts("Fibonacci Series: 0, 1, ");
@@ -166,7 +165,6 @@ void fibonacciNumbs(){
             return;
         }
         puts("\n");
-        i++;
     }
 }
 
