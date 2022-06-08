@@ -119,7 +119,7 @@ void keyboard_handler(uint64_t * registers)
       case 0x13:  //Ctrl+R(13) = Pause right window
         changeStatus(1);
         break;
-      case 0x1:   //Ctrl+esc = Terminate both tasks
+      case 0x12:   //Ctrl+E = Terminate both tasks
         terminateTasks();
         break;
       case 0x2e:  //Ctrl+C = copy registers

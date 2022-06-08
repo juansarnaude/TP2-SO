@@ -38,7 +38,7 @@ Para terminar correctamente, las funciones deberian realizar una syscall exit, a
 
 Mediante la combinación de teclas Ctrl+L se pausa y resume la pantalla izquierda, mientras que utilizando Ctrl+R se pausa y resume el de la pantalla derecha.
 
-En caso de que una de las funciones tire excepción, y la otra termine, el programa se quedara en ese estado hasta que el usuario apriete Ctrl+Esc, donde se terminara la ejecuión de ambas y se volvera a la función que lo llamo originalmente.
+En caso de que una de las funciones tire excepción, y la otra termine, el programa se quedara en ese estado hasta que el usuario apriete Ctrl+E, donde se terminara la ejecuión de ambas y se volvera a la función que lo llamo originalmente.
 
 ### Exit
 
