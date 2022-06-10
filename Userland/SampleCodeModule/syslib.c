@@ -64,7 +64,7 @@ unsigned int charBelongs(char *s,char c){
 }
 
 void excepDivZero(){
-    int i=7/0;
+    div_zero();
 }
 
 void excepInvalidOpcode(){

@@ -5,6 +5,7 @@ GLOBAL sys_exit
 GLOBAL sys_execve
 GLOBAL sys_time
 GLOBAL inv_opcode
+GLOBAL div_zero
 
 section .text
 sys_write:
@@ -63,4 +64,9 @@ sys_time:
 
 inv_opcode:
     ud2
+    ret
+
+div_zero:
+    mov ecx, 0
+    div ecx
     ret

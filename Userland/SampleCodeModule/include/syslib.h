@@ -19,6 +19,7 @@ int sys_read(int fd,char * buffer,int size);
 void sys_time();
 int sys_getregs(uint64_t * registers);
 void inv_opcode();
+void div_zero();
 void sys_execve(void (*f1)(), void (*f2)());
 
 unsigned int strlen(const char *s);
