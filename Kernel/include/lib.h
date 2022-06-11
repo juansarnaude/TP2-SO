@@ -15,5 +15,8 @@ uint8_t read_port(uint8_t key);
 char *cpuVendor(char *result);
 void tick();
 void loadUserland(uint64_t * address, uint64_t * rsp);
+char valueToHexChar(unsigned char value);
+void printmem(uint8_t address);
+int checkPrintMemParams(char *s,uint8_t* address);
 
 #endif

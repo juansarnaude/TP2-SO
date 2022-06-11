@@ -31,7 +31,7 @@ char getChar();
 int gets(char * s);
 unsigned int charBelongs(char *s,char c);
 int containsString(const char *p1,const char *p2);
-int checkPrintMemParams(char *s);
+void savePrintMemParams(char *s);
 int strcmp (const char *p1, const char *p2);
 void getTime();
 void printPrime();

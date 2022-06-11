@@ -4,6 +4,7 @@ GLOBAL sys_getregs
 GLOBAL sys_exit
 GLOBAL sys_execve
 GLOBAL sys_time
+GLOBAL sys_printmem
 GLOBAL inv_opcode
 GLOBAL div_zero
 
@@ -57,6 +58,15 @@ sys_time:
     push rbp
     mov rbp,rsp
     mov rax,5
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_printmem:
+    push rbp
+    mov rbp,rsp
+    mov rax,6
     int 0x80
     mov rsp,rbp
     pop rbp

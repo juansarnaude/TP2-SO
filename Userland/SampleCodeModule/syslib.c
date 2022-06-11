@@ -201,57 +201,65 @@ int containsString(const char *p1,const char *p2){
     return -1;
 }
 
-static uint8_t address;
+// //Wrapper function for printMem
+// int checkPrintMemParams(char *s){
+//     s+=8;
+//     uint64_t size = strlen(s);//le resto el "printmem"
+//     if(size<3 || size>18 || s[0]!='0' || s[1]!='x'){
+//         puts("Incorrect address format\n");
+//         return 0;
+//     }	
+//     unsigned int i=2;
+//     while(s[i] != '\0' && i < 18){
+//         if((s[i] < '0' || s[i] > '9') && (s[i] < 'a' || s[i] > 'f')){
+//             puts("Address can't be accesed");
+//             return -1;
+//         }
+//         if(s[i]>='0' && s[i]<='9')
+// 			address = 16*address + s[i]-'0';
+// 		else if(s[i]>='a' && s[i]<='f')
+// 			address = 16*address + s[i]-'a';
+//         i++;
+//     }
+//     if(i == 18){
+//         unknownCommand();
+//         return -1;
+//     }
+//     return 1;
+// }
 
-//Wrapper function for printMem
-int checkPrintMemParams(char *s){
-    s+=8;
-    uint64_t size = strlen(s);//le resto el "printmem"
-    if(size<3 || size>18 || s[0]!='0' || s[1]!='x'){
-        puts("Incorrect address format\n");
-        return 0;
-    }	
-    unsigned int i=2;
-    while(s[i] != '\0' && i < 18){
-        if((s[i] < '0' || s[i] > '9') && (s[i] < 'a' || s[i] > 'f')){
-            puts("Address can't be accesed");
-            return -1;
-        }
-        if(s[i]>='0' && s[i]<='9')
-			address = 16*address + s[i]-'0';
-		else if(s[i]>='a' && s[i]<='f')
-			address = 16*address + s[i]-'a';
-        i++;
-    }
-    if(i == 18){
-        unknownCommand();
-        return -1;
-    }
-    return 1;
+// void printmem()
+// {
+//     uint8_t* source = (uint8_t*) address;
+//     for(int i=0; i<32 ; i++){
+//         if(i%4==0){
+//             if(i%8==0){
+//                 putChar('\n');
+//             }else{
+//                 putChar('\t');
+//             }
+//         }
+//         putChar(valueToHexChar(source[i]>>4));
+//         putChar(valueToHexChar(source[i]&0x0F));
+//         putChar(' ');
+//         putChar(' ');
+//     }
+//     putChar('\n');
+// }
+
+// static char valueToHexChar(unsigned char value) {
+//     return value >= 10 ? (value - 10 + 'A') : (value + '0');
+// }
+
+static char* address;
+
+void savePrintMemParams(char *s){
+    s+=8;//skip printmem chars
+    address = s;
 }
 
-
-void printmem()
-{
-    uint8_t* source = (uint8_t*) address;
-    for(int i=0; i<32 ; i++){
-        if(i%4==0){
-            if(i%8==0){
-                putChar('\n');
-            }else{
-                putChar('\t');
-            }
-        }
-        putChar(valueToHexChar(source[i]>>4));
-        putChar(valueToHexChar(source[i]&0x0F));
-        putChar(' ');
-        putChar(' ');
-    }
-    putChar('\n');
-}
-
-static char valueToHexChar(unsigned char value) {
-    return value >= 10 ? (value - 10 + 'A') : (value + '0');
+void printmem(){
+    sys_printmem(address);
 }
 
 void inforeg(){

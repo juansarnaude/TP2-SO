@@ -5,6 +5,7 @@ static void sys_write(unsigned fd,const char* buffer, uint64_t count);
 static int sys_exec(int (*program1)(), int (*program2)(), uint64_t * registers);
 static void sys_exit(int retValue, uint64_t * registers);
 static void sys_time();
+static void sys_printmem(char* source);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t * registers){
     //TODO: Aumentar la cantidad de registros que nos pasan a 6.
@@ -27,6 +28,9 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
             break;
         case 5:
             sys_time();
+            break;
+        case 6:
+            sys_printmem((char*) rdi);
             break;
     }
     return 0;
@@ -73,4 +77,11 @@ static void sys_exit(int retValue, uint64_t * registers){
 
 static void sys_time(){
     ncPrintTime();
+}
+
+static void sys_printmem(char* source){
+    uint8_t address;
+    if(checkPrintMemParams(source,&address)){
+        printmem(address);
+    }
 }

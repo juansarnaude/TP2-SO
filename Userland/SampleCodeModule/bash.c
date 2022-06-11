@@ -60,9 +60,8 @@ ptr commandLine(char* buffer){
         return &excepInvalidOpcode;
     }else if(containsString(buffer,"printmem") >= 0){
         putChar('\n');
-        if(checkPrintMemParams(buffer) == 1){
-            return &printmem;
-        }
+        savePrintMemParams(buffer);
+        return &printmem;
     }else if( (strcmp(buffer,"inforeg")) == 0){
         putChar('\n');
         return &inforeg;
