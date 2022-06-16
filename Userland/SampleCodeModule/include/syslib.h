@@ -21,6 +21,7 @@ int sys_getregs(uint64_t * registers);
 void inv_opcode();
 void div_zero();
 void sys_execve(void (*f1)(), void (*f2)());
+void sys_copymem(uint64_t address, uint8_t * buffer, uint64_t length);
 
 unsigned int strlen(const char *s);
 void excepDivZero();
