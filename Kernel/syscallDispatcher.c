@@ -77,6 +77,10 @@ static void sys_time(){
     ncPrintTime();
 }
 
-static void sys_printmem(char* source){
-    printmem(source);
+static void sys_copymem(uint64_t address, uint8_t * buffer, uint64_t length){
+    memcpy(buffer, address, length);
+}
+
+char valueToHexChar(unsigned char value) {
+    return value >= 10 ? (value - 10 + 'A') : (value + '0');
 }
