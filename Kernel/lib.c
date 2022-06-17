@@ -59,56 +59,54 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 }
 
 //Wrapper function for printMem
-int checkPrintMemParams(char *s,uint8_t* address){
+int checkPrintMemParams(char *s,uint8_t** output){
     uint64_t size = strlen(s);//le resto el "printmem"
     if(size<3 || size>11 || s[0]!='0' || s[1]!='x'){
 		ncPrint("\nIncorrect address format\n");
         return 0;
-    }	
+    }
+	uint64_t dir=0;
     unsigned int i=2;
     while(s[i] != '\0' && i < 12){
         if((s[i] < '0' || s[i] > '9') && (s[i] < 'a' || s[i] > 'f')){
 			ncPrint("\nAddress can't be accesed\n");
-            return -1;
+            return 0;
         }
         if(s[i]>='0' && s[i]<='9'){
-			*address *= 16;
-			*address += s[i]-'0';
+			dir = 16*dir + s[i]-'0';
 		}
 		else if(s[i]>='a' && s[i]<='f'){
 			if(i == 10){
 				ncPrint("\nAddress can't be accesed\n");
-				return -1;
+				return 0;
 			}else if(i == 11 && s[i-1] == '9' && s[i] > 'b'){
 				ncPrint("\nAddress can't be accesed\n");
-				return -1;
+				return 0;
 			}
-			*address *= 16;
-			*address += s[i]-'a';
+			dir = 16*dir + s[i]-'a';
 		}
         i++;
     }
+	*output = (uint8_t*)dir;
     return 1;
 }
 
-void printmem(uint8_t address)
+void printmem(char* source)
 {
-    uint8_t* source = (uint8_t*) address;
+	uint8_t* address;
+    if(!checkPrintMemParams(source,&address)){
+        return;
+    }
     for(int i=0; i<32 ; i++){
         if(i%4==0){
             if(i%8==0){
 				ncPrintChar('\n');
-            }else{
-                ncPrintChar('n');
             }
         }
-		//char c = valueToHexChar(source[i]>>4);
-		ncPrintChar(valueToHexChar(source[i]>>4));
-		ncPrintChar(valueToHexChar(source[i]&0x0F));
+		ncPrintChar(valueToHexChar(address[i]>>4));
+		ncPrintChar(valueToHexChar(address[i]&0x0F));
 		ncPrintChar(' ');
 		ncPrintChar(' ');
-		//c = valueToHexChar(source[i]&0x0F);
-		//c = ' ';
     }
     ncPrintChar(' ');
 }

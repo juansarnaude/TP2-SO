@@ -80,8 +80,5 @@ static void sys_time(){
 }
 
 static void sys_printmem(char* source){
-    uint8_t address;
-    if(checkPrintMemParams(source,&address)){
-        printmem(address);
-    }
+    printmem(source);
 }
