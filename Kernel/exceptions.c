@@ -3,6 +3,7 @@
 #define INVALID_OPCODE_EXCEPTION_ID 6
 
 #include <naiveConsole.h>
+#include <scheduler.h>
 
 static void zero_division(uint64_t rip, uint64_t rsp, const uint64_t * backup);
 static void invalid_opcode(uint64_t rip, uint64_t rsp, const uint64_t * backup);
@@ -14,7 +15,8 @@ void exceptionDispatcher(uint64_t exception, uint64_t rip, uint64_t rsp, const u
 	{
 		invalid_opcode(rip, rsp, backup);
 	}
-	
+	// If a scheduled task generated the exception, pause it.
+	changeStatus(getCurrentTask());
 }
 
 

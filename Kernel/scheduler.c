@@ -164,3 +164,7 @@ void terminateTasks(){
     current = DEFAULT_CURRENT;
     amount = -1;
 }
+
+int getCurrentTask(){
+    return current;
+}

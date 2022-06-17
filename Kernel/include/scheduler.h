@@ -19,4 +19,6 @@ void exitTask(int retValue, uint64_t * registers);
 
 void terminateTasks();
 
+int getCurrentTask();
+
 #endif //SCHEDULER_H
