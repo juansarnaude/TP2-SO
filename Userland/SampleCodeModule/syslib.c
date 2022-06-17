@@ -168,7 +168,9 @@ void fibonacciNumbs(){
     }
 }
 
-static char valueToHexChar(unsigned char value);
+char valueToHexChar(unsigned char value) {
+    return value >= 10 ? (value - 10 + 'A') : (value + '0');
+} 
 
 //Checks the first occurence of p2 inside p1, return the index where p2 appears inside p1 or -1
 //if p2 isnt found inside p1
@@ -201,65 +203,68 @@ int containsString(const char *p1,const char *p2){
     return -1;
 }
 
-// //Wrapper function for printMem
-// int checkPrintMemParams(char *s){
-//     s+=8;
-//     uint64_t size = strlen(s);//le resto el "printmem"
-//     if(size<3 || size>18 || s[0]!='0' || s[1]!='x'){
-//         puts("Incorrect address format\n");
-//         return 0;
-//     }	
-//     unsigned int i=2;
-//     while(s[i] != '\0' && i < 18){
-//         if((s[i] < '0' || s[i] > '9') && (s[i] < 'a' || s[i] > 'f')){
-//             puts("Address can't be accesed");
-//             return -1;
-//         }
-//         if(s[i]>='0' && s[i]<='9')
-// 			address = 16*address + s[i]-'0';
-// 		else if(s[i]>='a' && s[i]<='f')
-// 			address = 16*address + s[i]-'a';
-//         i++;
-//     }
-//     if(i == 18){
-//         unknownCommand();
-//         return -1;
-//     }
-//     return 1;
-// }
-
-// void printmem()
-// {
-//     uint8_t* source = (uint8_t*) address;
-//     for(int i=0; i<32 ; i++){
-//         if(i%4==0){
-//             if(i%8==0){
-//                 putChar('\n');
-//             }else{
-//                 putChar('\t');
-//             }
-//         }
-//         putChar(valueToHexChar(source[i]>>4));
-//         putChar(valueToHexChar(source[i]&0x0F));
-//         putChar(' ');
-//         putChar(' ');
-//     }
-//     putChar('\n');
-// }
-
-// static char valueToHexChar(unsigned char value) {
-//     return value >= 10 ? (value - 10 + 'A') : (value + '0');
-// }
-
-static char* address;
+static char * address_str;
 
 void savePrintMemParams(char *s){
     s+=8;//skip printmem chars
-    address = s;
+    address_str = s;
+}
+
+int checkPrintMemParams(char *s,uint64_t* address){
+    *address = 0;
+    uint64_t size = strlen(s);//le resto el "printmem"
+    if(size<3 || size>11 || s[0]!='0' || s[1]!='x'){
+		puts("\nIncorrect address format\n");
+        return 0;
+    }	
+    unsigned int i=2;
+    while(s[i] != '\0' && i < 12){
+        if((s[i] < '0' || s[i] > '9') && (s[i] < 'a' || s[i] > 'f')){
+			puts("\nAddress can't be accesed\n");
+            return -1;
+        }
+        if(s[i]>='0' && s[i]<='9'){
+			*address *= 16;
+			*address += s[i]-'0';
+		}
+		else if(s[i]>='a' && s[i]<='f'){
+			if(i == 10){
+				puts("\nAddress can't be accesed\n");
+				return -1;
+			}else if(i == 11 && s[i-1] == '9' && s[i] > 'b'){
+				puts("\nAddress can't be accesed\n");
+				return -1;
+			}
+			*address *= 16;
+			*address += s[i]-'a'+10;
+		}
+        i++;
+    }
+    return 1;
 }
 
 void printmem(){
-    sys_printmem(address);
+    uint8_t copy[32];
+    uint64_t address;
+
+    if (!checkPrintMemParams(address_str, &address))
+        return;
+
+    sys_copymem(address, copy, 32);
+
+    uint8_t* source = (uint8_t*) address;
+    for(int i=0; i<32 ; i++){
+        if(i%8==0)
+		    putChar('\n');
+		//char c = valueToHexChar(source[i]>>4);
+		putChar(valueToHexChar(copy[i]>>4));
+		putChar(valueToHexChar(copy[i]&0x0F));
+		putChar(' ');
+		putChar(' ');
+		//c = valueToHexChar(source[i]&0x0F);
+		//c = ' ';
+    }
+    putChar(' ');
 }
 
 void inforeg(){

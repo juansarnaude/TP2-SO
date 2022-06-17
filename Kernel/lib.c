@@ -1,14 +1,5 @@
 #include <lib.h>
 
-unsigned int strlen(const char *str){
-    unsigned int len = 0;
-    while(str[len]!='\0')
-    {
-        len++;
-    }
-    return len;
-}
-
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
