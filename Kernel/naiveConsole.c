@@ -79,12 +79,15 @@ void ncDeleteChar(){
 		if (currentVideo-2 >= video){
 			currentVideo -= 2;
 			*currentVideo = ' ';
+			*(currentVideo+1) = defaultFormat;
 		}
 		return;
 	} else {
 		if (currentVideoW[currentWindow]-2 >= videoWindow[currentWindow]){
 			currentVideoW[currentWindow] -= 2;
 			*(currentVideoW[currentWindow]) = ' ';
+			*(currentVideoW[currentWindow]+1) = defaultFormat;
+
 		}
 	}
 }
@@ -180,14 +183,15 @@ void ncClear()
 {
 	
 	if (windows==1){
-	int i;
+		int i;
 
-	for (i = 0; i < height * width; i++)
-		video[i * 2] = ' ';
-	currentVideo = video;
-	}
-
-	else{
+		for (i = 0; i < height * width; i++){
+			video[i * 2] = ' ';
+			video[i*2+1] = defaultFormat;
+		}
+		
+		currentVideo = video;
+	} else {
 		ncClearWindow(currentWindow);
 	}
 }
@@ -206,6 +210,7 @@ void ncClearWindow(uint8_t windowToCLear){
 		
 	while(i < height*width){
 		video[i*2]=' ';
+		video[i*2+1] = defaultFormat;
 		if (i && (i+1)%widthW==0)
 			i+=width/2;
 		i++;
@@ -252,10 +257,12 @@ void scrollUp(){
 		for (i = 0; i <= width * (height-1); i++)
 		{
 			video[i*2] = video[(i+width)*2];
+			video[i*2+1] = video[(i+width)*2+1];	// Copy format too.
 		}
 		for (uint64_t j = i; j < width * height; j++)
 		{
-			video[j*2] = video[(i+width)*2];
+			video[j*2] = ' ';
+			video[j*2+1] = defaultFormat;
 		}
 		currentVideo -= width*2;
 	} else {	// Scroll a window
@@ -272,6 +279,7 @@ void scrollUp(){
 			
 		while(i < (HEIGHT-1)*WIDTH){
 			video[i*2]=video[(i+WIDTH)*2];
+			video[i*2+1]=video[(i+WIDTH)*2+1];	// Copy format
 			if (i && (i+1)%widthW==0)
 				i+=WIDTH/2;
 			i++;
@@ -279,6 +287,7 @@ void scrollUp(){
 		while (i < height*width)
 		{
 			video[i*2]=' ';
+			video[i*2]=defaultFormat;
 			if (i && (i+1)%widthW==0)
 				i+=width/2;
 			i++;
