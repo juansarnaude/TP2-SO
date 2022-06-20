@@ -108,7 +108,7 @@ Cuando se usa correctamente, simplemente recive un valor de retorno que imprime 
 
 ### Time
 
-Imprime el tiempo en zona horaria UTC en pantalla, imprimiendo primero la fecha en formato DD/MM/YYYY, y despues las horas, minutos y segundos.
+Imprime el tiempo en zona horaria ART (UTC-3) en pantalla, imprimiendo primero la hora en formato HH:MM:SS, y luego la fecha en DD/MM/AAAA.
 
 ### Copy memory
 

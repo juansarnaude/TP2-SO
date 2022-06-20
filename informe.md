@@ -127,7 +127,16 @@ Si se la llama cuando el scheduler no esta funcionando, no hace nada, y como cua
 
 #### 5 - Time
 
-No recibe argumentos, simplemente imprime a pantalla el tiempor en formato DD/MM/AAAA, y luego en renglones separados la hora, los minutos y los segundos.
+Recibe como argumento una estructura que debe tener el siguiente formato:
+
+```C
+typedef struct {
+    uint8_t day, month, year;
+    uint8_t hours, minutes, seconds;
+} time_t;
+```
+
+Luego, devuelve el tiempo en formato ART(UTC-3), pero para el año solo retorna los ultimos dos digitos.
 
 #### 6 - Copy memory
 
