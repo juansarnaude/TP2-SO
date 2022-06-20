@@ -15,6 +15,7 @@
     - [3 - Exec](#3---exec)
     - [4 - Exit](#4---exit)
     - [5 - Time](#5---time)
+    - [6 - Copy memory](#6---copy-memory)
   - [Excepciones](#excepciones)
   - [Scheduler](#scheduler)
     - [Estructura](#estructura)
@@ -128,13 +129,19 @@ Si se la llama cuando el scheduler no esta funcionando, no hace nada, y como cua
 
 No recibe argumentos, simplemente imprime a pantalla el tiempor en formato DD/MM/AAAA, y luego en renglones separados la hora, los minutos y los segundos.
 
+#### 6 - Copy memory
+
+Para poder realizar el printmem del trabajo, decidimos implementar una syscall que recibe la dirección de memoria, un pointer a `uint8_t`, y la cantidad de bytes a copiar.
+
+De esta forma, el kernel copia la cantidad de bytes pedidos de la dirección de memoria a donde apunta el pointer.
+
 ***
 
 ### Excepciones
 
 Para las excepciones, para poder imprimir los registros decidimos desde assembler pasarle un puntero a donde se pushearon todos los registros apenas empezo la excepción, y un puntero a los valores de RIP y RSP que fueron guardados en el stack cuando se realizo la interrupción, luego se imprime el tipo de error y todos los registros en color rojo.
 
-Luego de imprimirse los registros, entra en un loop llamado `haltcpu` que setea los interrupts y luego la instrucción `hlt`. De esta forma, nos aseguramos que cuando una excepción ocurre durante el scheduler, la otra función pueda seguir funcionando.
+Luego de imprimirse los registros, para evitar problemas con el Scheduler se encarga de pausear la task que tiro la excepción, dado que si no esta corriendo el Scheduler no hace nada, y despues entra en un loop llamado `haltcpu` que setea los interrupts y luego la instrucción `hlt`. De esta forma, nos aseguramos que cuando una excepción ocurre durante el scheduler, la otra función pueda seguir funcionando.
 
 ***
 

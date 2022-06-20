@@ -15,6 +15,7 @@
   - [Exec](#exec)
   - [Exit](#exit)
   - [Time](#time-1)
+  - [Copy memory](#copy-memory)
 
 ## Bash
 
@@ -66,6 +67,7 @@ Con Ctrl+E se terminan ambas funciones y vuelve al bash.
 |3|exec|0x03|`int(*)()` f1|`int(*)()` f2|-|
 |4|exit|0x04|`int` ret|-|-|
 |5|time|0x05|-|-|-|
+|6|copymem|0x06|`uint64_t` address|`uint8_t *` pointer| `uint64_t` length|
 
 ### Read
 
@@ -107,3 +109,7 @@ Cuando se usa correctamente, simplemente recive un valor de retorno que imprime 
 ### Time
 
 Imprime el tiempo en zona horaria UTC en pantalla, imprimiendo primero la fecha en formato DD/MM/YYYY, y despues las horas, minutos y segundos.
+
+### Copy memory
+
+Copia la cantidad de bytes pedidos desde la dirección de memoria al pointer, que debe tener el tamaño apropiado para guardar esa cantidad de bytes.
