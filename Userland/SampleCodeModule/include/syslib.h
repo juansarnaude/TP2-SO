@@ -11,11 +11,14 @@
 
 #define EOF -1
 
-#include <stdint.h>
+typedef struct {
+    uint8_t day, month, year;
+    uint8_t hours, minutes, seconds;
+} time_t;
 
 int sys_write(int fd, const char *buffer, int size);
 int sys_read(int fd,char * buffer,int size);
-void sys_time();
+void sys_time(time_t * time);
 int sys_getregs(uint64_t * registers);
 void inv_opcode();
 void div_zero();

@@ -13,6 +13,11 @@
 #define STDOUT 1
 #define STDERR 2
 
+typedef struct {
+    uint8_t day, month, year;
+    uint8_t hours, minutes, seconds;
+} time_t;
+
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t * registers);
 
 #endif

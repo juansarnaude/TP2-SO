@@ -8,12 +8,12 @@ uint8_t localHours(void)
     uint8_t hour = getHours();
     if (hour >= 0 && hour <= 3)
     {
-        return hour + 21;
+        return hour - 3 + 21;
     }
-    return hour;
+    return hour - 3;
 }
 
-uint8_t getPreviousDay(uint8_t day){
+static uint8_t getPreviousDay(uint8_t day){
     uint8_t year = getYear();
     uint8_t dayMonth[13] = { 31, 31 , 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 0};
     if( year%4==0 && ( year%100!=0 || year%400==0 )){

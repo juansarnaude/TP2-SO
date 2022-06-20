@@ -4,7 +4,7 @@ static uint64_t sys_read(unsigned int fd,char* output, uint64_t count);
 static void sys_write(unsigned fd,const char* buffer, uint64_t count);
 static int sys_exec(int (*program1)(), int (*program2)(), uint64_t * registers);
 static void sys_exit(int retValue, uint64_t * registers);
-static void sys_time();
+static void sys_time(time_t * s);
 static void sys_copymem(uint64_t address, uint8_t * buffer, uint64_t length);
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t * registers){
@@ -25,7 +25,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
             sys_exit(rdi, registers);
             break;
         case 5:
-            sys_time();
+            sys_time((time_t*)rdi);
             break;
         case 6:
             sys_copymem(rdi,(uint8_t *) rsi, rdx);
@@ -73,8 +73,13 @@ static void sys_exit(int retValue, uint64_t * registers){
     exitTask(retValue, registers);
 }
 
-static void sys_time(){
-    ncPrintTime();
+static void sys_time(time_t * s){
+    s->day = localDay();
+    s->month = localMonth();
+    s->year = localYear();
+    s->hours = localHours();
+    s->minutes = getMinutes();
+    s->seconds = getSeconds();
 }
 
 static void sys_copymem(uint64_t address, uint8_t * buffer, uint64_t length){

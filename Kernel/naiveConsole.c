@@ -55,25 +55,6 @@ uint8_t ncCurrentWindow(uint8_t select){
 	return currentWindow = 0;
 }
 
-void ncPrintTime()
-{
-	ncPrint("  Date:");
-	ncPrintDec(localDay());
-	ncPrint("/");
-	ncPrintDec(localMonth());
-	ncPrint("/20");
-	ncPrintDec(localYear());
-	ncNewline();
-	ncPrint("  Hours:");
-	ncPrintDec(localHours()); // restamos 3 ya que la hora argentina es UTC-03:00
-	ncNewline();
-	ncPrint("  Minutes:");
-	ncPrintDec(getMinutes());
-	ncNewline();
-	ncPrint("  Seconds:");
-	ncPrintDec(getSeconds());
-	ncNewline();
-}
 void ncDeleteChar(){
 	if (windows == 1){
 		if (currentVideo-2 >= video){

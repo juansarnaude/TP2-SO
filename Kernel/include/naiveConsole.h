@@ -7,7 +7,6 @@
 
 #define ERROR_FORMAT 0x0C
 
-void ncPrintTime();
 void ncDeleteChar();
 void ncPrintFormat(const char* string,uint8_t format);
 void ncPrintCharFormat(char character,uint8_t format);
