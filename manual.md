@@ -66,7 +66,7 @@ Con Ctrl+E se terminan ambas funciones y vuelve al bash.
 |2|getRegisters|0x02|`uint64_t*`|-|-|
 |3|exec|0x03|`int(*)()` f1|`int(*)()` f2|-|
 |4|exit|0x04|`int` ret|-|-|
-|5|time|0x05|-|-|-|
+|5|time|0x05|`time_t *` time|-|-|
 |6|copymem|0x06|`uint64_t` address|`uint8_t *` pointer| `uint64_t` length|
 
 ### Read
@@ -109,6 +109,15 @@ Cuando se usa correctamente, simplemente recive un valor de retorno que imprime 
 ### Time
 
 Imprime el tiempo en zona horaria ART (UTC-3) en pantalla, imprimiendo primero la hora en formato HH:MM:SS, y luego la fecha en DD/MM/AAAA.
+
+Para obtenerlo, se le debe pasar un puntero a una estructura en especifico:
+
+```C
+typedef struct {
+    uint8_t day, month, year;
+    uint8_t hours, minutes, seconds;
+} time_t;
+```
 
 ### Copy memory
 
