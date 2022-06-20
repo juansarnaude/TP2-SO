@@ -78,5 +78,5 @@ static void sys_time(){
 }
 
 static void sys_copymem(uint64_t address, uint8_t * buffer, uint64_t length){
-    memcpy(buffer, address, length);
+    memcpy((void*)buffer, (void*)address, length);
 }

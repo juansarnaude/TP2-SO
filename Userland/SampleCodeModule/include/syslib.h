@@ -12,7 +12,6 @@
 #define EOF -1
 
 #include <stdint.h>
-#include <bash.h>
 
 int sys_write(int fd, const char *buffer, int size);
 int sys_read(int fd,char * buffer,int size);

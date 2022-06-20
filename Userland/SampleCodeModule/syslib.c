@@ -252,7 +252,6 @@ void printmem(){
 
     sys_copymem(address, copy, 32);
 
-    uint8_t* source = (uint8_t*) address;
     for(int i=0; i<32 ; i++){
         if(i%8==0)
 		    putChar('\n');

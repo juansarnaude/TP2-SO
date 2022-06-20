@@ -1,6 +1,16 @@
 #include <bash.h>
+
 #define MAX_SIZE_CMD 32
 static char buffer[32];
+
+typedef void (*ptr)();
+typedef ptr (*pm)();
+
+void help();
+int readInput();
+void unknownCommand();
+void pipeManager();
+pm commandLine(char* buffer);
 
 void bash() {
     help();
@@ -36,35 +46,35 @@ void unknownCommand(){
     putChar('\n');
 }
 
-ptr commandLine(char* buffer){
+pm commandLine(char* buffer){
     if(strcmp(buffer,"time") == 0){
         putChar('\n');
-        return &getTime;
+        return (pm)getTime;
     }else if(strcmp(buffer,"prime") == 0){
         putChar('\n');
-        return &printPrime;
+        return (pm)printPrime;
     }else if(strcmp(buffer,"fibonacci") == 0){
         putChar('\n');
-        return &fibonacciNumbs;
+        return (pm)fibonacciNumbs;
     }else if(strcmp(buffer,"inforeg") == 0){
         putChar('\n');
-        return &inforeg;
+        return (pm)inforeg;
     }else if(strcmp(buffer,"dividebyzero") == 0){
         putChar('\n');
-        return &excepDivZero;
+        return (pm)excepDivZero;
     }else if(strcmp(buffer,"help") == 0){
         putChar('\n');
-        return &help;
+        return (pm)help;
     }else if(strcmp(buffer,"invalidopcode") == 0){
         putChar('\n');
-        return &excepInvalidOpcode;
+        return (pm)excepInvalidOpcode;
     }else if(containsString(buffer,"printmem") >= 0){
         putChar('\n');
         savePrintMemParams(buffer);
-        return &printmem;
+        return (pm)printmem;
     }else if( (strcmp(buffer,"inforeg")) == 0){
         putChar('\n');
-        return &inforeg;
+        return (pm)inforeg;
     }else{//el comando ingresado no existe.
         unknownCommand();
     }
@@ -98,7 +108,7 @@ void pipeManager(){
     if(fun1 == NULL || fun2 == NULL){
         return;
     }
-    sys_execve(fun1,fun2);
+    sys_execve((void(*)())fun1,(void(*)())fun2);
 }
 
 void help(){
