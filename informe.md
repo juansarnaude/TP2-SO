@@ -74,6 +74,8 @@ El handler de timer tick recive solo el puntero a los backups de los registros, 
 
 Cuando se realiza una interrupción de keyboard, se llama a la función `keyboard_handler`, que se encarga de fijarse si se apreto la tecla, si es una letra con un caracter ASCII la agrega al buffer, y en caso contrario no hace nada.
 
+El buffer lo hicimos de 32 posiciones, por lo que solo puede guardar 32 keystrokes antes de limpiarlo. Aún asi se pueden hacer reads de más de 32 por la implementación de readBuffer, que se queda esperando hasta llegar a la cantidad de caracteres pedidos.
+
 ***
 
 ### Syscalls
