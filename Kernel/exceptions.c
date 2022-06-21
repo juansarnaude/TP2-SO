@@ -37,7 +37,6 @@ static void printRegisters(uint64_t rip, uint64_t rsp, const uint64_t * backup){
 
 static void zero_division(uint64_t rip, uint64_t rsp, const uint64_t * backup) {
 	// Handler para manejar excepcíon
-	ncClear();
 	ncPrintFormat("ERROR: Zero division.", ERROR_FORMAT);
 	printRegisters(rip, rsp, backup);
 }
