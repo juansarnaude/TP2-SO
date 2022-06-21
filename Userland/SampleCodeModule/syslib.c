@@ -279,13 +279,10 @@ void printmem(){
     for(int i=0; i<32 ; i++){
         if(i%8==0)
 		    putChar('\n');
-		//char c = valueToHexChar(source[i]>>4);
 		putChar(valueToHexChar(copy[i]>>4));
 		putChar(valueToHexChar(copy[i]&0x0F));
 		putChar(' ');
 		putChar(' ');
-		//c = valueToHexChar(source[i]&0x0F);
-		//c = ' ';
     }
     putChar(' ');
 }
