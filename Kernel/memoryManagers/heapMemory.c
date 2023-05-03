@@ -1,11 +1,11 @@
-#include <unistd.h>
 #include <memoryManager.h>
 #define START_ADDRESS 0xF00000
-#define MEMORY_MANAGMENT_NAME 'Heap'
+#define MEMORY_MANAGMENT_NAME 'Fixed size allocation'
 
 typedef struct blockCDT
 {
     size_t size;           // Number of bytes allocated
+    size_t freeSpace;      // Number of bytes free for allocated
     struct blockCDT *prev; // Pointer to prevoius block
     struct blockCDT *next; // Pointer to next block
 } BlockCDT;
@@ -25,6 +25,7 @@ void createMemory(size_t size)
     memoryBlockCount = 1;
     head = START_ADDRESS;
     head->size = 0;
+    head->freeSpace = totalHeapMemory - usedHeapMemory;
     head->prev = NULL;
     head->next = NULL;
 }
@@ -35,7 +36,7 @@ void *memoryManagerAlloc(size_t nbytes)
         return NULL;
     BlockADT current = head;
 
-    while ((totalHeapMemory - usedHeapMemory - current->size) < (nbytes + sizeof(BlockCDT)))
+    while (current->freeSpace < (nbytes + sizeof(BlockCDT)))
     {
         if (current == NULL)
             return NULL;
@@ -45,13 +46,15 @@ void *memoryManagerAlloc(size_t nbytes)
     {
         current->size = nbytes;
         usedHeapMemory += nbytes;
+        current->freeSpace -= nbytes;
         return (void *)current + sizeof(BlockCDT); // Return pointer to next block
     }
     else
     {
         BlockADT nextBlock = (void *)((size_t)current + current->size + sizeof(BlockCDT));
         nextBlock->size = nbytes;
-        current->size = totalHeapMemory - usedHeapMemory - nbytes - sizeof(BlockCDT);
+        nextBlock->freeSpace = current->freeSpace - nbytes - sizeof(BlockCDT);
+        current->freeSpace = 0;
         nextBlock->next = current->next;
         nextBlock->prev = current;
         if (current->next != NULL)
@@ -70,6 +73,7 @@ void memory_manager_free(void *ap)
     BlockADT current = (void *)((size_t)ap - sizeof(BlockCDT));
     if (current->prev == NULL)
     {
+        current->freeSpace += current->size;
         usedHeapMemory -= current->size;
         current->size = 0;
     }
@@ -79,6 +83,7 @@ void memory_manager_free(void *ap)
         prevBlock->next = current->next;
         if (current->next != NULL)
             current->next->prev = prevBlock;
+        prevBlock->freeSpace += current->size + current->freeSpace + sizeof(usedHeapMemory);
         usedHeapMemory -= current->size + sizeof(BlockCDT);
         memoryBlockCount--;
     }

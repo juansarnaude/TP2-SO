@@ -1,7 +1,7 @@
 #ifndef MEMORY_MANAGER_H
 #define MEMORY_MANAGER_H
 
-#include <stdint.h>
+#include <unistd.h>
 
 typedef struct memoryInfo
 {
