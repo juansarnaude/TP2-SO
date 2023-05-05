@@ -1,3 +1,5 @@
+#ifdef HEAP_MM
+
 #include <memoryManager.h>
 #define START_ADDRESS 0xF00000
 #define MEMORY_MANAGMENT_NAME 'Fixed size allocation'
@@ -103,3 +105,5 @@ MemoryInfo *mem_info()
     info->blocksUsed = memoryBlockCount;
     return info;
 }
+
+#endif

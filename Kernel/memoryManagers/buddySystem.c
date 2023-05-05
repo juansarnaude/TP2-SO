@@ -1,7 +1,9 @@
+#ifdef BUDDY_MM
+
 #include <memoryManager.h>
 #define START_ADDRESS 0xF00000
 #define MIN_BUDDY_SIZE (8 * 1024 * 1024)
-
+#define MEMORY_MANAGEMENT_NAME "buddy"
 #define FREE 0
 #define OCCUPIED 1
 
@@ -158,10 +160,12 @@ MemoryInfo *mem_info()
     {
         return NULL;
     }
-    // info->memoryAlgorithmName = strcpy(MEMORY_MANAGMENT_NAME);
+    info->memoryAlgorithmName = strcpy(MEMORY_MANAGEMENT_NAME);
     info->totalMemory = totalMemory;
     info->occupiedMemory = usedMemory;
     info->freeMemory = totalMemory - usedMemory;
     info->blocksUsed = buddyCount;
     return info;
 }
+
+#endif
