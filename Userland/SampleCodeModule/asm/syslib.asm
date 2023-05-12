@@ -7,6 +7,9 @@ GLOBAL sys_time
 GLOBAL sys_copymem
 GLOBAL inv_opcode
 GLOBAL div_zero
+GLOBAL sys_memInfo
+GLOBAL sys_memMalloc
+GLOBAL sys_memFree
 
 section .text
 sys_write:
@@ -67,6 +70,33 @@ sys_copymem:
     push rbp
     mov rbp,rsp
     mov rax,6
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_memInfo:
+    push rbp
+    mov rbp,rsp
+    mov rax,7
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_memMalloc:
+    push rbp
+    mov rbp,rsp
+    mov rax,8
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_memFree:
+    push rbp
+    mov rbp,rsp
+    mov rax,9
     int 0x80
     mov rsp,rbp
     pop rbp

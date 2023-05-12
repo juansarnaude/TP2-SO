@@ -25,7 +25,7 @@ void createMemory(size_t size)
     totalHeapMemory = size;
     usedHeapMemory = sizeof(BlockCDT);
     memoryBlockCount = 1;
-    head = START_ADDRESS;
+    head = (void *)START_ADDRESS;
     head->size = 0;
     head->freeSpace = totalHeapMemory - usedHeapMemory;
     head->prev = NULL;

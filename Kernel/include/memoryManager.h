@@ -2,7 +2,6 @@
 #define MEMORY_MANAGER_H
 
 #include <unistd.h>
-
 typedef struct memoryInfo
 {
     char *memoryAlgorithmName;
