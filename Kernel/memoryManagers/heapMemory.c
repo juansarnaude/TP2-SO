@@ -1,4 +1,4 @@
-#ifdef HEAP_MM
+#ifndef BUDDY_MM
 
 #include <memoryManager.h>
 #define START_ADDRESS 0xF00000
