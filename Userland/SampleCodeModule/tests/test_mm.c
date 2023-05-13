@@ -3,6 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <uniqueTypes.h>
+
+MemoryInfo *sys_memInfo();
+extern void *sys_memMalloc(uint64_t size);
+void sys_memFree(void* ap);
 
 #define MAX_BLOCKS 128
 
@@ -12,6 +17,13 @@ typedef struct MM_rq
   uint32_t size;
 } mm_rq;
 
+static char * max_mem;
+
+void saveTestmmParam(char * address){
+  address+=8;
+  max_mem = address;
+}
+
 void test_mm(int argc, char *argv[])
 {
 
@@ -20,10 +32,10 @@ void test_mm(int argc, char *argv[])
   uint32_t total;
   uint64_t max_memory;
 
-  if (argc != 1)
-    return;
+  //if (argc != 1)
+  //  return;
 
-  if ((max_memory = satoi(argv[0])) <= 0)
+  if ((max_memory = satoi(max_mem)) <= 0)
     return;
 
   while (1)
@@ -63,5 +75,6 @@ void test_mm(int argc, char *argv[])
     for (i = 0; i < rq; i++)
       if (mm_rqs[i].address)
         sys_memFree(mm_rqs[i].address);
+    puts("test_mm WORKS :D\n");
   }
 }

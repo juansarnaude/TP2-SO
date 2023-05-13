@@ -37,10 +37,10 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         sys_copymem(rdi, (uint8_t *)rsi, rdx);
         break;
     case 7:
-        sys_memInfo();
+        return sys_memInfo();
         break;
     case 8:
-        sys_memMalloc((uint64_t)rdi);
+        return (uint64_t)sys_memMalloc(rdi);
         break;
     case 9:
         sys_memFree(rdi);

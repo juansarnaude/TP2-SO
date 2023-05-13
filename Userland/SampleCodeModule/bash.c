@@ -1,4 +1,6 @@
 #include <bash.h>
+#include <syscall.h>
+#include <syslib.h>
 
 #define MAX_SIZE_CMD 32
 static char buffer[32];
@@ -108,7 +110,8 @@ pm commandLine(char *buffer)
     else if ((containsString(buffer, "test_mm")) >= 0)
     {
         putChar('\n');
-        return (command)test_mm;
+        saveTestmmParam(buffer);
+        return (pm)test_mm;
     }
     else
     { // el comando ingresado no existe.

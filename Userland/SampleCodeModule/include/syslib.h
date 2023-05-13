@@ -22,8 +22,9 @@ void div_zero();
 void sys_execve(void (*f1)(), void (*f2)());
 void sys_copymem(uint64_t address, uint8_t *buffer, uint64_t length);
 MemoryInfo *sys_memInfo();
-void *sys_memMalloc(uint64_t size);
+extern void *sys_memMalloc(uint64_t size);
 void sys_memFree(void* ap);
+void test_mm(int argc, char *argv[]);
 
 unsigned int strlen(const char *s);
 void excepDivZero();
@@ -35,6 +36,7 @@ int gets(char *s);
 unsigned int charBelongs(char *s, char c);
 int containsString(const char *p1, const char *p2);
 void savePrintMemParams(char *s);
+void saveTestmmParam(char * address);
 int strcmp(const char *p1, const char *p2);
 void getTime();
 void printPrime();
