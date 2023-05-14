@@ -2,7 +2,7 @@
 
 #include <memoryManager.h>
 #define START_ADDRESS 0xF00000
-#define MIN_BUDDY_SIZE (8 * 1024 * 1024)
+#define MIN_BUDDY_SIZE (8 * 1024)
 #define MEMORY_MANAGEMENT_NAME "buddy"
 #define FREE 0
 #define OCCUPIED 1
@@ -37,29 +37,29 @@ void createMemory(size_t size)
 
     for (int i = 0; i < buddyCount; i++)
     {
-        table[i].occupied = FREE;
-        table[i].childrenStatus = FREE;
+       table[i].occupied = FREE;
+       table[i].childrenStatus = FREE;
     }
 
     size_t buddyCountAux = buddyCount;
-    for (int i = 0; buddyTreeHeight != 0; i++)
+    for (int i = 0; buddyTreeHeight == 0; i++)
     {
         if (buddyCountAux == 1)
         {
             buddyTreeHeight = i;
         }
-        buddyCountAux >> 1;
+        buddyCountAux /= 2;
     }
 }
 
 size_t firstIndexInHeight(size_t height)
 {
-    return (1 << (buddyTreeHeight - height)) - 1;
+    return (POWER_OF_2(height)) - 1;
 }
 
 size_t findIndexInHeight(size_t height, size_t index)
 {
-    return index - firstIndexInHeight(height);
+    return (index - firstIndexInHeight(height));
 }
 
 // Returns the index of the buddy in which it will be positioned. -1 if couldnt find
@@ -96,19 +96,24 @@ void *memoryManagerAlloc(size_t nbytes)
     if (index != 0)
     {
         size_t auxIndex = index;
-        while (auxIndex >= 0)
+        while (auxIndex > 0)
         {
             table[auxIndex].occupied = OCCUPIED;
             table[auxIndex].childrenStatus += 1;
             auxIndex = PARENT(auxIndex);
             height++;
         }
+        table[auxIndex].occupied = OCCUPIED;
+        table[auxIndex].childrenStatus += 1;
     }
 
     table[index].occupied = OCCUPIED;
     buddyCount++;
     usedMemory += MIN_BUDDY_SIZE * POWER_OF_2(buddyTreeHeight - height);
     // Aca esta mandando la direccion de la tabla de buddys y no la direccion de la memoria
+    if(buddyTreeHeight < height){
+        buddyTreeHeight = height;
+    }
     return START_ADDRESS + findIndexInHeight(height, index) * totalMemory / POWER_OF_2(height);
 }
 
@@ -120,9 +125,9 @@ void memory_manager_free(void *ap)
         return;
     }
     size_t position = (size_t)ap;
-
+    size_t a = buddyTreeHeight;
     size_t indexInMaxHeight = (position - START_ADDRESS) / MIN_BUDDY_SIZE;
-    size_t index = findIndexInHeight(buddyTreeHeight, indexInMaxHeight);
+    size_t index = indexInMaxHeight + firstIndexInHeight(buddyTreeHeight);
     size_t height = buddyTreeHeight;
     size_t found = 0;
 
@@ -137,20 +142,27 @@ void memory_manager_free(void *ap)
         {
             height++;
             index = PARENT(index);
+            //Agregar qué pasa si no lo encuentra
         }
     }
 
     index = PARENT(index);
 
-    while (index >= 0)
+    while (index > 0)
     {
         table[index].childrenStatus -= 1;
         if (table[index].childrenStatus <= 0)
         {
             table[index].occupied = FREE;
         }
+        index = PARENT(index);
     }
 
+    table[index].childrenStatus -= 1;
+    if (table[index].childrenStatus <= 0)
+    {
+        table[index].occupied = FREE;
+    }
     usedMemory -= MIN_BUDDY_SIZE * POWER_OF_2(buddyTreeHeight - height);
     buddyCount--;
 }

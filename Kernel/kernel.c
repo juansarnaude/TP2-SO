@@ -47,7 +47,7 @@ int main()
 {
 	ncClear();
 	load_idt();
-	createMemory(0x2000000 - 0xF00000);
+	createMemory(0x2000000 - 0x1000000);
 	loadUserland(sampleCodeModuleAddress, (uint64_t *)0x900000);
 	ncPrint("[Finished]");
 	return 0;

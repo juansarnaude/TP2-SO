@@ -5,7 +5,7 @@ docker start tpe > /dev/null
 docker exec -it tpe make -C /root/Toolchain clean
 docker exec -it tpe make -C /root clean
 docker exec -it tpe make -C /root/Toolchain all
-docker exec -it tpe make -C /root all
+docker exec -it tpe make -C /root buddy
 docker stop tpe > /dev/null
 printf "\033[0;36m############################### END COMPILE ###############################\033[0m\n"
 
