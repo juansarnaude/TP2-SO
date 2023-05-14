@@ -7,7 +7,7 @@
 
 MemoryInfo *sys_memInfo();
 extern void *sys_memMalloc(uint64_t size);
-void sys_memFree(void* ap);
+void sys_memFree(void *ap);
 
 #define MAX_BLOCKS 128
 
@@ -17,10 +17,11 @@ typedef struct MM_rq
   uint32_t size;
 } mm_rq;
 
-static char * max_mem;
+static char *max_mem;
 
-void saveTestmmParam(char * address){
-  address+=8;
+void saveTestmmParam(char *address)
+{
+  address += 8;
   max_mem = address;
 }
 
@@ -32,8 +33,8 @@ void test_mm(int argc, char *argv[])
   uint32_t total;
   uint64_t max_memory;
 
-  //if (argc != 1)
-  //  return;
+  // if (argc != 1)
+  //   return;
 
   if ((max_memory = satoi(max_mem)) <= 0)
     return;
