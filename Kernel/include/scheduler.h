@@ -7,18 +7,47 @@
 #include <timerDriver.h>
 #include <defs.h>
 
-void _defaultExit();
+typedef unsigned int pid_t;
+typedef unsigned int priority_t;
+typedef unsigned int status_t;
 
-void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers);
+typedef struct node
+{
+    PCB process;
+    struct node *next;
+} Node;
 
-void nextTask(uint64_t * registers);
+typedef Node *Queue;
 
-void changeStatus(unsigned int taskNum);
+typedef struct blockednode
+{
+    pid_t pid;
+    struct blockednode *next;
+} BlockedNode;
 
-void exitTask(int retValue, uint64_t * registers);
+typedef struct
+{
+    BlockedNode *first;
+    BlockedNode *last;
+    unsigned int qty;
+} BlockedQueueCDT;
 
-void terminateTasks();
+typedef BlockedQueueCDT *BlockedQueueADT;
 
-int getCurrentTask();
+typedef struct
+{
+    pid_t pid;
+    priority_t priority;
+    int newPriority;
+    status_t status;
+    unsigned int quantumsLeft;
+    uint64_t rsp;
+    uint64_t stackBase;
+    BlockedQueueADT blockedQueue;
+    fd_t fileDescriptors[MAX_FDS];
+    unsigned int lastFd;
+    unsigned int argc;
+    char **argv;
+} PCB;
 
-#endif //SCHEDULER_H
+#endif // SCHEDULER_H

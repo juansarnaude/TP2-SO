@@ -11,6 +11,8 @@ static MemoryInfo *sys_memInfo();
 static void *sys_memMalloc(uint64_t size);
 static void sys_memFree(void *ap);
 
+//AGREGAR SYSCALL EXIT QUE ES LLAMADA EN SCHEDULER.ASM
+
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t *registers)
 {
     switch (rax)
