@@ -92,6 +92,7 @@ void *memoryManagerAlloc(size_t nbytes)
     if (index == -1)
     {
         // ERROR
+        return -1;
     }
     if (index != 0)
     {

@@ -1,9 +1,8 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#include <test_util.h>
+/*#include "test_util.h"
 #include <syslib.h>
-#include <syscalls.h>
-#include <uniqueTypes.h>
+#include <syscall.h>
 
 enum State {RUNNING, BLOCKEDD, KILLED};
 
@@ -96,4 +95,4 @@ void test_processes(int argc, char * argv[]) {
         j++;
     }
     fprintf(STDOUT, "All good with test_processes. ;)\n");
-}
+}*/

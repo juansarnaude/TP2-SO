@@ -1,3 +1,7 @@
+#define MAX_BUFFER  512
+
+typedef int pid_t;
+
 typedef struct
 {
     uint8_t day, month, year;

@@ -19,12 +19,11 @@ void sys_time(time_t *time);
 int sys_getregs(uint64_t *registers);
 void inv_opcode();
 void div_zero();
-void sys_execve(void (*f1)(), void (*f2)());
 void sys_copymem(uint64_t address, uint8_t *buffer, uint64_t length);
 MemoryInfo *sys_memInfo();
 extern void *sys_memMalloc(uint64_t size);
 void sys_memFree(void* ap);
-void test_mm(int argc, char *argv[]);
+pid_t sys_exec(uint64_t program, unsigned int argc, char * argv[]); 
 
 unsigned int strlen(const char *s);
 void excepDivZero();
@@ -38,11 +37,8 @@ int containsString(const char *p1, const char *p2);
 void savePrintMemParams(char *s);
 void saveTestmmParam(char * address);
 int strcmp(const char *p1, const char *p2);
-void getTime();
-void printPrime();
-void fibonacciNumbs();
-void printmem();
-void inforeg();
+char ** strtok(char * str, char delim, int * qty);
+void strcpy(char * dest, char * src);
 
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 

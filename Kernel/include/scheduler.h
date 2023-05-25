@@ -6,48 +6,19 @@
 #include <interrupts.h>
 #include <timerDriver.h>
 #include <defs.h>
+#include <queue.h>
 
-typedef unsigned int pid_t;
-typedef unsigned int priority_t;
-typedef unsigned int status_t;
-
-typedef struct node
-{
-    PCB process;
-    struct node *next;
-} Node;
-
-typedef Node *Queue;
-
-typedef struct blockednode
-{
-    pid_t pid;
-    struct blockednode *next;
-} BlockedNode;
-
-typedef struct
-{
-    BlockedNode *first;
-    BlockedNode *last;
-    unsigned int qty;
-} BlockedQueueCDT;
-
-typedef BlockedQueueCDT *BlockedQueueADT;
-
-typedef struct
-{
-    pid_t pid;
-    priority_t priority;
-    int newPriority;
-    status_t status;
-    unsigned int quantumsLeft;
-    uint64_t rsp;
-    uint64_t stackBase;
-    BlockedQueueADT blockedQueue;
-    fd_t fileDescriptors[MAX_FDS];
-    unsigned int lastFd;
-    unsigned int argc;
-    char **argv;
-} PCB;
+void dummyProcess();
+void createScheduler();
+PCB *getProcess(pid_t pid);
+uint64_t getCurrentPid();
+int blockProcess(pid_t pid);
+int unblockProcess(pid_t pid);
+pid_t createProcess(uint64_t rip, int argc, char *argv[]);
+void nextProcess();
+void prepareDummyForWork();
+uint64_t contextSwitch(uint64_t rsp);
+int killProcess(int returnValue);
+int changePriority(pid_t pid, int priorityValue);
 
 #endif // SCHEDULER_H

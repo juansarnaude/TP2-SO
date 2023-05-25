@@ -38,7 +38,7 @@ int gets(char * s){
     return i;
 }
 
-void getTime(){
+void getTime(int argc, char * argv[]){
     time_t time;
     char buffer[64] = {'0'};
     sys_time(&time);
@@ -153,7 +153,7 @@ int isPrime(int n)
 }
 
 //Ciclo infinito que imprime numeros primos
-void printPrime(){
+void printPrime(int argc, char * argv[]){
     char num[30];
     int i=2;
     puts("Prime numbers: ");
@@ -172,7 +172,7 @@ void printPrime(){
 }
 
 //Ciclo infinito que imprime numeros de secuencia de fibonacci
-void fibonacciNumbs(){
+void fibonacciNumbs(int argc, char * argv[]){
     char num[30];
     int t1 = 0, t2 = 1;
     long nextTerm = t1 + t2;
@@ -267,7 +267,7 @@ int checkPrintMemParams(char *s,uint64_t* address){
     return 1;
 }
 
-void printmem(){
+void printmem(int argc, char * argv[]){
     uint8_t copy[32];
     uint64_t address;
 
@@ -287,7 +287,7 @@ void printmem(){
     putChar(' ');
 }
 
-void inforeg(){
+void inforeg(int argc, char * argv[]){
     static char* registers[18] = { "R15", "R14", "R13", "R12", "R11", "R10", "R9 ", "R8 ", "RSI", "RDI", "RBP", "RDX", "RCX", "RBX", "RAX", "RIP", "RFL", "RSP" };
 
     uint64_t regval[18];
@@ -337,4 +337,59 @@ uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 	}
 
 	return digits;
+}
+
+char ** strtok(char * str, char delim, int * qty) {
+    (*qty) = 1;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == delim) {
+            (*qty)++;
+        }
+    }
+    char ** parts = sys_memMalloc(sizeof(char *) * *qty);
+    if (parts == NULL) {
+        return NULL;
+    }
+    char buffer[MAX_BUFFER];
+    int i, j, k;
+    for (i = 0, j = 0, k = 0; str[j] != '\0'; j++) {
+        if (str[j] == delim) {
+            buffer[i] = '\0';
+            char * new_part = sys_memMalloc(i + 1);
+            if (new_part == NULL) {
+                while (k > 0) {
+                    sys_memFree((uint64_t) parts[--k]);
+                }
+                sys_memFree((uint64_t) parts);
+                return NULL;
+            }
+            strcpy(new_part, buffer);
+            parts[k++] = new_part;
+            i = 0;
+        } else {
+            buffer[i] = str[j];
+            i++;
+        }
+    }
+    buffer[i] = '\0';
+    char * new_part = sys_memMalloc(i + 1);
+    if (new_part == NULL) {
+        while (k > 0) {
+            sys_memFree((uint64_t) parts[--k]);
+        }
+        sys_memFree((uint64_t) parts);
+        return NULL;
+    }
+    strcpy(new_part, buffer);
+    parts[k++] = new_part;
+    return parts;
+}
+
+void strcpy(char * dest, char * src) {
+	unsigned int len = strlen(src);
+    int i;
+	for (i = 0; i < len; i++) {
+        dest[i] = src[i];
+    }
+    dest[i] = 0;
 }

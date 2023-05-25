@@ -1,23 +1,53 @@
-global load_process
-global _int20h
-
-;extern context_switch
+GLOBAL _defaultExit
+EXTERN contextSwitch
+GLOBAL loadProcess
+GLOBAL _int20h
 
 section .text
 
-_start:
-    call rcx
+_defaultExit:
     mov rdi, rax
-    mov rax, 3
+    mov rax, 4
     int 80h
 
-; rdi -> rip
+scheduler_handler:
+    pushState
+    
+    mov rdi, rsp
+    call contextSwitch
+    mov rsp, rax
+
+    mov al, 20h
+    out 20h, al
+    
+    popState
+
+    iretq
+
+_start:
+    ; Como en RCX quedo el entryPoint que estaba en rdi entonces
+    ; debo llamar a este registro
+    call rcx
+    ; La función de userland tiene su entrypoint en rcx y va a devolver algo
+    ; ese algo se guarda en rax.
+    ; Guardamos el return value de la funcion en rdi para pasarselo como primer
+    ; parametro a la syscall
+    mov rdi, rax
+    ; TODO mov rax, Numero de syscall de exit
+    mov rax, 4
+    int 80h
+    int 20h
+
+; Creamos el stack "simulado" del proceso para que el scheduler
+; pueda tomar el programa y correrlo
+; rdi -> entryPoint, el puntero a funcion rip
 ; rsi -> rsp
 ; rdx -> argc
 ; rcx -> argv
-load_process:
+loadProcess:
     enter 0, 0
 
+    ; Muevo el rsp que me pasan por parametro a el registro rsp
     mov rsp, rsi
 
     push qword 0x0      ; SS
@@ -45,7 +75,7 @@ load_process:
     mov rax, rsp
 
     leave
-    ret    	
+    ret        
 
 _int20h:
     int 20h

@@ -5,6 +5,8 @@
 #ifndef _defs_
 #define _defs_
 
+#include <stdint.h>
+
 #define NULL ((void*)0)
 
 /* Flags para derechos de acceso de los segmentos */
@@ -27,5 +29,75 @@
 #define RIP_POS REG_AMOUNT
 #define RFLAGS_POS (REG_AMOUNT+2)
 #define RSP_POS (REG_AMOUNT+3)
+
+#define PIPESIZE  512
+#define MAX_FDS   16
+
+typedef int pid_t;
+
+typedef struct blockednode
+{
+    pid_t pid;
+    struct blockednode *next;
+} BlockedNode;
+
+typedef struct
+{
+    BlockedNode *first;
+    BlockedNode *last;
+    unsigned int qty;
+} BlockedQueueCDT;
+
+typedef BlockedQueueCDT *BlockedQueueADT;
+
+/* Pipe */
+typedef struct {
+    char data[PIPESIZE];
+    unsigned int read_offset;
+    unsigned int write_offset;
+    unsigned int open_for_read;
+    unsigned int open_for_write;
+    BlockedQueueADT blocked_in_read;
+    BlockedQueueADT blocked_in_write;
+} Pipe;
+
+typedef struct pipenode {
+    Pipe * p;
+    struct pipenode * next;
+} PipeNode;
+
+typedef PipeNode * PipeList;
+
+typedef struct {
+    unsigned int mode;
+    Pipe * pipe;
+} fd_t;
+
+typedef unsigned int priority_t;
+typedef unsigned int status_t;
+
+typedef struct
+{
+    pid_t pid;
+    priority_t priority;
+    int newPriority;
+    status_t status;
+    unsigned int quantumsLeft;
+    uint64_t rsp;
+    uint64_t stackBase;
+    BlockedQueueADT blockedQueue;
+    fd_t fileDescriptors[MAX_FDS];
+    unsigned int lastFd;
+    unsigned int argc;
+    char **argv;
+} PCB;
+
+typedef struct node
+{
+    PCB process;
+    struct node *next;
+} Node;
+
+typedef Node *Queue;
 
 #endif

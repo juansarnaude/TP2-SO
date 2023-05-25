@@ -1,15 +1,16 @@
 #include <syscallDispatcher.h>
 #include <memoryManager.h>
+#include <scheduler.h>
 
 static uint64_t sys_read(unsigned int fd, char *output, uint64_t count);
 static void sys_write(unsigned fd, const char *buffer, uint64_t count);
-static int sys_exec(int (*program1)(), int (*program2)(), uint64_t *registers);
-static void sys_exit(int retValue, uint64_t *registers);
+static pid_t sys_exec(uint64_t program, unsigned int argc, char * argv[]); 
+static void sys_exit(int return_value);
 static void sys_time(time_t *s);
 static void sys_copymem(uint64_t address, uint8_t *buffer, uint64_t length);
 static MemoryInfo *sys_memInfo();
 static void *sys_memMalloc(uint64_t size);
-static void sys_memFree(void *ap);
+static void sys_memFree(uint64_t ap);
 
 //AGREGAR SYSCALL EXIT QUE ES LLAMADA EN SCHEDULER.ASM
 
@@ -27,10 +28,10 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         return (uint64_t)getRegisters((uint64_t *)rdi);
         break;
     case 3:
-        return sys_exec((int (*)())rdi, (int (*)())rsi, registers);
+        return (uint64_t) sys_exec(rdi, (unsigned int) rsi, (char **) rdx);
         break;
     case 4:
-        sys_exit(rdi, registers);
+        sys_exit(rdi);
         break;
     case 5:
         sys_time((time_t *)rdi);
@@ -39,7 +40,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         sys_copymem(rdi, (uint8_t *)rsi, rdx);
         break;
     case 7:
-        return sys_memInfo();
+        return (uint64_t)sys_memInfo();
         break;
     case 8:
         return (uint64_t)sys_memMalloc(rdi);
@@ -84,15 +85,20 @@ static void sys_write(unsigned fd, const char *buffer, uint64_t count)
     }
 }
 
-static int sys_exec(int (*program1)(), int (*program2)(), uint64_t *registers)
+static pid_t sys_exec(uint64_t program, unsigned int argc, char * argv[]) 
 {
-    loadTasks(program1, program2, registers);
-    return 0;
+    return createProcess(program, argc, argv);
 }
 
-static void sys_exit(int retValue, uint64_t *registers)
-{
-    exitTask(retValue, registers);
+static void sys_exit(int return_value) {
+    PCB * pcb = getProcess(getCurrentPid());
+    unsigned int lastFd = pcb->lastFd;
+
+    for (int i = 0; i < lastFd; i++) {
+        //sys_close(i);
+    }
+
+    killProcess(return_value);
 }
 
 static void sys_time(time_t *s)
@@ -120,7 +126,7 @@ static void *sys_memMalloc(uint64_t size)
     return memoryManagerAlloc(size);
 }
 
-static void sys_memFree(void *ap)
+static void sys_memFree(uint64_t ap)
 {
-    memory_manager_free(ap);
+    memory_manager_free((void *)ap);
 }

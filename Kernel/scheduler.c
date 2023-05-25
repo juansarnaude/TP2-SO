@@ -73,13 +73,16 @@ void dummyProcess()
 {
     while (1)
     {
+        ncPrint("a");
         _hlt();
     }
 }
 
 void createScheduler()
 {
-    dummyProcessPid = createProcess(dummyProcess, 0, NULL);
+    char * name = "Kernel Task";
+    char * argv[] = {name};
+    dummyProcessPid = createProcess((uint64_t)dummyProcess, 1, argv);
     active->process.status = BLOCKED;
     readyProcessAmount--;
 }
@@ -168,7 +171,7 @@ int unblockProcess(pid_t pid)
 
     while (!found && current != NULL)
     {
-        if (current->process.pid = NULL)
+        if (current->process.pid == pid)
         {
             found = 1;
             current->process.status = READY;
@@ -181,7 +184,7 @@ int unblockProcess(pid_t pid)
     current = expired;
     while (!found && current != NULL)
     {
-        if (current->process.pid = NULL)
+        if (current->process.pid == pid)
         {
             found = 1;
             current->process.status = READY;
@@ -199,19 +202,32 @@ int unblockProcess(pid_t pid)
     return -1;
 }
 
-uint64_t createProcess(uint64_t rip, int argc, char *argv[])
+char ** copy_argv(int argc, char ** argv) {
+    char ** new_argv = memoryManagerAlloc(sizeof(char *) * argc);
+    for (int i = 0; i < argc; i++) {
+        new_argv[i] = strcpy(argv[i]);
+    }
+    return new_argv;
+}
+
+pid_t createProcess(uint64_t rip, int argc, char *argv[])
 {
     Node *newProcess = memoryManagerAlloc(sizeof(Node));
-    newProcess->process.pid = processAmount;
+    newProcess->process.pid = processAmount++;
     newProcess->process.priority = DEFAULT_PRIORITY;
     newProcess->process.quantumsLeft = priorities[DEFAULT_PRIORITY];
-    newProcess->process.blockedQueue = newBlockedQueue();
+    newProcess->process.blockedQueue = newQueue();
     newProcess->process.newPriority = -1;
     newProcess->process.status = READY;
+    newProcess->process.argc = argc;
+    newProcess->process.argv = copy_argv(argc, argv);
 
-    uint64_t rsp = memoryManagerAlloc(4 * 1024);
-
-    uint64_t newRsp = loadProcess(rip, rsp + 4 * 1024, argc, argv);
+    uint64_t rsp = (uint64_t)memoryManagerAlloc(4 * 1024);
+    if(rsp == 0) {
+        return -1;
+    }
+    newProcess->process.stackBase = rsp;
+    uint64_t newRsp = (uint64_t)loadProcess(rip, rsp + 4 * 1024, newProcess->process.argc,(uint64_t) newProcess->process.argv);
     newProcess->process.rsp = newRsp;
 
     if (active == NULL)
@@ -431,7 +447,7 @@ int killProcess(int returnValue)
     active = currentProcess->next;
     readyProcessAmount--;
     freeQueue(currentProcess->process.blockedQueue);
-    memory_manager_free(currentProcess->process.stackBase);
+    memory_manager_free((void *)currentProcess->process.stackBase);
     memory_manager_free(currentProcess);
     proccessBeingRun = 0;
     return returnValue;

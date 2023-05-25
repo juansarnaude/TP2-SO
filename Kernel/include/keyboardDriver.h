@@ -4,7 +4,7 @@
 #include <idtLoader.h>
 #include <naiveConsole.h>
 #include <lib.h>
-#include <scheduler.h>
+#include <scheduler0.1.h>
 #include <inforeg.h>
 
 void keyboard_handler(uint64_t * registers);

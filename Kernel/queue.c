@@ -28,9 +28,9 @@ pid_t dequeuePid(BlockedQueueADT queue) {
 
 void enqueuePid(BlockedQueueADT queue, pid_t pid) {
     if(queue == NULL) {
-        return -1;
+        return;
     }
-    BlockedNode * newNode = memory_manager_alloc(sizeof(BlockedNode));
+    BlockedNode * newNode = memoryManagerAlloc(sizeof(BlockedNode));
     newNode->pid = pid;
     newNode->next = NULL;
     if(queue->first == NULL) {

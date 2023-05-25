@@ -1,6 +1,7 @@
 #include <bash.h>
 #include <syscall.h>
 #include <syslib.h>
+#include <processes.h>
 
 #define MAX_SIZE_CMD 32
 static char buffer[32];
@@ -13,11 +14,16 @@ int readInput();
 void unknownCommand();
 void pipeManager();
 
+
+command command_parser(char * name);
 pm commandLine(char *buffer);
+
+command bck_fun = NULL;
+int bck_argc = -1;
+char ** bck_argv = NULL;
 
 void bash()
 {
-    help();
     int i = 0;
     while (i != -1)
     {
@@ -30,25 +36,32 @@ void bash()
 int readInput()
 {
     int sizeRead = gets(buffer);
+    int part_count;
+    char ** parts = strtok(buffer, ' ', &part_count);
     if (strcmp(buffer, "exit") == 0)
     {
         puts("\nGoodbye\n");
         return -1;
-    }
+    } 
     else if (charBelongs(buffer, '|'))
     {
         putChar('\n');
-        pipeManager();
     }
     else
     {
-        pm fun = commandLine(buffer);
-        if (fun != NULL)
+        command fun = command_parser(parts[0]);
+        if (fun == NULL)
         {
-            (*fun)();
+            unknownCommand(parts[0]);
+        }else{
+            sys_exec((uint64_t) fun, part_count, parts);
         }
     }
     // etc, para los distintos comandos a implementar
+    for (int i = 0; i < part_count; i++) {
+        sys_memFree((uint64_t) parts[i]);
+    }
+    sys_memFree((uint64_t) parts);
     return sizeRead;
 }
 
@@ -59,59 +72,64 @@ void unknownCommand()
     putChar('\n');
 }
 
-pm commandLine(char *buffer)
+command command_parser(char *buffer)
 {
     if (strcmp(buffer, "time") == 0)
     {
         putChar('\n');
-        return (pm)getTime;
+        return (command)getTime;
     }
     else if (strcmp(buffer, "prime") == 0)
     {
         putChar('\n');
-        return (pm)printPrime;
+        return (command)printPrime;
     }
     else if (strcmp(buffer, "fibonacci") == 0)
     {
         putChar('\n');
-        return (pm)fibonacciNumbs;
+        return (command)fibonacciNumbs;
     }
     else if (strcmp(buffer, "inforeg") == 0)
     {
         putChar('\n');
-        return (pm)inforeg;
+        return (command)inforeg;
     }
     else if (strcmp(buffer, "dividebyzero") == 0)
     {
         putChar('\n');
-        return (pm)excepDivZero;
+        return (command)excepDivZero;
     }
     else if (strcmp(buffer, "help") == 0)
     {
         putChar('\n');
-        return (pm)help;
+        return (command)help;
     }
     else if (strcmp(buffer, "invalidopcode") == 0)
     {
         putChar('\n');
-        return (pm)excepInvalidOpcode;
+        return (command)excepInvalidOpcode;
     }
     else if (containsString(buffer, "printmem") >= 0)
     {
         putChar('\n');
         savePrintMemParams(buffer);
-        return (pm)printmem;
+        return (command)printmem;
     }
     else if ((strcmp(buffer, "inforeg")) == 0)
     {
         putChar('\n');
-        return (pm)inforeg;
+        return (command)inforeg;
     }
     else if ((containsString(buffer, "test_mm")) >= 0)
     {
         putChar('\n');
         saveTestmmParam(buffer);
-        return (pm)test_mm;
+        return (command)test_mm;
+    }
+    else if ((containsString(buffer, "test_processes")) >= 0)
+    {
+        putChar('\n');
+        return (command)test_mm;
     }
     else
     { // el comando ingresado no existe.
@@ -120,43 +138,7 @@ pm commandLine(char *buffer)
     return NULL;
 }
 
-void pipeManager()
-{
-    char cmd1[MAX_SIZE_CMD], cmd2[MAX_SIZE_CMD];
-    unsigned int i = 0;
-    while (buffer[i] != '|' && i < MAX_SIZE_CMD)
-    {
-        cmd1[i] = buffer[i];
-        i++;
-    }
-    if (i == MAX_SIZE_CMD)
-    {
-        unknownCommand(cmd1);
-        return;
-    }
-    cmd1[i] = '\0';
-    i++; // como estoy parado en la '|' paso al siguiente
-    unsigned int j = 0;
-    while (buffer[i] != '\0' && j < MAX_SIZE_CMD)
-    {
-        cmd2[j++] = buffer[i++];
-    }
-    if (j == MAX_SIZE_CMD)
-    {
-        unknownCommand(cmd2);
-        return;
-    }
-    cmd2[j] = '\0';
-    pm fun1 = commandLine(cmd1);
-    pm fun2 = commandLine(cmd2);
-    if (fun1 == NULL || fun2 == NULL)
-    {
-        return;
-    }
-    sys_execve((void (*)())fun1, (void (*)())fun2);
-}
-
-void help()
+void help(int argc, char * argv[])
 {
     const char *helpstring =
         "help                 Provides help information for commands.\n"

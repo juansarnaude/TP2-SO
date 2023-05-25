@@ -3,7 +3,7 @@
 #define INVALID_OPCODE_EXCEPTION_ID 6
 
 #include <naiveConsole.h>
-#include <scheduler.h>
+#include <scheduler0.1.h>
 
 static void zero_division(uint64_t rip, uint64_t rsp, const uint64_t * backup);
 static void invalid_opcode(uint64_t rip, uint64_t rsp, const uint64_t * backup);
