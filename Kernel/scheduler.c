@@ -65,7 +65,7 @@ Queue expired = NULL;
 // Schelduler states
 int processAmount = -1;
 unsigned int processReadyCount = 0;
-pid_t dummyProcessPid;
+pid_t dummyProcessPid = NULL;
 char proccessBeingRun = 0;
 int readyProcessAmount = 0;
 
@@ -128,6 +128,7 @@ uint64_t getCurrentPid()
 int blockProcess(pid_t pid)
 {
     Node *current = active;
+    Node * previous = NULL;
     char found = 0;
 
     while (!found && current != NULL)
@@ -139,10 +140,12 @@ int blockProcess(pid_t pid)
         }
         else
         {
+            previous = current;
             current = current->next;
         }
     }
     current = expired;
+    previous = NULL;
     while (!found && current != NULL)
     {
         if (current->process.pid == pid)
@@ -152,6 +155,7 @@ int blockProcess(pid_t pid)
         }
         else
         {
+            previous = current;
             current = current->next;
         }
     }
@@ -272,7 +276,7 @@ pid_t createProcess(uint64_t rip, int argc, char *argv[])
             }
         }
     }
-    processAmount++;
+    readyProcessAmount++;
     return newProcess->process.pid;
 }
 

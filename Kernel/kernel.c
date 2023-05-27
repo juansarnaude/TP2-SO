@@ -35,8 +35,8 @@ void *getStackBase()
 void *initializeKernelBinary()
 {
 	void *moduleAddresses[] = {
-		sampleCodeModuleAddress,
-		sampleDataModuleAddress};
+		(void *)sampleCodeModuleAddress,
+		(void *)sampleDataModuleAddress};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
 
@@ -51,11 +51,8 @@ int main()
 	load_idt();
 	createMemory(0x2000000 - 0xF00000);
 	createScheduler();
-	char * name = "Userland";
-    char * argv[] = {name};
-    createProcess(sampleCodeModuleAddress, 1, argv);
+    createProcess(sampleCodeModuleAddress, 0, NULL);
 	_sti();
 	_hlt();
-	ncPrint("[Finished]");
 	return 0;
 }

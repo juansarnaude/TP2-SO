@@ -10,6 +10,7 @@ GLOBAL div_zero
 GLOBAL sys_memInfo
 GLOBAL sys_memMalloc
 GLOBAL sys_memFree
+GLOBAL sys_waitpid
 
 section .text
 sys_write:
@@ -97,6 +98,15 @@ sys_memFree:
     push rbp
     mov rbp,rsp
     mov rax,9
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_waitpid:
+push rbp
+    mov rbp,rsp
+    mov rax,10
     int 0x80
     mov rsp,rbp
     pop rbp

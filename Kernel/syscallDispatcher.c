@@ -11,6 +11,7 @@ static void sys_copymem(uint64_t address, uint8_t *buffer, uint64_t length);
 static MemoryInfo *sys_memInfo();
 static void *sys_memMalloc(uint64_t size);
 static void sys_memFree(uint64_t ap);
+static pid_t sys_waitpid(pid_t pid);
 
 //AGREGAR SYSCALL EXIT QUE ES LLAMADA EN SCHEDULER.ASM
 
@@ -47,6 +48,9 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         break;
     case 9:
         sys_memFree(rdi);
+        break;
+    case 10:
+        return sys_waitpid( (pid_t) rdi);
         break;
     }
     return 0;
@@ -129,4 +133,18 @@ static void *sys_memMalloc(uint64_t size)
 static void sys_memFree(uint64_t ap)
 {
     memory_manager_free((void *)ap);
+}
+
+static pid_t sys_waitpid(pid_t pid)
+{
+    PCB * processPcb = getProcess(pid);
+    if (processPcb == NULL) {
+        return -1;
+    }
+
+    pid_t currentPid = getCurrentPid();
+    enqueuePid(processPcb->blockedQueue, currentPid);
+    blockProcess(currentPid);
+
+    return pid;
 }

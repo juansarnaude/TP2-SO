@@ -54,14 +54,15 @@ int readInput()
         {
             unknownCommand(parts[0]);
         }else{
-            sys_exec((uint64_t) fun, part_count, parts);
+            pid_t pid = sys_exec((uint64_t) fun, part_count, parts);
+            sys_waitpid(pid);
         }
     }
     // etc, para los distintos comandos a implementar
-    for (int i = 0; i < part_count; i++) {
-        sys_memFree((uint64_t) parts[i]);
-    }
-    sys_memFree((uint64_t) parts);
+    // for (int i = 0; i < part_count; i++) {
+    //     sys_memFree((uint64_t) parts[i]);
+    // }
+    // sys_memFree((uint64_t) parts);
     return sizeRead;
 }
 

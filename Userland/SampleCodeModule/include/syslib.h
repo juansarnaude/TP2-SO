@@ -23,7 +23,8 @@ void sys_copymem(uint64_t address, uint8_t *buffer, uint64_t length);
 MemoryInfo *sys_memInfo();
 extern void *sys_memMalloc(uint64_t size);
 void sys_memFree(void* ap);
-pid_t sys_exec(uint64_t program, unsigned int argc, char * argv[]); 
+pid_t sys_exec(uint64_t program, unsigned int argc, char * argv[]);
+pid_t sys_waitpid(pid_t pid); 
 
 unsigned int strlen(const char *s);
 void excepDivZero();

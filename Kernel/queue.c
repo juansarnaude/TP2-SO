@@ -9,6 +9,7 @@ BlockedQueueADT newQueue() {
     }
     queue->first = NULL;
     queue->last = NULL;
+    queue->qty = 0;
     return queue;
 }
 
@@ -20,6 +21,7 @@ pid_t dequeuePid(BlockedQueueADT queue) {
     if(first == NULL) {
         return -1;
     }
+    queue->qty--;
     queue->first = first->next;
     pid_t ans = first->pid;
     memory_manager_free(first);
@@ -40,6 +42,7 @@ void enqueuePid(BlockedQueueADT queue, pid_t pid) {
         queue->last->next = newNode;
         queue->last = newNode;
     }
+    queue->qty++;
 }
 
 void freeQueue(BlockedQueueADT queue) {
