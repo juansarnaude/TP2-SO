@@ -12,6 +12,9 @@ static MemoryInfo *sys_memInfo();
 static void *sys_memMalloc(uint64_t size);
 static void sys_memFree(uint64_t ap);
 static pid_t sys_waitpid(pid_t pid);
+static int sys_kill(pid_t pid);
+static int sys_block(pid_t pid);
+static int sys_unblock(pid_t pid);
 
 //AGREGAR SYSCALL EXIT QUE ES LLAMADA EN SCHEDULER.ASM
 
@@ -51,6 +54,15 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         break;
     case 10:
         return sys_waitpid( (pid_t) rdi);
+        break;
+    case 11:
+        return sys_kill( (pid_t) rdi);
+        break;
+    case 12:
+        return sys_block( (pid_t) rdi );
+        break;
+    case 13:
+        return sys_unblock( (pid_t) rdi);
         break;
     }
     return 0;
@@ -147,4 +159,32 @@ static pid_t sys_waitpid(pid_t pid)
     blockProcess(currentPid);
 
     return pid;
+}
+
+static int sys_kill(pid_t pid) {
+    if (pid <= 0) {
+        return -1;
+    }
+
+    int x = prepareDummyForWork(pid);
+    if (x == -1) {
+        return -1;
+    }
+
+    sys_exit(0);
+    return 0;
+}
+
+static int sys_block(pid_t pid){
+    if(pid <= 0){
+        return -1;
+    }
+    return blockProcess(pid);
+}
+
+static int sys_unblock(pid_t pid){
+    if(pid <= 0){
+        return -1;
+    }
+    return unblockProcess(pid);
 }

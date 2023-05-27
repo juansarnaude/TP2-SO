@@ -11,6 +11,9 @@ GLOBAL sys_memInfo
 GLOBAL sys_memMalloc
 GLOBAL sys_memFree
 GLOBAL sys_waitpid
+GLOBAL sys_kill
+GLOBAL sys_block
+GLOBAL sys_unblock
 
 section .text
 sys_write:
@@ -104,9 +107,36 @@ sys_memFree:
     ret
 
 sys_waitpid:
-push rbp
+    push rbp
     mov rbp,rsp
     mov rax,10
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_kill:
+    push rbp
+    mov rbp,rsp
+    mov rax,11
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_block:
+    push rbp
+    mov rbp,rsp
+    mov rax,12
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_unblock:
+    push rbp
+    mov rbp,rsp
+    mov rax,13
     int 0x80
     mov rsp,rbp
     pop rbp

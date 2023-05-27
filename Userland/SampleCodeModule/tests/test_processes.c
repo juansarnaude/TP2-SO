@@ -1,6 +1,6 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-/*#include "test_util.h"
+#include "test_util.h"
 #include <syslib.h>
 #include <syscall.h>
 
@@ -35,7 +35,7 @@ void test_processes(int argc, char * argv[]) {
     while (j < 10) {
         // Create max_processes processes
         for (rq = 0; rq < max_processes; rq++) {
-            p_rqs[rq].pid = exec((uint64_t) endless_loop, 1, arg);
+            p_rqs[rq].pid = sys_exec((uint64_t) endless_loop, 1, arg);
 
             if (p_rqs[rq].pid == -1) {
                 fprintf(STDOUT, "test_processes: ERROR creating process\n");
@@ -50,12 +50,12 @@ void test_processes(int argc, char * argv[]) {
         // Randomly kills, blocks or unblocks processes until every one has been killed
         while (alive > 0) {
             for (rq = 0; rq < max_processes; rq++) {
-                action = get_uniform(100) % 2; 
+                action = GetUniform(100) % 2; 
 
                 switch(action) {
                     case 0:
                         if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKEDD) {
-                            if (kill(p_rqs[rq].pid) == -1) {  
+                            if (sys_kill(p_rqs[rq].pid) == -1) {  
                                 fprintf(STDOUT, "test_processes: ERROR killing process\n");
                                 return;
                             } else {
@@ -67,7 +67,7 @@ void test_processes(int argc, char * argv[]) {
                         break;
                     case 1:
                         if (p_rqs[rq].state == RUNNING) {
-                            if (block(p_rqs[rq].pid) == -1) {
+                            if (sys_block(p_rqs[rq].pid) == -1) {
                                 fprintf(STDOUT, "test_processes: ERROR blocking process\n");
                                 return;
                             } else {
@@ -81,8 +81,8 @@ void test_processes(int argc, char * argv[]) {
 
             // Randomly unblocks processes
             for(rq = 0; rq < max_processes; rq++) {
-                if (p_rqs[rq].state == BLOCKEDD && get_uniform(100) % 2) {
-                    if(unblock(p_rqs[rq].pid) == -1) {
+                if (p_rqs[rq].state == BLOCKEDD && GetUniform(100) % 2) {
+                    if(sys_unblock(p_rqs[rq].pid) == -1) {
                         fprintf(STDOUT, "test_processes: ERROR unblocking process\n");
                         return;
                     } else {
@@ -95,4 +95,4 @@ void test_processes(int argc, char * argv[]) {
         j++;
     }
     fprintf(STDOUT, "All good with test_processes. ;)\n");
-}*/
+}

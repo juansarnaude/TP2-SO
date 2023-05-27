@@ -320,11 +320,11 @@ void nextProcess()
     }
 }
 
-void prepareDummyForWork()
+int prepareDummyForWork(pid_t pid)
 {
     Node *current = active;
     Node *previous = NULL;
-    while (current != NULL && current->process.pid != dummyProcessPid)
+    while (current != NULL && current->process.pid != pid)
     {
         previous = current;
         current = current->next;
@@ -343,10 +343,13 @@ void prepareDummyForWork()
     {
         current = expired;
         previous = NULL;
-        while (current->process.pid != dummyProcessPid)
+        while (current != NULL && current->process.pid != pid)
         {
             previous = current;
             current = current->next;
+        }
+        if(current == NULL){
+            return -1;
         }
         if (previous == NULL)
         {
@@ -359,6 +362,7 @@ void prepareDummyForWork()
         current->next = active;
         active = current;
     }
+    return 0;
 }
 
 uint64_t contextSwitch(uint64_t rsp)
@@ -374,7 +378,7 @@ uint64_t contextSwitch(uint64_t rsp)
         }
         else
         { // C1.3.2 y C1.3.3
-            prepareDummyForWork();
+            prepareDummyForWork(dummyProcessPid);
         }
         return active->process.rsp;
     }
@@ -385,7 +389,7 @@ uint64_t contextSwitch(uint64_t rsp)
     // Si no tengo procesos en ready, es decir, estan todos bloqueados tengo que correr el dummy
     if (readyProcessAmount == 0)
     {
-        prepareDummyForWork();
+        prepareDummyForWork(dummyProcessPid);
         return active->process.rsp;
     }
 

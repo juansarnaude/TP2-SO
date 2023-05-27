@@ -1,4 +1,7 @@
 #include <syslib.h>
+#include <stdarg.h>
+
+#define MAX(x,y) ((x) > (y) ? (x) : (y))
 
 unsigned int strlen(const char *str){
     unsigned int len = 0;
@@ -111,8 +114,6 @@ int strcmp (const char *p1, const char *p2){
   return c1 - c2;
 }
 
-static void reverse(char s[]);
-
 //Turn an integer number to a char array
 void itoa(int n, char s[]){
      int i, sign;
@@ -129,7 +130,7 @@ void itoa(int n, char s[]){
      reverse(s);
 }
 
-static void reverse(char s[]){
+void reverse(char s[]){
      int i, j;
      char c;
  
@@ -339,6 +340,10 @@ uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 	return digits;
 }
 
+int is_num(char c) {
+    return c >= '0' && c <= '9';
+}
+
 char ** strtok(char * str, char delim, int * qty) {
     (*qty) = 1;
     for (int i = 0; str[i] != '\0'; i++) {
@@ -393,3 +398,127 @@ void strcpy(char * dest, char * src) {
     }
     dest[i] = 0;
 }
+
+int atoi(char * str) {
+    uint64_t i = 0;
+    int64_t res = 0;
+    int8_t sign = 1;
+
+    if (!str) return 0;
+
+    if (str[i] == '-'){
+        i++;
+        sign = -1;
+    }
+
+    for ( ; str[i] != '\0'; ++i){
+        if(str[i] < '0' || str[i] > '9'){
+            return 0;
+        }
+        res = res * 10 + str[i] - '0';
+    }
+
+    return res * sign;
+}
+
+
+void fprintf(int fd, char * str, ...) {
+    va_list vl;
+	int i = 0, j=0;
+    int spaces = 0;
+    char buff[MAX_BUFFER]={0}, tmp[100];
+    va_start( vl, str ); 
+
+    while (str && str[i]) {
+        if(str[i] == '%'  || spaces > 0) {
+            if (spaces == 0) {
+                i++;
+            }
+            switch (str[i]) {
+                case 'c': 
+                    buff[j] = (char)va_arg( vl, int );
+                    j++;
+                    if (spaces > 0) {
+                        spaces--;
+                    }
+                    while (spaces > 0) {
+                        buff[j] = ' ';
+                        j++;
+                        spaces--;
+                    }
+                    break;
+                case 'd': 
+                    itoa(va_arg( vl, int ), tmp);
+                    strcpy(&buff[j], tmp);
+                    int len = strlen(tmp);
+                    j += len;
+                    if (spaces > 0) {
+                        spaces = MAX(spaces - len, 0);
+                    }
+                    while (spaces > 0) {
+                        buff[j] = ' ';
+                        j++;
+                        spaces--;
+                    }
+                    break;
+                case 's': {
+                    char * s = va_arg( vl, char * );
+                    for (int r = 0; s[r] != 0; r++) {
+                        buff[j] = s[r];
+                        j++;
+                        if (j == MAX_BUFFER) {
+                            sys_write(fd, buff, j);
+                            j = 0;
+                        }
+                    }
+                    int len = strlen(s);
+                    if (spaces > 0) {
+                        spaces = MAX(spaces - len, 0);
+                    }
+                    while (spaces > 0) {
+                        buff[j] = ' ';
+                        j++;
+                        spaces--;
+                    }
+                    break;
+                }
+                case 'x': {
+                    uintToBase(va_arg( vl, int ), tmp, 16);
+                    strcpy(&buff[j], tmp);
+                    int len = strlen(tmp);
+                    j += len;
+                    if (spaces > 0) {
+                        spaces = MAX(spaces - len, 0);
+                    }
+                    while (spaces > 0) {
+                        buff[j] = ' ';
+                        j++;
+                        spaces--;
+                    }
+                    break;
+                }
+                case '-': {
+                    i++;
+                    int k = 0;
+                    while (is_num(str[i])) {
+                        tmp[k++] = str[i++];
+                    }
+                    i--;
+                    tmp[k] = 0;
+                    spaces = atoi(tmp);
+                    break;
+                }
+            }
+        } else {
+            buff[j] = str[i];
+            j++;
+            if (j == MAX_BUFFER) {
+                sys_write(fd, buff, j);
+                j = 0;
+            }
+        }
+        i++;
+    }
+    va_end(vl);
+    sys_write(fd, buff, j);
+ }

@@ -16,7 +16,7 @@ int blockProcess(pid_t pid);
 int unblockProcess(pid_t pid);
 pid_t createProcess(uint64_t rip, int argc, char *argv[]);
 void nextProcess();
-void prepareDummyForWork();
+int prepareDummyForWork(pid_t pid);
 uint64_t contextSwitch(uint64_t rsp);
 int killProcess(int returnValue);
 int changePriority(pid_t pid, int priorityValue);

@@ -59,10 +59,10 @@ int readInput()
         }
     }
     // etc, para los distintos comandos a implementar
-    // for (int i = 0; i < part_count; i++) {
-    //     sys_memFree((uint64_t) parts[i]);
-    // }
-    // sys_memFree((uint64_t) parts);
+    for (int i = 0; i < part_count; i++) {
+        sys_memFree((uint64_t) parts[i]);
+    }
+    sys_memFree((uint64_t) parts);
     return sizeRead;
 }
 
@@ -124,13 +124,12 @@ command command_parser(char *buffer)
     else if ((containsString(buffer, "test_mm")) >= 0)
     {
         putChar('\n');
-        saveTestmmParam(buffer);
         return (command)test_mm;
     }
     else if ((containsString(buffer, "test_processes")) >= 0)
     {
         putChar('\n');
-        return (command)test_mm;
+        return (command)test_processes;
     }
     else
     { // el comando ingresado no existe.

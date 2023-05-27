@@ -17,14 +17,6 @@ typedef struct MM_rq
   uint32_t size;
 } mm_rq;
 
-static char *max_mem;
-
-void saveTestmmParam(char *address)
-{
-  address += 8;
-  max_mem = address;
-}
-
 void test_mm(int argc, char *argv[])
 {
 
@@ -33,10 +25,10 @@ void test_mm(int argc, char *argv[])
   uint32_t total;
   uint64_t max_memory;
 
-  // if (argc != 1)
-  //   return;
+   if (argc != 2)
+     return;
 
-  if ((max_memory = satoi(max_mem)) <= 0)
+  if ((max_memory = satoi(argv[1])) <= 0)
     return;
 
   while (1)

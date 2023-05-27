@@ -24,7 +24,10 @@ MemoryInfo *sys_memInfo();
 extern void *sys_memMalloc(uint64_t size);
 void sys_memFree(void* ap);
 pid_t sys_exec(uint64_t program, unsigned int argc, char * argv[]);
-pid_t sys_waitpid(pid_t pid); 
+pid_t sys_waitpid(pid_t pid);
+int sys_kill(pid_t pid);
+int sys_block(pid_t pid);
+int sys_unblock(pid_t pid);
 
 unsigned int strlen(const char *s);
 void excepDivZero();
@@ -36,10 +39,14 @@ int gets(char *s);
 unsigned int charBelongs(char *s, char c);
 int containsString(const char *p1, const char *p2);
 void savePrintMemParams(char *s);
-void saveTestmmParam(char * address);
 int strcmp(const char *p1, const char *p2);
 char ** strtok(char * str, char delim, int * qty);
 void strcpy(char * dest, char * src);
+void fprintf(int fd, char * str, ...);
+int is_num(char c);
+int atoi(char * str);
+void itoa(int n, char s[]);
+void reverse(char s[]);
 
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 

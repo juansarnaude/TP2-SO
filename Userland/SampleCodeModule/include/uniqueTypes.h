@@ -1,5 +1,8 @@
 #define MAX_BUFFER  512
 
+#include <stdint.h>
+#include <stddef.h>
+
 typedef int pid_t;
 
 typedef struct
