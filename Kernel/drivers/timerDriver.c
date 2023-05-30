@@ -2,9 +2,9 @@
 
 static unsigned long ticks = 0;
 
-void timer_handler(uint64_t * registers) {
+void timer_handler() {
 	ticks++;
-	nextTask(registers);
+	//nextTask(registers);
 }
 
 int ticks_elapsed() {

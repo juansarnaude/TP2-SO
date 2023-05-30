@@ -435,17 +435,17 @@ uint64_t contextSwitch(uint64_t rsp)
             previousExpired->next = currentProcess;
             currentProcess->next = currentExpired;
         }
-        // if (active == NULL)
-        // {
-        //     active = expired;
-        //     expired = NULL;
-        // }
+        if (active == NULL)
+        {
+            active = expired;
+            expired = NULL;
+        }
     }
     nextProcess();
     return active->process.rsp;
 }
 
-int killProcess(int returnValue)
+int killProcess(int returnValue,char autokill)
 {
     Node *currentProcess = active;
 
@@ -465,7 +465,10 @@ int killProcess(int returnValue)
     freeQueue(currentProcess->process.blockedQueue);
     memory_manager_free((void *)currentProcess->process.stackBase);
     memory_manager_free(currentProcess);
-    proccessBeingRun = 0;
+    if(autokill){
+        proccessBeingRun = 0;
+        _int20h();
+    }
     return returnValue;
 }
 

@@ -5,7 +5,7 @@
 static uint64_t sys_read(unsigned int fd, char *output, uint64_t count);
 static void sys_write(unsigned fd, const char *buffer, uint64_t count);
 static pid_t sys_exec(uint64_t program, unsigned int argc, char * argv[]); 
-static void sys_exit(int return_value);
+static void sys_exit(int return_value, char autokill);
 static void sys_time(time_t *s);
 static void sys_copymem(uint64_t address, uint8_t *buffer, uint64_t length);
 static MemoryInfo *sys_memInfo();
@@ -35,7 +35,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         return (uint64_t) sys_exec(rdi, (unsigned int) rsi, (char **) rdx);
         break;
     case 4:
-        sys_exit(rdi);
+        sys_exit( (int) rdi, 1);
         break;
     case 5:
         sys_time((time_t *)rdi);
@@ -106,7 +106,7 @@ static pid_t sys_exec(uint64_t program, unsigned int argc, char * argv[])
     return createProcess(program, argc, argv);
 }
 
-static void sys_exit(int return_value) {
+static void sys_exit(int return_value, char autokill) {
     PCB * pcb = getProcess(getCurrentPid());
     unsigned int lastFd = pcb->lastFd;
 
@@ -114,7 +114,7 @@ static void sys_exit(int return_value) {
         //sys_close(i);
     }
 
-    killProcess(return_value);
+    killProcess(return_value, autokill);
 }
 
 static void sys_time(time_t *s)
@@ -171,7 +171,7 @@ static int sys_kill(pid_t pid) {
         return -1;
     }
 
-    sys_exit(0);
+    sys_exit(0,0);
     return 0;
 }
 

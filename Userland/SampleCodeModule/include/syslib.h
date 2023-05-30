@@ -28,6 +28,7 @@ pid_t sys_waitpid(pid_t pid);
 int sys_kill(pid_t pid);
 int sys_block(pid_t pid);
 int sys_unblock(pid_t pid);
+void sys_exit(int retValue);
 
 unsigned int strlen(const char *s);
 void excepDivZero();

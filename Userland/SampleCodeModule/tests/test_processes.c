@@ -59,11 +59,12 @@ void test_processes(int argc, char * argv[]) {
                 switch(action) {
                     case 0:
                         if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKEDD) {
+                            
                             if (sys_kill(p_rqs[rq].pid) == -1) {  
-                                prueba();
                                 fprintf(STDOUT, "test_processes: ERROR killing process\n");
                                 return;
                             } else {
+                                prueba();
                                 fprintf(STDOUT, "test_processes: process %d KILLED\n", p_rqs[rq].pid);
                             }
                             p_rqs[rq].state = KILLED; 
