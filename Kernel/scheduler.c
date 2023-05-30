@@ -10,53 +10,56 @@ extern void _int20h();                                                          
 // tck and ppriorities
 #define STACK_SIZE 4096
 #define MIN_PRIORITY 1
-#define MAX_PRIORITY 8
+#define MAX_PRIORITY 9
 
-#define NUMBER_OF_PRIORITIES 8
+#define NUMBER_OF_PRIORITIES 9
 #define DEFAULT_PRIORITY 4
-priority_t priorities[NUMBER_OF_PRIORITIES] = {8, 7, 6, 5, 4, 3, 2, 1};
+priority_t priorities[NUMBER_OF_PRIORITIES] = {9, 8, 7, 6, 5, 4, 3, 2, 1};
+
+#define READY 0
+#define BLOCKED 1
 
 /* Status */
-typedef enum
-{
-    READY,
-    RUNNING,
-    BLOCKED,
-    KILLED,
-} State;
+// typedef enum
+// {
+//     READY,
+//     RUNNING,
+//     BLOCKED,
+//     KILLED,
+// } State;
 
-typedef const char *StateStrings[];
+// typedef const char *StateStrings[];
 
-StateStrings stateStrings = {
-    "READY",
-    "RUNNING",
-    "BLOCKED",
-    "KILLED",
-};
+// StateStrings stateStrings = {
+//     "READY",
+//     "RUNNING",
+//     "BLOCKED",
+//     "KILLED",
+// };
 
-// Proccess info, nodes and lists
+// // Proccess info, nodes and lists
 
-typedef struct processInfo
-{
-    uint64_t pid;
-    uint64_t p_pid;
-    uint64_t priority;
-    State state;
-} pInfo;
+// typedef struct processInfo
+// {
+//     uint64_t pid;
+//     uint64_t p_pid;
+//     uint64_t priority;
+//     State state;
+// } pInfo;
 
-typedef struct processNode
-{
-    pInfo info;
-    struct processNode *next;
-} pNode;
+// typedef struct processNode
+// {
+//     pInfo info;
+//     struct processNode *next;
+// } pNode;
 
-typedef struct processList
-{
-    pNode *first;
-    pNode *last;
-    uint64_t size;
-    uint64_t readyAmount;
-} pList;
+// typedef struct processList
+// {
+//     pNode *first;
+//     pNode *last;
+//     uint64_t size;
+//     uint64_t readyAmount;
+// } pList;
 
 // Queues
 Queue active = NULL;
@@ -82,9 +85,10 @@ void createScheduler()
 {
     char * name = "Kernel Task";
     char * argv[] = {name};
-    dummyProcessPid = createProcess((uint64_t)dummyProcess, 1, argv);
+    dummyProcessPid = createProcess((uint64_t)dummyProcess, 0, NULL);
     active->process.status = BLOCKED;
-    readyProcessAmount--;
+    //readyProcessAmount--;
+    processReadyCount--;
 }
 
 PCB *getProcess(pid_t pid)
@@ -128,7 +132,6 @@ uint64_t getCurrentPid()
 int blockProcess(pid_t pid)
 {
     Node *current = active;
-    Node * previous = NULL;
     char found = 0;
 
     while (!found && current != NULL)
@@ -140,12 +143,10 @@ int blockProcess(pid_t pid)
         }
         else
         {
-            previous = current;
             current = current->next;
         }
     }
     current = expired;
-    previous = NULL;
     while (!found && current != NULL)
     {
         if (current->process.pid == pid)
@@ -155,7 +156,6 @@ int blockProcess(pid_t pid)
         }
         else
         {
-            previous = current;
             current = current->next;
         }
     }
@@ -276,7 +276,7 @@ pid_t createProcess(uint64_t rip, int argc, char *argv[])
             }
         }
     }
-    readyProcessAmount++;
+    processReadyCount++;
     return newProcess->process.pid;
 }
 
@@ -311,7 +311,7 @@ void nextProcess()
             previous = current;
             current = current->next;
         }
-        if (previous != NULL)
+        if (previous != NULL && current != NULL)
         {
             previous->next = current->next;
             current->next = active;
@@ -372,7 +372,8 @@ uint64_t contextSwitch(uint64_t rsp)
     {
         proccessBeingRun = 1;
         // C1.1 o C1.3.1: NO HAY NADA CORRIENDOSE Y TENGO ALGO PARA CORRER
-        if (readyProcessAmount > 0)
+        if//(readyProcessAmount > 0)
+        (processReadyCount > 0)
         {
             nextProcess();
         }
@@ -387,7 +388,8 @@ uint64_t contextSwitch(uint64_t rsp)
     currentProcess->process.rsp = rsp;
 
     // Si no tengo procesos en ready, es decir, estan todos bloqueados tengo que correr el dummy
-    if (readyProcessAmount == 0)
+    if //(readyProcessAmount == 0)
+    (processReadyCount == 0)
     {
         prepareDummyForWork(dummyProcessPid);
         return active->process.rsp;
@@ -403,12 +405,13 @@ uint64_t contextSwitch(uint64_t rsp)
     // teniendo en cuenta su prioridad.
     if (currentProcess->process.quantumsLeft == 0)
     {
-        currentProcess->process.quantumsLeft = priorities[currentProcess->process.priority];
         if (currentProcess->process.newPriority != -1)
         {
             currentProcess->process.priority = currentProcess->process.newPriority;
             currentProcess->process.newPriority = -1;
         }
+        currentProcess->process.quantumsLeft = priorities[currentProcess->process.priority];
+        
         Node *currentExpired = expired;
         Node *previousExpired = NULL;
         while (currentExpired != NULL && currentProcess->process.priority >= currentExpired->process.priority)
@@ -432,11 +435,11 @@ uint64_t contextSwitch(uint64_t rsp)
             previousExpired->next = currentProcess;
             currentProcess->next = currentExpired;
         }
-        if (active == NULL)
-        {
-            active = expired;
-            expired = NULL;
-        }
+        // if (active == NULL)
+        // {
+        //     active = expired;
+        //     expired = NULL;
+        // }
     }
     nextProcess();
     return active->process.rsp;
@@ -451,9 +454,14 @@ int killProcess(int returnValue)
     {
         unblockProcess(blockedPid);
     }
-
     active = currentProcess->next;
-    readyProcessAmount--;
+    if (currentProcess->process.status != BLOCKED) {
+        processReadyCount--;
+    }
+    for (int i = 0; i < currentProcess->process.argc; i++) {
+        memory_manager_free(currentProcess->process.argv[i]);
+    }
+    memory_manager_free(currentProcess->process.argv);
     freeQueue(currentProcess->process.blockedQueue);
     memory_manager_free((void *)currentProcess->process.stackBase);
     memory_manager_free(currentProcess);
@@ -463,7 +471,7 @@ int killProcess(int returnValue)
 
 int changePriority(pid_t pid, int priorityValue)
 {
-    if (priorityValue < 0 && priorityValue > 8)
+    if (priorityValue < 0 || priorityValue > 8)
     {
         return -1;
     }
@@ -473,6 +481,6 @@ int changePriority(pid_t pid, int priorityValue)
         return -1;
     }
 
-    active->process.newPriority = priorityValue;
+    process->newPriority = priorityValue;
     return 0;
 }

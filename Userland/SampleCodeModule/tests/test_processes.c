@@ -11,6 +11,10 @@ typedef struct P_rq {
   enum State state;
 } p_rq;
 
+void prueba(){
+    return;
+}
+
 void test_processes(int argc, char * argv[]) {
     uint8_t rq;
     uint8_t alive = 0;
@@ -56,6 +60,7 @@ void test_processes(int argc, char * argv[]) {
                     case 0:
                         if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKEDD) {
                             if (sys_kill(p_rqs[rq].pid) == -1) {  
+                                prueba();
                                 fprintf(STDOUT, "test_processes: ERROR killing process\n");
                                 return;
                             } else {

@@ -131,10 +131,6 @@ command command_parser(char *buffer)
         putChar('\n');
         return (command)test_processes;
     }
-    else
-    { // el comando ingresado no existe.
-        unknownCommand();
-    }
     return NULL;
 }
 

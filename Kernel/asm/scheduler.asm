@@ -1,7 +1,7 @@
 GLOBAL _defaultExit
-EXTERN contextSwitch
 GLOBAL loadProcess
 GLOBAL _int20h
+EXTERN contextSwitch
 
 section .text
 
