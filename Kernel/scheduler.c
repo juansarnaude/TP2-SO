@@ -83,11 +83,11 @@ void dummyProcess()
 
 void createScheduler()
 {
-    char * name = "Kernel Task";
-    char * argv[] = {name};
+    char *name = "Kernel Task";
+    char *argv[] = {name};
     dummyProcessPid = createProcess((uint64_t)dummyProcess, 0, NULL);
     active->process.status = BLOCKED;
-    //readyProcessAmount--;
+    // readyProcessAmount--;
     processReadyCount--;
 }
 
@@ -206,9 +206,11 @@ int unblockProcess(pid_t pid)
     return -1;
 }
 
-char ** copy_argv(int argc, char ** argv) {
-    char ** new_argv = memoryManagerAlloc(sizeof(char *) * argc);
-    for (int i = 0; i < argc; i++) {
+char **copy_argv(int argc, char **argv)
+{
+    char **new_argv = memoryManagerAlloc(sizeof(char *) * argc);
+    for (int i = 0; i < argc; i++)
+    {
         new_argv[i] = strcpy(argv[i]);
     }
     return new_argv;
@@ -227,11 +229,12 @@ pid_t createProcess(uint64_t rip, int argc, char *argv[])
     newProcess->process.argv = copy_argv(argc, argv);
 
     uint64_t rsp = (uint64_t)memoryManagerAlloc(4 * 1024);
-    if(rsp == 0) {
+    if (rsp == 0)
+    {
         return -1;
     }
     newProcess->process.stackBase = rsp;
-    uint64_t newRsp = (uint64_t)loadProcess(rip, rsp + 4 * 1024, newProcess->process.argc,(uint64_t) newProcess->process.argv);
+    uint64_t newRsp = (uint64_t)loadProcess(rip, rsp + 4 * 1024, newProcess->process.argc, (uint64_t)newProcess->process.argv);
     newProcess->process.rsp = newRsp;
 
     if (active == NULL)
@@ -348,7 +351,8 @@ int prepareDummyForWork(pid_t pid)
             previous = current;
             current = current->next;
         }
-        if(current == NULL){
+        if (current == NULL)
+        {
             return -1;
         }
         if (previous == NULL)
@@ -372,8 +376,8 @@ uint64_t contextSwitch(uint64_t rsp)
     {
         proccessBeingRun = 1;
         // C1.1 o C1.3.1: NO HAY NADA CORRIENDOSE Y TENGO ALGO PARA CORRER
-        if//(readyProcessAmount > 0)
-        (processReadyCount > 0)
+        if //(readyProcessAmount > 0)
+            (processReadyCount > 0)
         {
             nextProcess();
         }
@@ -389,7 +393,7 @@ uint64_t contextSwitch(uint64_t rsp)
 
     // Si no tengo procesos en ready, es decir, estan todos bloqueados tengo que correr el dummy
     if //(readyProcessAmount == 0)
-    (processReadyCount == 0)
+        (processReadyCount == 0)
     {
         prepareDummyForWork(dummyProcessPid);
         return active->process.rsp;
@@ -411,7 +415,7 @@ uint64_t contextSwitch(uint64_t rsp)
             currentProcess->process.newPriority = -1;
         }
         currentProcess->process.quantumsLeft = priorities[currentProcess->process.priority];
-        
+
         Node *currentExpired = expired;
         Node *previousExpired = NULL;
         while (currentExpired != NULL && currentProcess->process.priority >= currentExpired->process.priority)
@@ -445,7 +449,7 @@ uint64_t contextSwitch(uint64_t rsp)
     return active->process.rsp;
 }
 
-int killProcess(int returnValue,char autokill)
+int killProcess(int returnValue, char autokill)
 {
     Node *currentProcess = active;
 
@@ -455,17 +459,20 @@ int killProcess(int returnValue,char autokill)
         unblockProcess(blockedPid);
     }
     active = currentProcess->next;
-    if (currentProcess->process.status != BLOCKED) {
+    if (currentProcess->process.status != BLOCKED)
+    {
         processReadyCount--;
     }
-    for (int i = 0; i < currentProcess->process.argc; i++) {
+    for (int i = 0; i < currentProcess->process.argc; i++)
+    {
         memory_manager_free(currentProcess->process.argv[i]);
     }
     memory_manager_free(currentProcess->process.argv);
     freeQueue(currentProcess->process.blockedQueue);
     memory_manager_free((void *)currentProcess->process.stackBase);
     memory_manager_free(currentProcess);
-    if(autokill){
+    if (autokill)
+    {
         proccessBeingRun = 0;
         _int20h();
     }
@@ -485,5 +492,12 @@ int changePriority(pid_t pid, int priorityValue)
     }
 
     process->newPriority = priorityValue;
+    return 0;
+}
+
+int yieldProcess()
+{
+    active->process.quantumsLeft = 0;
+    _int20h();
     return 0;
 }
