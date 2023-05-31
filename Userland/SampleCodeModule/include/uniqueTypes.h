@@ -23,6 +23,15 @@ typedef struct memoryInfo
     unsigned int blocksUsed;
 } MemoryInfo;
 
+//Semaphores
+typedef struct {
+    char * name;
+    uint64_t value;         //it wont be negative, process that try to wait when 0 will be stacked in blockedProcess
+    uint8_t locked;            //if its locked its 1 if not 0;
+    BlockedQueueADT blockedProcesses;
+} semaphore;
+ 
+typedef semaphore * sem_t;
 
 
 typedef void (*command)(int, char **);

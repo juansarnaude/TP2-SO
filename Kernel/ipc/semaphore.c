@@ -1,6 +1,7 @@
 #include <semaphore.h>
 #include <memoryManager.h>
 #include <queue.h>
+#include <scheduler.h>
 
 extern int spinlock(uint8_t * lock);    //Both of theese functions will be used to avoid
 extern void unlock(uint8_t * lock);     // race conditions in the post and wait
@@ -33,7 +34,7 @@ sem_t sem_open(char * name, uint64_t value){
         return &(semAux->sem);
     }
     semAux = (semNode *) memoryManagerAlloc(sizeof(semNode));
-    strcpy(semAux->sem.name, name);
+    semAux->sem.name = strcpy(name);
     semAux->sem.value = value;
     semAux->sem.locked = 0; 
     semAux->next = semaphoreList;
@@ -73,14 +74,14 @@ int sem_post(sem_t sem){
         return -1;
     }
 
-    spinlock(&(sem->lock));
+    spinlock(&(sem->locked));
     if(sem->blockedProcesses->qty != 0){
         pid_t pidCurrent = dequeuePid(sem->blockedProcesses);
         unblockProcess(pidCurrent);
     }else{
         sem->value++;
     }
-    unlock(&(sem->lock));
+    unlock(&(sem->locked));
 
     return 1;
 }
@@ -94,7 +95,7 @@ int sem_wait(sem_t sem){
         return -1;
     }
 
-    spinlock(&(sem->lock));
+    spinlock(&(sem->locked));
     if(sem->value > 0){
         sem->value--;
     } else{
@@ -102,7 +103,7 @@ int sem_wait(sem_t sem){
         blockProcess(pidCurrent);
         enqueuePid(sem->blockedProcesses, pidCurrent);
     }    
-    unlock(&(sem->lock));
+    unlock(&(sem->locked));
 
     return 1;
 }
