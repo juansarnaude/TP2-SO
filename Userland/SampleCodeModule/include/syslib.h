@@ -29,6 +29,10 @@ int sys_kill(pid_t pid);
 int sys_block(pid_t pid);
 int sys_unblock(pid_t pid);
 void sys_exit(int retValue);
+sem_t sem_open(char * name, uint64_t value);
+int sem_close(sem_t sem);
+int sem_post(sem_t sem);
+int sem_wait(sem_t sem);
 
 unsigned int strlen(const char *s);
 void excepDivZero();

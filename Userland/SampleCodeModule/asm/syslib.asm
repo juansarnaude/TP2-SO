@@ -14,6 +14,10 @@ GLOBAL sys_waitpid
 GLOBAL sys_kill
 GLOBAL sys_block
 GLOBAL sys_unblock
+GLOBAL sem_open
+GLOBAL sem_close
+GLOBAL sem_post
+GLOBAL sem_wait
 
 section .text
 sys_write:
@@ -137,6 +141,45 @@ sys_unblock:
     push rbp
     mov rbp,rsp
     mov rax,13
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sem_open:
+    push rbp
+    mov rbp,rsp
+    mov rax,14
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+
+sem_close:
+    push rbp
+    mov rbp,rsp
+    mov rax,15
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+
+sem_post:
+    push rbp
+    mov rbp,rsp
+    mov rax,16
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+
+sem_wait:
+    push rbp
+    mov rbp,rsp
+    mov rax,17
     int 0x80
     mov rsp,rbp
     pop rbp

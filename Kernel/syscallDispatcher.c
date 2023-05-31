@@ -1,6 +1,7 @@
 #include <syscallDispatcher.h>
 #include <memoryManager.h>
 #include <scheduler.h>
+#include <semaphore.h>
 
 static uint64_t sys_read(unsigned int fd, char *output, uint64_t count);
 static void sys_write(unsigned fd, const char *buffer, uint64_t count);
@@ -15,6 +16,10 @@ static pid_t sys_waitpid(pid_t pid);
 static int sys_kill(pid_t pid);
 static int sys_block(pid_t pid);
 static int sys_unblock(pid_t pid);
+static sem_t sys_sem_open(char * name, uint64_t value);
+static int sys_sem_close(sem_t sem);
+static int sys_sem_post(sem_t sem);
+static int sys_sem_wait(sem_t sem);
 
 //AGREGAR SYSCALL EXIT QUE ES LLAMADA EN SCHEDULER.ASM
 
@@ -64,6 +69,18 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
     case 13:
         return sys_unblock( (pid_t) rdi);
         break;
+    case 14:
+        return  (uint64_t)sys_sem_open( (char *) rdi, (uint64_t) rsi );
+        break;
+    case 15:
+        return sys_sem_close( (sem_t) rdi);
+        break;
+    case 16:
+        return sys_sem_post( (sem_t) rdi);
+        break;
+    case 17:
+        return sys_sem_wait( (sem_t) rdi);
+        break;            
     }
     return 0;
 }
@@ -187,4 +204,17 @@ static int sys_unblock(pid_t pid){
         return -1;
     }
     return unblockProcess(pid);
+}
+
+static sem_t sys_sem_open(char * name, uint64_t value){
+    return sem_open(name, value);
+}
+static int sys_sem_close(sem_t sem){
+    return sem_close(sem);
+}
+static int sys_sem_post(sem_t sem){
+    return 0;
+}
+static int sys_sem_wait(sem_t sem){
+    return 0;
 }
