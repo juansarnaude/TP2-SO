@@ -213,8 +213,8 @@ static int sys_sem_close(sem_t sem){
     return sem_close(sem);
 }
 static int sys_sem_post(sem_t sem){
-    return 0;
+    return sem_post(sem);
 }
 static int sys_sem_wait(sem_t sem){
-    return 0;
+    return sem_wait(sem);
 }

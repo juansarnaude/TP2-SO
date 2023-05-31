@@ -1,5 +1,9 @@
 #include <semaphore.h>
 #include <memoryManager.h>
+#include <queue.h>
+
+extern int spinlock(uint8_t * lock);    //Both of theese functions will be used to avoid
+extern void unlock(uint8_t * lock);     // race conditions in the post and wait
 
 typedef struct semNode{
     semaphore sem;
@@ -34,6 +38,7 @@ sem_t sem_open(char * name, uint64_t value){
     semAux->sem.locked = 0; 
     semAux->next = semaphoreList;
     semAux->previous = NULL;
+    semAux->sem.blockedProcesses = newQueue();
     semaphoreList = semAux;
     return &(semAux->sem);
 }
@@ -54,11 +59,12 @@ int sem_close(sem_t sem){
     }
     
     memory_manager_free(semAux->sem.name);
+    freeQueue(semAux->sem.blockedProcesses);
     memory_manager_free(semAux);
     return 1;
 } 
 
-// Adds 1 to the value of a semaphore, if it was blocked (==0) it unblocks
+// Adds 1 to the value of a semaphore, if it was blocked (==0) it unblocks one of the blocked process
 // Returns 1 on success, -1 on error
 int sem_post(sem_t sem){
     semNode * semAux = findSemaphore(sem->name);
@@ -67,5 +73,36 @@ int sem_post(sem_t sem){
         return -1;
     }
 
-    
+    spinlock(&(sem->lock));
+    if(sem->blockedProcesses->qty != 0){
+        pid_t pidCurrent = dequeuePid(sem->blockedProcesses);
+        unblockProcess(pidCurrent);
+    }else{
+        sem->value++;
+    }
+    unlock(&(sem->lock));
+
+    return 1;
+}
+
+// Reduce the value of the semaphore by 1, if it is now 0 it is blocked
+// Returns 1 on success, -1 on error
+int sem_wait(sem_t sem){
+    semNode * semAux = findSemaphore(sem->name);
+
+    if(semAux == NULL){
+        return -1;
+    }
+
+    spinlock(&(sem->lock));
+    if(sem->value > 0){
+        sem->value--;
+    } else{
+        pid_t pidCurrent = getCurrentPid();
+        blockProcess(pidCurrent);
+        enqueuePid(sem->blockedProcesses, pidCurrent);
+    }    
+    unlock(&(sem->lock));
+
+    return 1;
 }

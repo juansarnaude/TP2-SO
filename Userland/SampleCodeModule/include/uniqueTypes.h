@@ -23,13 +23,6 @@ typedef struct memoryInfo
     unsigned int blocksUsed;
 } MemoryInfo;
 
-//Semaphores
-typedef struct {
-    char * name;
-    uint64_t value;
-    char locked;            //if its locked its 1 if not 0;
-} semaphore;
- 
-typedef semaphore * sem_t;
+
 
 typedef void (*command)(int, char **);

@@ -35,6 +35,7 @@
 
 typedef int pid_t;
 
+//Blocked Queue
 typedef struct blockednode
 {
     pid_t pid;
@@ -49,6 +50,16 @@ typedef struct
 } BlockedQueueCDT;
 
 typedef BlockedQueueCDT *BlockedQueueADT;
+
+//Semaphores
+typedef struct {
+    char * name;
+    uint64_t value;         //it wont be negative, process that try to wait when 0 will be stacked in blockedProcess
+    char locked;            //if its locked its 1 if not 0;
+    BlockedQueueADT blockedProcesses;
+} semaphore;
+ 
+typedef semaphore * sem_t;
 
 /* Pipe */
 typedef struct {
