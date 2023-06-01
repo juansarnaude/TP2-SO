@@ -61,6 +61,27 @@ typedef struct {
 
 typedef semaphore *sem_t;
 
+//Pipes
+typedef struct Pipe
+{
+    char data[PIPESIZE];
+    unsigned int openR;
+    unsigned int openW;
+    uint64_t indexR;
+    uint64_t indexW;
+    BlockedQueueADT queueWriteBlocked;
+    BlockedQueueADT queueReadBlocked;
+} Pipe;
+
+typedef struct pipeNode
+{
+    Pipe *pipe;
+    struct pipeNode *next;
+    struct pipeNode *previous;
+} pipeNode;
+
+typedef pipeNode *pipeList;
+
 //Que es esto?
 typedef struct
 {

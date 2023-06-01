@@ -2,38 +2,16 @@
 #include <memoryManager.h>
 #include <queue.h>
 #include <scheduler.h>
-#include <semaphore.h>
-
-typedef struct
-{
-    char data[PIPESIZE];
-    unsigned int openR;
-    unsigned int openW;
-    sem_t canRead;
-    unsigned int indexR;
-    unsigned int indexW;
-    BlockedQueueADT queueW;
-    BlockedQueueADT queueR;
-} Pipe;
-
-typedef struct pipeNode
-{
-    Pipe *pipe;
-    struct pipeNode *next;
-    struct pipeNode *previous;
-} pipeNode;
-
-typedef pipeNode *pipeList;
 
 pipeList pipesList = NULL;
 
 Pipe *pipeOpen()
 {
     Pipe *newPipe = (Pipe *)memoryManagerAlloc(sizeof(Pipe));
-    newPipe->openR = 0;
+    newPipe->openR = 1;
     newPipe->openW = 1;
-    newPipe->queueR = newQueue();
-    newPipe->queueW = newQueue();
+    newPipe->queueWriteBlocked = newQueue();
+    newPipe->queueReadBlocked = newQueue();
 
     pipeNode *newPipeNode = (pipeNode *)memoryManagerAlloc(sizeof(pipeNode));
     newPipeNode->pipe = newPipe;
@@ -51,40 +29,71 @@ int pipeClose(Pipe *pipe)
     {
         current = current->next;
     }
-    if (current == NULL)
+    if (current == NULL){
         return 0;
+    }
 
-    freeQueue(pipe->queueR);
-    freeQueue(pipe->queueR);
-    if (current->next != NULL)
+    freeQueue(pipe->queueReadBlocked);
+    freeQueue(pipe->queueWriteBlocked);
+    if (current->next != NULL){
         current->next->previous = current->previous;
-    if (current->previous != NULL)
+    }  
+    if (current->previous != NULL){
         current->previous->next = current->next;
-    sem_close(pipe->openR);
-    sem_close(pipe->openW);
+    }   
     memory_manager_free(current);
     memory_manager_free(pipe);
     return 1;
 }
 
+//Returns the amount of chars read or -1 if it failed
 int pipeRead(Pipe *pipe, char *msg, int size)
 {
-    pid_t pid = getCurrentPid();
-    enqueuePid(pipe->queueR, pid);
-    int i = 0;
-    while (pipe->indexR < pipe->indexW && i < size)
-    {
-        msg[i] = pipe->data[pipe->indexR];
-        pipe->indexR++;
-        i++;
+    if(pipe->openR == 0){
+        return -1;
     }
-    return msg;
+
+    int i=0;
+    pid_t currentPid;
+    while (i < size)
+    {
+        if(pipe->indexR == pipe->indexW){
+            currentPid = getCurrentPid();
+            enqueuePid(pipe->queueReadBlocked, currentPid);
+            blockProcess(currentPid);
+        }        
+        msg[i] = pipe->data[pipe->indexR %PIPESIZE];
+        pipe->indexR ++;
+        i++;
+        while((currentPid = dequeuePid(pipe->queueWriteBlocked)) != -1){
+            unblockProcess(currentPid);
+        }        
+    }
+
+    return i;
 }
 
-int pipeWrite(Pipe *pipe, char *data, int size)
+//Returns the amount of chars writen or -1 if it failed
+int pipeWrite(Pipe *pipe, char *msg, int size)
 {
-    for (int i = 0; i < size; i++, pipe->indexW++)
-    {
-        pipe->data[pipe->indexW] = data[i];
+    if(pipe->openW == 0){
+        return -1;
     }
+
+    int i=0;
+    pid_t currentPid;
+    while(i < size){        
+        if(pipe->indexW == pipe->indexR + PIPESIZE ){
+            currentPid = getCurrentPid();
+            enqueuePid(pipe->queueWriteBlocked, currentPid);
+            blockProcess(currentPid);
+        }
+        pipe->data[pipe->indexW % PIPESIZE] = msg[i];
+        pipe->indexW ++;
+        i++;
+        while((currentPid = dequeuePid(pipe->queueReadBlocked)) != -1){
+            unblockProcess(currentPid);
+        }
+    }
+    return 1;
 }
