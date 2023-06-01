@@ -20,6 +20,10 @@ GLOBAL sem_post
 GLOBAL sem_wait
 GLOBAL sys_yieldProcess
 GLOBAL sys_nice
+GLOBAL sys_pipe
+GLOBAL sys_dup2
+GLOBAL sys_open
+GLOBAL sys_close
 
 section .text
 sys_write:
@@ -200,6 +204,42 @@ sys_nice:
     push rbp
     mov rbp,rsp
     mov rax,19
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_pipe:
+    push rbp
+    mov rbp,rsp
+    mov rax,20
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_dup2:
+    push rbp
+    mov rbp,rsp
+    mov rax,21
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_open:
+    push rbp
+    mov rbp,rsp
+    mov rax,22
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_close:
+    push rbp
+    mov rbp,rsp
+    mov rax,23
     int 0x80
     mov rsp,rbp
     pop rbp

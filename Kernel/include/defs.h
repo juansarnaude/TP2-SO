@@ -30,7 +30,9 @@
 #define RSP_POS (REG_AMOUNT + 3)
 
 #define PIPESIZE 512
-#define MAX_FDS 16
+#define FDS 10
+#define OPEN 1
+#define CLOSED 0
 
 typedef int pid_t;
 
@@ -50,18 +52,19 @@ typedef struct
 
 typedef BlockedQueueCDT *BlockedQueueADT;
 
-//Semaphores
-typedef struct {
-    char * name;
-    uint64_t value;         //it wont be negative, process that try to wait when 0 will be stacked in blockedProcess
+// Semaphores
+typedef struct
+{
+    char *name;
+    uint64_t value; // it wont be negative, process that try to wait when 0 will be stacked in blockedProcess
     uint64_t processesOpened;
-    uint8_t locked;            //if its locked its 1 if not 0;
+    uint8_t locked; // if its locked its 1 if not 0;
     BlockedQueueADT blockedProcesses;
 } semaphore;
 
 typedef semaphore *sem_t;
 
-//Pipes
+// Pipes
 typedef struct Pipe
 {
     char data[PIPESIZE];
@@ -82,7 +85,6 @@ typedef struct pipeNode
 
 typedef pipeNode *pipeList;
 
-//Que es esto?
 typedef struct
 {
     unsigned int mode;
@@ -102,7 +104,7 @@ typedef struct
     uint64_t rsp;
     uint64_t stackBase;
     BlockedQueueADT blockedQueue;
-    fd_t fileDescriptors[MAX_FDS];
+    fd_t fileDescriptors[FDS];
     unsigned int lastFd;
     unsigned int argc;
     char **argv;
