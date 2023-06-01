@@ -70,10 +70,10 @@ void test_sync(int argc, char *argv[]) { //{n, use_sem, 0}
     pids[i + TOTAL_PAIR_PROCESSES] = sys_exec((uint64_t) my_process_inc, 4, argvInc);
   }
 
-//pid[0] = 2
-//pid[1] = 4
-//pid[2] = 3
-//pid[3] = 5
+  //pid[0] = 2
+  //pid[1] = 4
+  //pid[2] = 3
+  //pid[3] = 5
   fprintf(STDOUT, "test_sync: All processes created\n");
   for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
     sys_waitpid(pids[i]); //pid[0] = 2

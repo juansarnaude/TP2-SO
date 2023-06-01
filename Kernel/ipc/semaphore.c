@@ -98,12 +98,12 @@ int sem_wait(sem_t sem){
     spinlock(&(sem->locked));
     if(sem->value > 0){
         sem->value--;
+        unlock(&(sem->locked));
     } else{
         pid_t pidCurrent = getCurrentPid();
         enqueuePid(sem->blockedProcesses, pidCurrent);
+        unlock(&(sem->locked));
         blockProcess(pidCurrent);
-    }    
-    unlock(&(sem->locked));
-
+    } 
     return 1;
 }
