@@ -18,6 +18,8 @@ GLOBAL sem_open
 GLOBAL sem_close
 GLOBAL sem_post
 GLOBAL sem_wait
+GLOBAL sys_yieldProcess
+GLOBAL sys_nice
 
 section .text
 sys_write:
@@ -180,6 +182,24 @@ sem_wait:
     push rbp
     mov rbp,rsp
     mov rax,17
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_yieldProcess:
+    push rbp
+    mov rbp,rsp
+    mov rax,18
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_nice:
+    push rbp
+    mov rbp,rsp
+    mov rax,19
     int 0x80
     mov rsp,rbp
     pop rbp

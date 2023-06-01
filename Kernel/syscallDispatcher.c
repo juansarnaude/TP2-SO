@@ -21,6 +21,7 @@ static int sys_sem_close(sem_t sem);
 static int sys_sem_post(sem_t sem);
 static int sys_sem_wait(sem_t sem);
 static int sys_yieldProcess();
+static int sys_nice(pid_t pid, int new_priority);
 // AGREGAR SYSCALL EXIT QUE ES LLAMADA EN SCHEDULER.ASM
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t *registers)
@@ -82,8 +83,11 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         return sys_sem_wait((sem_t)rdi);
         break;
     case 18:
-        return (uint64_t)sys_yieldProcess();
-        break
+        (uint64_t)sys_yieldProcess();
+        break;
+    case 19:
+        return (uint64_t)sys_nice( (pid_t) rdi, (int) rsi);
+        break;
     }
     return 0;
 }
@@ -238,6 +242,13 @@ static int sys_sem_wait(sem_t sem)
 
 static int sys_yieldProcess()
 {
-    yieldProcess();
-    return;
+    return yieldProcess();
+}
+
+static int sys_nice(pid_t pid, int newPriority){
+    if (pid <= 0) {
+        return -1;
+    }
+
+    return changePriority(pid, newPriority);
 }

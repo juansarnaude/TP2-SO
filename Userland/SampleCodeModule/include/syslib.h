@@ -33,6 +33,8 @@ sem_t sem_open(char * name, uint64_t value);
 int sem_close(sem_t sem);
 int sem_post(sem_t sem);
 int sem_wait(sem_t sem);
+int sys_yieldProcess();
+void sys_nice(pid_t pid, int newPriority);
 
 unsigned int strlen(const char *s);
 void excepDivZero();

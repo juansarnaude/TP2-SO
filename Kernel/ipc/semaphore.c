@@ -100,8 +100,8 @@ int sem_wait(sem_t sem){
         sem->value--;
     } else{
         pid_t pidCurrent = getCurrentPid();
-        blockProcess(pidCurrent);
         enqueuePid(sem->blockedProcesses, pidCurrent);
+        blockProcess(pidCurrent);
     }    
     unlock(&(sem->locked));
 

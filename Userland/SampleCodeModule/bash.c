@@ -131,6 +131,16 @@ command command_parser(char *buffer)
         putChar('\n');
         return (command)test_processes;
     }
+    else if ((containsString(buffer, "test_priority")) >= 0)
+    {
+        putChar('\n');
+        return (command)test_priority;
+    }
+    else if ((containsString(buffer, "test_sync")) >= 0)
+    {
+        putChar('\n');
+        return (command)test_sync;
+    }
     return NULL;
 }
 
