@@ -31,12 +31,14 @@ semNode * findSemaphore(char * name){
 sem_t sem_open(char * name, uint64_t value){
     semNode * semAux = findSemaphore(name);
     if(semAux != NULL){
+        semAux->sem.processesOpened++;
         return &(semAux->sem);
     }
     semAux = (semNode *) memoryManagerAlloc(sizeof(semNode));
     semAux->sem.name = strcpy(name);
     semAux->sem.value = value;
-    semAux->sem.locked = 0; 
+    semAux->sem.locked = 0;
+    semAux->sem.processesOpened = 1;
     semAux->next = semaphoreList;
     semAux->previous = NULL;
     semAux->sem.blockedProcesses = newQueue();
@@ -45,11 +47,16 @@ sem_t sem_open(char * name, uint64_t value){
 }
 
 // Removes a semaphore
-// 1 if it could remove it, -1 if it failed
+// 1 if it could remove it, 0 if it wasnt removed but didnt fail (just removed it in this process) -1 if it failed
 int sem_close(sem_t sem){
    semNode * semAux = findSemaphore(sem->name);
     if(semAux == NULL){
         return -1;
+    }
+
+    if(sem->processesOpened > 1){
+        sem->processesOpened--;
+        return;
     }
 
     if(semAux->previous != NULL){
@@ -59,8 +66,9 @@ int sem_close(sem_t sem){
         semAux->next->previous = semAux->previous;
     }
     
-    memory_manager_free(semAux->sem.name);
-    freeQueue(semAux->sem.blockedProcesses);
+    
+    freeQueue(sem->blockedProcesses);
+    memory_manager_free(sem->name);
     memory_manager_free(semAux);
     return 1;
 } 

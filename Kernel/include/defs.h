@@ -50,12 +50,12 @@ typedef struct
 
 typedef BlockedQueueCDT *BlockedQueueADT;
 
-// Semaphores
-typedef struct
-{
-    char *name;
-    uint64_t value; // it wont be negative, process that try to wait when 0 will be stacked in blockedProcess
-    uint8_t locked; // if its locked its 1 if not 0;
+//Semaphores
+typedef struct {
+    char * name;
+    uint64_t value;         //it wont be negative, process that try to wait when 0 will be stacked in blockedProcess
+    uint64_t processesOpened;
+    uint8_t locked;            //if its locked its 1 if not 0;
     BlockedQueueADT blockedProcesses;
 } semaphore;
 
