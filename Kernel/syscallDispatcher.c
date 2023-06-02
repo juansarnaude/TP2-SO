@@ -149,7 +149,7 @@ static void sys_write(unsigned fd, const char *buffer, uint64_t count)
             }
             i++;
         }
-        if (fd != STDOUT || fd != STDERR)
+        if (fd != STDOUT && fd != STDERR)
             pipeWrite(pcb->fileDescriptors[fd].pipe, buffer, count);
         return;
     }
