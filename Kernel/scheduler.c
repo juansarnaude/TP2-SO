@@ -229,19 +229,13 @@ pid_t createProcess(uint64_t rip, int argc, char *argv[])
     newProcess->process.argc = argc;
     newProcess->process.argv = copy_argv(argc, argv);
 
-    // STDIN, STDOUT, STDERR
-    for (int i = 0; i < 3; i++)
+    // STDIN, STDOUT
+    for (int i = 0; i < 2; i++)
     {
         newProcess->process.fileDescriptors[i].mode = OPEN;
         newProcess->process.fileDescriptors[i].pipe = pipeOpen();
     }
-
-    // // REST OF FDS
-    for (int i = 3; i < FDS; i++)
-    {
-        newProcess->process.fileDescriptors[i].mode = CLOSED;
-    }
-    newProcess->process.lastFd = FDS - 1;
+    newProcess->process.lastFd = 2;
 
     uint64_t rsp = (uint64_t)memoryManagerAlloc(4 * 1024);
     if (rsp == 0)
@@ -517,23 +511,26 @@ int yieldProcess()
     return 0;
 }
 
-processInfo * getProccessesInfo(){
-    processInfo * first;
-    processInfo * current;
-    PCB * aux;
-    int i=-1;
+processInfo *getProccessesInfo()
+{
+    processInfo *first;
+    processInfo *current;
+    PCB *aux;
+    int i = -1;
 
     aux = getProcess(i);
-    while (aux!=NULL){
-        current->next = (processInfo*) memoryManagerAlloc(sizeof(processInfo));
+    while (aux != NULL)
+    {
+        current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
         current = current->next;
         current->pid = aux->pid;
-        if(current->pid==-1){
-            first=current;
+        if (current->pid == -1)
+        {
+            first = current;
         }
         current->priority = aux->priority;
         current->stackBase = aux->stackBase;
-        current->status = aux->status;  
+        current->status = aux->status;
         i++;
         aux = getProcess(i);
     }
