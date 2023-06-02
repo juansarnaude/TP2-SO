@@ -6,8 +6,10 @@
 #include <lib.h>
 #include <scheduler.h>
 #include <inforeg.h>
+#include <pipe.h>>
 
-void keyboard_handler(uint64_t * registers);
-uint64_t readBuffer(char* output, uint64_t count);
+void keyboard_handler(uint64_t *registers);
+uint64_t readBuffer(char *output, uint64_t count);
+Pipe *getKeyboardPipe();
 
-#endif 
+#endif

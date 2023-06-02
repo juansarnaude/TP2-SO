@@ -1,4 +1,10 @@
 #include <scheduler.h>
+#include <interrupts.h>
+#include <memoryManager.h>
+#include <queue.h>
+#include <lib.h>
+#include <pipe.h>
+#include <defs.h>
 
 #define DEFAULT_CURRENT -1
 #define TASK_ARR_SIZE 2
@@ -55,12 +61,191 @@ void loadTasks(int (*program1)(), int (*program2)(), uint64_t * registers){
     nextTask(registers);
 }
 
+<<<<<<< Updated upstream
 void changeStatus(unsigned int taskNum){
     if (amount <= 0)    // Do nothing if no tasks are running or they were terminated.
         return;
     int i = taskNum % TASK_ARR_SIZE;
     if (tasks[i].active == 1)
         pauseTask(i);
+=======
+void createScheduler(Pipe *stdin)
+{
+    char *name = "Kernel Task";
+    char *argv[] = {name};
+    dummyProcessPid = createProcess((uint64_t)dummyProcess, 0, NULL);
+
+    active->process.lastFd = 2;
+    active->process.fileDescriptors[0].mode = READ;
+    active->process.fileDescriptors[0].pipe = stdin;
+    active->process.fileDescriptors[1].mode = WRITE;
+    active->process.fileDescriptors[1].pipe = pipeOpen();
+
+    active->process.status = BLOCKED;
+    processReadyCount--;
+}
+
+PCB *getProcess(pid_t pid)
+{
+    Node *current = active;
+    while (current != NULL)
+    {
+        if (current->process.pid == pid)
+        {
+            return &(current->process);
+        }
+        else
+        {
+            current = current->next;
+        }
+    }
+    current = expired;
+    while (current != NULL)
+    {
+        if (current->process.pid == pid)
+        {
+            return &(current->process);
+        }
+        else
+        {
+            current = current->next;
+        }
+    }
+    return NULL;
+}
+
+uint64_t getCurrentPid()
+{
+    if (active != NULL)
+    {
+        return active->process.pid;
+    }
+    return -1;
+}
+
+int blockProcess(pid_t pid)
+{
+    Node *current = active;
+    char found = 0;
+
+    while (!found && current != NULL)
+    {
+        if (current->process.pid == pid)
+        {
+            found = 1;
+            current->process.status = BLOCKED;
+        }
+        else
+        {
+            current = current->next;
+        }
+    }
+    current = expired;
+    while (!found && current != NULL)
+    {
+        if (current->process.pid == pid)
+        {
+            found = 1;
+            current->process.status = BLOCKED;
+        }
+        else
+        {
+            current = current->next;
+        }
+    }
+    if (found)
+    {
+        processReadyCount--;
+        _int20h();
+        return 0;
+    }
+    return -1;
+}
+
+int unblockProcess(pid_t pid)
+{
+    Node *current = active;
+    char found = 0;
+
+    while (!found && current != NULL)
+    {
+        if (current->process.pid == pid)
+        {
+            found = 1;
+            current->process.status = READY;
+        }
+        else
+        {
+            current = current->next;
+        }
+    }
+    current = expired;
+    while (!found && current != NULL)
+    {
+        if (current->process.pid == pid)
+        {
+            found = 1;
+            current->process.status = READY;
+        }
+        else
+        {
+            current = current->next;
+        }
+    }
+    if (found)
+    {
+        processReadyCount++;
+        return 0;
+    }
+    return -1;
+}
+
+char **copy_argv(int argc, char **argv)
+{
+    char **new_argv = memoryManagerAlloc(sizeof(char *) * argc);
+    for (int i = 0; i < argc; i++)
+    {
+        new_argv[i] = strcpy(argv[i]);
+    }
+    return new_argv;
+}
+
+pid_t createProcess(uint64_t rip, int argc, char *argv[])
+{
+    Node *newProcess = memoryManagerAlloc(sizeof(Node));
+    newProcess->process.pid = processAmount++;
+    newProcess->process.priority = DEFAULT_PRIORITY;
+    newProcess->process.quantumsLeft = priorities[DEFAULT_PRIORITY];
+    newProcess->process.blockedQueue = newQueue();
+    newProcess->process.newPriority = -1;
+    newProcess->process.status = READY;
+    newProcess->process.argc = argc;
+    newProcess->process.argv = copy_argv(argc, argv);
+
+    if (active != NULL)
+    {
+        newProcess->process.lastFd = active->process.lastFd;
+        newProcess->process.fileDescriptors[0].mode = active->process.fileDescriptors[0].mode;
+        newProcess->process.fileDescriptors[0].pipe = active->process.fileDescriptors[0].pipe;
+        newProcess->process.fileDescriptors[1].mode = active->process.fileDescriptors[1].mode;
+        newProcess->process.fileDescriptors[1].pipe = active->process.fileDescriptors[1].pipe;
+    }
+
+    uint64_t rsp = (uint64_t)memoryManagerAlloc(4 * 1024);
+    if (rsp == 0)
+    {
+        return -1;
+    }
+    newProcess->process.stackBase = rsp;
+    uint64_t newRsp = (uint64_t)loadProcess(rip, rsp + 4 * 1024, newProcess->process.argc, (uint64_t)newProcess->process.argv);
+    newProcess->process.rsp = newRsp;
+
+    if (active == NULL)
+    {
+        newProcess->next = NULL;
+        active = newProcess;
+    }
+>>>>>>> Stashed changes
     else
         activateTask(i);
 }

@@ -7,6 +7,25 @@ GLOBAL sys_time
 GLOBAL sys_copymem
 GLOBAL inv_opcode
 GLOBAL div_zero
+<<<<<<< Updated upstream
+=======
+GLOBAL sys_memInfo
+GLOBAL sys_memMalloc
+GLOBAL sys_memFree
+GLOBAL sys_waitpid
+GLOBAL sys_kill
+GLOBAL sys_block
+GLOBAL sys_unblock
+GLOBAL sem_open
+GLOBAL sem_close
+GLOBAL sem_post
+GLOBAL sem_wait
+GLOBAL sys_yieldProcess
+GLOBAL sys_nice
+GLOBAL sys_pipe
+GLOBAL sys_dup2
+GLOBAL sys_close
+>>>>>>> Stashed changes
 
 section .text
 sys_write:
@@ -67,6 +86,153 @@ sys_copymem:
     push rbp
     mov rbp,rsp
     mov rax,6
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_memInfo:
+    push rbp
+    mov rbp,rsp
+    mov rax,7
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_memMalloc:
+    push rbp
+    mov rbp,rsp
+    mov rax,8
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_memFree:
+    push rbp
+    mov rbp,rsp
+    mov rax,9
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_waitpid:
+    push rbp
+    mov rbp,rsp
+    mov rax,10
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_kill:
+    push rbp
+    mov rbp,rsp
+    mov rax,11
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_block:
+    push rbp
+    mov rbp,rsp
+    mov rax,12
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_unblock:
+    push rbp
+    mov rbp,rsp
+    mov rax,13
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sem_open:
+    push rbp
+    mov rbp,rsp
+    mov rax,14
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+
+sem_close:
+    push rbp
+    mov rbp,rsp
+    mov rax,15
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+
+sem_post:
+    push rbp
+    mov rbp,rsp
+    mov rax,16
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+
+sem_wait:
+    push rbp
+    mov rbp,rsp
+    mov rax,17
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_yieldProcess:
+    push rbp
+    mov rbp,rsp
+    mov rax,18
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_nice:
+    push rbp
+    mov rbp,rsp
+    mov rax,19
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_pipe:
+    push rbp
+    mov rbp,rsp
+    mov rax,20
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_dup2:
+    push rbp
+    mov rbp,rsp
+    mov rax,21
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret
+
+sys_close:
+    push rbp
+    mov rbp,rsp
+    mov rax,22
     int 0x80
     mov rsp,rbp
     pop rbp

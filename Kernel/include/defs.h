@@ -28,4 +28,93 @@
 #define RFLAGS_POS (REG_AMOUNT+2)
 #define RSP_POS (REG_AMOUNT+3)
 
+#define PIPESIZE 512
+#define FDS 10
+#define OPEN 1
+#define CLOSED 0
+
+typedef int pid_t;
+
+// Blocked Queue
+typedef struct blockednode
+{
+    pid_t pid;
+    struct blockednode *next;
+} BlockedNode;
+
+typedef struct
+{
+    BlockedNode *first;
+    BlockedNode *last;
+    unsigned int qty;
+} BlockedQueueCDT;
+
+typedef BlockedQueueCDT *BlockedQueueADT;
+
+// Semaphores
+typedef struct
+{
+    char *name;
+    uint64_t value; // it wont be negative, process that try to wait when 0 will be stacked in blockedProcess
+    uint64_t processesOpened;
+    uint8_t locked; // if its locked its 1 if not 0;
+    BlockedQueueADT blockedProcesses;
+} semaphore;
+
+typedef semaphore *sem_t;
+
+// Pipes
+typedef struct Pipe
+{
+    char data[PIPESIZE];
+    unsigned int openR;
+    unsigned int openW;
+    uint64_t indexR;
+    uint64_t indexW;
+    BlockedQueueADT queueWriteBlocked;
+    BlockedQueueADT queueReadBlocked;
+} Pipe;
+
+typedef struct pipeNode
+{
+    Pipe *pipe;
+    struct pipeNode *next;
+    struct pipeNode *previous;
+} pipeNode;
+
+typedef pipeNode *pipeList;
+
+typedef struct
+{
+    unsigned int mode;
+    Pipe *pipe;
+} fd_t;
+
+typedef unsigned int priority_t;
+typedef unsigned int status_t;
+
+typedef struct
+{
+    pid_t pid;
+    priority_t priority;
+    int newPriority;
+    status_t status;
+    unsigned int quantumsLeft;
+    uint64_t rsp;
+    uint64_t stackBase;
+    BlockedQueueADT blockedQueue;
+    fd_t fileDescriptors[FDS];
+    unsigned int lastFd;
+    unsigned int argc;
+    char **argv;
+} PCB;
+
+typedef struct node
+{
+    PCB process;
+    struct node *next;
+} Node;
+
+typedef Node *Queue;
+
 #endif

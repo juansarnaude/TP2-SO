@@ -4,6 +4,8 @@
 #include <naiveConsole.h>
 #include <idtLoader.h>
 
+#include <scheduler.h>
+#include <keyboardDriver.h>
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -53,5 +55,11 @@ int main()
 	load_idt();
 	loadUserland(sampleCodeModuleAddress, (uint64_t*) 0x900000);
 	ncPrint("[Finished]");
+	createMemory(0x2000000 - 0xF00000);
+	Pipe *stdin = getKeyboardPipe();
+	createScheduler(stdin);
+	createProcess(sampleCodeModuleAddress, 0, NULL);
+	_sti();
+	_hlt();
 	return 0;
 }
