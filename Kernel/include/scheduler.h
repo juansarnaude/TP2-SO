@@ -21,5 +21,6 @@ uint64_t contextSwitch(uint64_t rsp);
 int killProcess(int returnValue, char autokill);
 int changePriority(pid_t pid, int priorityValue);
 int yieldProcess();
+processInfo * getProccessesInfo();
 
 #endif // SCHEDULER_H

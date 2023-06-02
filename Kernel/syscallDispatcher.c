@@ -28,6 +28,7 @@ static int sys_pipe(int pipefd[2]);
 static int sys_dup2(int fd1, int fd2);
 static int sys_open(int fd);
 static int sys_close(int fd);
+static processInfo * sys_ps();
 // AGREGAR SYSCALL EXIT QUE ES LLAMADA EN SCHEDULER.ASM
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t *registers)
@@ -106,8 +107,11 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
     case 23:
         return sys_close((int)rdi);
         break;
-    }
+    case 24:
+        return (uint64_t)sys_ps();
+        break;
     return 0;
+    }
 }
 
 static uint64_t sys_read(unsigned int fd, char *output, uint64_t count)
@@ -287,7 +291,6 @@ static int sys_nice(pid_t pid, int newPriority)
 
 static int sys_pipe(int pipefd[2])
 {
-
     return pipeOpen();
 }
 
@@ -314,4 +317,8 @@ static int sys_close(int fd)
         return 0;
     pcb->fileDescriptors[fd].mode = CLOSED;
     return 1;
+}
+
+static processInfo *sys_ps(){
+    return getProccessesInfo();
 }

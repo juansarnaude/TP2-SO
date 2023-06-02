@@ -516,3 +516,27 @@ int yieldProcess()
     _int20h();
     return 0;
 }
+
+processInfo * getProccessesInfo(){
+    processInfo * first;
+    processInfo * current;
+    PCB * aux;
+    int i=-1;
+
+    aux = getProcess(i);
+    while (aux!=NULL){
+        current->next = (processInfo*) memoryManagerAlloc(sizeof(processInfo));
+        current = current->next;
+        current->pid = aux->pid;
+        if(current->pid==-1){
+            first=current;
+        }
+        current->priority = aux->priority;
+        current->stackBase = aux->stackBase;
+        current->status = aux->status;  
+        i++;
+        aux = getProcess(i);
+    }
+    current->next = NULL;
+    return first;
+}

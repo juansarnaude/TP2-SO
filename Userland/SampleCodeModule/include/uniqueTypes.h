@@ -5,6 +5,16 @@
 
 // Processes
 typedef int pid_t;
+typedef unsigned int priority_t;
+typedef unsigned int status_t;
+
+typedef struct processInfo{
+    pid_t pid;
+    priority_t priority;
+    uint64_t stackBase;
+    status_t status;
+    struct processInfo * next;
+} processInfo;
 
 // Time
 typedef struct

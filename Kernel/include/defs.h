@@ -118,4 +118,12 @@ typedef struct node
 
 typedef Node *Queue;
 
+typedef struct processInfo{
+    pid_t pid;
+    priority_t priority;
+    uint64_t stackBase;
+    status_t status;
+    struct processInfo * next;
+} processInfo;
+
 #endif

@@ -141,6 +141,10 @@ command command_parser(char *buffer)
         putChar('\n');
         return (command)test_sync;
     }
+    else if((containsString(buffer, "ps")) >= 0){
+        putChar('\n');
+        return (command)getProcessesInfo; 
+    }
     return NULL;
 }
 

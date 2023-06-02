@@ -24,6 +24,7 @@ GLOBAL sys_pipe
 GLOBAL sys_dup2
 GLOBAL sys_open
 GLOBAL sys_close
+GLOBAL sys_ps
 
 section .text
 sys_write:
@@ -244,6 +245,15 @@ sys_close:
     mov rsp,rbp
     pop rbp
     ret
+
+sys_ps:
+    push rbp
+    mov rbp,rsp
+    mov rax,24
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret    
 
 inv_opcode:
     ud2
