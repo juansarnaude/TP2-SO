@@ -49,7 +49,7 @@ int main()
 	_cli();
 	ncClear();
 	load_idt();
-	createMemory(0x2000000 - 0xF00000);
+	createMemory(0x2000000 - 0x1000000);
 	createScheduler();
     createProcess(sampleCodeModuleAddress, 0, NULL);
 	_sti();

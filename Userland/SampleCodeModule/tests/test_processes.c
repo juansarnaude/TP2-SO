@@ -64,7 +64,6 @@ void test_processes(int argc, char * argv[]) {
                                 fprintf(STDOUT, "test_processes: ERROR killing process\n");
                                 return;
                             } else {
-                                prueba();
                                 fprintf(STDOUT, "test_processes: process %d KILLED\n", p_rqs[rq].pid);
                             }
                             p_rqs[rq].state = KILLED; 
@@ -101,4 +100,5 @@ void test_processes(int argc, char * argv[]) {
         j++;
     }
     fprintf(STDOUT, "All good with test_processes. ;)\n");
+    prueba();
 }
