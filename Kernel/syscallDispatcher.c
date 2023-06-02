@@ -2,6 +2,8 @@
 #include <memoryManager.h>
 #include <scheduler.h>
 #include <semaphore.h>
+#include <pipe.h>
+#include <defs.h>
 
 static uint64_t sys_read(unsigned int fd, char *output, uint64_t count);
 static void sys_write(unsigned fd, const char *buffer, uint64_t count);
@@ -22,6 +24,10 @@ static int sys_sem_post(sem_t sem);
 static int sys_sem_wait(sem_t sem);
 static int sys_yieldProcess();
 static int sys_nice(pid_t pid, int new_priority);
+static int sys_pipe(int pipefd[2]);
+static int sys_dup2(int fd1, int fd2);
+static int sys_open(int fd);
+static int sys_close(int fd);
 // AGREGAR SYSCALL EXIT QUE ES LLAMADA EN SCHEDULER.ASM
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t *registers)
@@ -83,10 +89,22 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         return sys_sem_wait((sem_t)rdi);
         break;
     case 18:
-        (uint64_t)sys_yieldProcess();
+        (uint64_t) sys_yieldProcess();
         break;
     case 19:
-        return (uint64_t)sys_nice( (pid_t) rdi, (int) rsi);
+        return (uint64_t)sys_nice((pid_t)rdi, (int)rsi);
+        break;
+    case 20:
+        return (uint64_t)sys_pipe((int)rdi);
+        break;
+    case 21:
+        return (uint64_t)sys_dup2((int)rdi, (int)rsi);
+        break;
+    case 22:
+        return sys_open((int)rdi);
+        break;
+    case 23:
+        return sys_close((int)rdi);
         break;
     }
     return 0;
@@ -94,34 +112,46 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
 
 static uint64_t sys_read(unsigned int fd, char *output, uint64_t count)
 {
-    switch (fd)
-    {
-    case STDIN:
-        return readBuffer(output, count);
-        break;
-
-    default:
+    PCB *pcb = getProcess(getCurrentPid());
+    if (pcb->lastFd <= fd || pcb->fileDescriptors[fd].mode == CLOSED)
         return 0;
+    if (pcb->fileDescriptors[fd].mode == OPEN)
+    {
+        switch (fd)
+        {
+        case STDIN:
+            return readBuffer(output, count);
+            break;
+        default:
+            return pipeRead(pcb->fileDescriptors[fd].pipe, output, count);
+        }
     }
 }
 
 static void sys_write(unsigned fd, const char *buffer, uint64_t count)
 {
-    uint64_t i = 0;
-    while (i < count)
+    PCB *pcb = getProcess(getCurrentPid());
+    if (pcb->lastFd <= fd || pcb->fileDescriptors[fd].mode == CLOSED)
+        return;
+    if (pcb->fileDescriptors[fd].mode == OPEN)
     {
-        switch (fd)
+        uint64_t i = 0;
+        while (i < count)
         {
-        case STDOUT:
-            ncPrintChar(buffer[i]);
-            break;
-        case STDERR:
-            ncPrintCharFormat(buffer[i], ERROR_FORMAT);
-            break;
-        default:
-            return;
+            switch (fd)
+            {
+            case STDOUT:
+                ncPrintChar(buffer[i]);
+                break;
+            case STDERR:
+                ncPrintCharFormat(buffer[i], ERROR_FORMAT);
+                break;
+            }
+            i++;
         }
-        i++;
+        if (fd != STDOUT && fd != STDERR)
+            pipeWrite(pcb->fileDescriptors[fd].pipe, buffer, count);
+        return;
     }
 }
 
@@ -245,10 +275,43 @@ static int sys_yieldProcess()
     return yieldProcess();
 }
 
-static int sys_nice(pid_t pid, int newPriority){
-    if (pid <= 0) {
+static int sys_nice(pid_t pid, int newPriority)
+{
+    if (pid <= 0)
+    {
         return -1;
     }
 
     return changePriority(pid, newPriority);
+}
+
+static int sys_pipe(int pipefd[2])
+{
+
+    return pipeOpen();
+}
+
+static int sys_dup2(int fd1, int fd2)
+{
+    PCB *pcb = getProcess(getCurrentPid());
+    if (fd1 >= pcb->lastFd || fd2 >= pcb->lastFd || pcb->fileDescriptors[fd2].mode == CLOSED)
+        return 0;
+    pcb->fileDescriptors[fd1] = pcb->fileDescriptors[fd2];
+    return 1;
+}
+static int sys_open(int fd)
+{
+    PCB *pcb = getProcess(getCurrentPid());
+    if (pcb->lastFd <= fd)
+        return 0;
+    pcb->fileDescriptors[fd].mode = OPEN;
+    return 1;
+}
+static int sys_close(int fd)
+{
+    PCB *pcb = getProcess(getCurrentPid());
+    if (pcb->lastFd <= fd)
+        return 0;
+    pcb->fileDescriptors[fd].mode = CLOSED;
+    return 1;
 }
