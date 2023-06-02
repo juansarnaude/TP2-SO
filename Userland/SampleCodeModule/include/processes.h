@@ -19,5 +19,9 @@ void inforeg(int argc, char * argv[]);
 void test_priority(int argc, char * argv[]);
 void test_sync(int argc, char *argv[]);
 void getProcessesInfo(int argc, char * argv[]);
+void loopProcess(int argc, char * argv[]);
+void killProcess(int argc, char * argv[]);
+void niceProcess(int argc, char * argv[]);
+void blockProcess(int argc, char * argv[]);
 
 #endif

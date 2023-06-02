@@ -29,6 +29,9 @@ static int sys_dup2(int fd1, int fd2);
 static int sys_open(int fd);
 static int sys_close(int fd);
 static processInfo * sys_ps();
+static int sys_changeProcessStatus(pid_t pid);
+static pid_t sys_getCurrentPid();
+static int sys_secondsElapsed();
 // AGREGAR SYSCALL EXIT QUE ES LLAMADA EN SCHEDULER.ASM
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t *registers)
@@ -109,6 +112,15 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         break;
     case 24:
         return (uint64_t)sys_ps();
+        break;
+    case 25:
+        return sys_changeProcessStatus((pid_t)rdi);
+        break;
+    case 26:
+        return sys_getCurrentPid();
+        break;
+    case 27:
+        return sys_secondsElapsed();
         break;
     return 0;
     }
@@ -321,4 +333,27 @@ static int sys_close(int fd)
 
 static processInfo *sys_ps(){
     return getProccessesInfo();
+}
+
+//Returns READY if unblocked, BLOCKED if blocked, -1 if failed
+static int sys_changeProcessStatus(pid_t pid){
+    PCB * process = getProcess(pid);
+    if(process==NULL){
+        return -1;
+    }
+    if(process->status == READY){
+        sys_block(pid);
+        return BLOCKED;
+    } else{
+        sys_unblock(pid);
+        return READY;
+    }
+}
+
+static pid_t sys_getCurrentPid(){
+    return getCurrentPid();
+}
+
+static int sys_secondsElapsed(){
+    return seconds_elapsed();
 }

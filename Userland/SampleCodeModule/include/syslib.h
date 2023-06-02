@@ -34,11 +34,14 @@ int sem_close(sem_t sem);
 int sem_post(sem_t sem);
 int sem_wait(sem_t sem);
 int sys_yieldProcess();
-void sys_nice(pid_t pid, int newPriority);
+int sys_nice(pid_t pid, int newPriority);
 int sys_pipe(int pipefd[2]);
 int sys_dup2(int fd1, int fd2);
 int sys_open(int fd);
 processInfo * sys_ps();
+int sys_changeProcessStatus(pid_t pid);
+pid_t sys_getCurrentPid();
+int sys_secondsElapsed();
 
 unsigned int strlen(const char *s);
 void excepDivZero();

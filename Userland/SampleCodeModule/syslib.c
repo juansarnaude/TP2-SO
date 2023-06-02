@@ -535,3 +535,64 @@ void getProcessesInfo(int argc, char * argv[]){
         current = current->next;
     }
 }
+
+void loopProcess(int argc, char * argv[]){
+    int secs = 5;
+    pid_t currentPid = sys_getCurrentPid();
+    int i = 0-secs-1;
+    while( 1 ){
+        if( sys_secondsElapsed() - i >= secs){
+            fprintf(STDOUT, "McWhiggin manda saludos al proceso identificable por el siguiente PID: %d\n", (int)currentPid);
+            i = sys_secondsElapsed();
+        }
+    }
+
+}
+
+void killProcess(int argc, char * argv[]){
+    if(argc != 2){
+        puts("kill should only receive 1 argument");
+        return;
+    }
+    if( sys_kill(atoi(argv[1])) == 0){
+        fprintf(STDOUT, "Killed PID: %d\n", atoi(argv[1]));
+    } else{
+        fprintf(STDOUT, "Failed to kill PID: %d\n", atoi(argv[1]));
+    }
+}
+
+
+void niceProcess(int argc, char * argv[]){
+    if(argc != 3){
+        puts("nice should only receive 2 argument");
+        return;
+    }
+    int a1 = atoi(argv[1]);
+    int a2 = atoi(argv[2]);
+    if( sys_nice((pid_t) a1, a2) ){
+        fprintf(STDOUT, "Changed priority of PID: %d , to %d\n", a1, a2);
+    }else{
+        puts("Failed to chang priority\n");
+    }
+}
+
+
+void blockProcess(int argc, char * argv[]){
+    if(argc != 2){
+        puts("block should only receive 1 arguments");
+        return;
+    }
+    int a = atoi(argv[1]);
+    int retValue = sys_changeProcessStatus(a);
+    
+    if(retValue==READY){
+        fprintf(STDOUT, "PID: %d unblocked\n", a);
+    }else if(retValue==BLOCKED){
+        fprintf(STDOUT, "PID: %d blocked\n", a);
+    }else{
+        puts("Failed to block/unblock the process\n");
+    }
+    
+}
+
+

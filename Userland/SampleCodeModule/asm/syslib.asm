@@ -25,6 +25,9 @@ GLOBAL sys_dup2
 GLOBAL sys_open
 GLOBAL sys_close
 GLOBAL sys_ps
+GLOBAL sys_changeProcessStatus
+GLOBAL sys_getCurrentPid
+GLOBAL sys_secondsElapsed
 
 section .text
 sys_write:
@@ -254,6 +257,33 @@ sys_ps:
     mov rsp,rbp
     pop rbp
     ret    
+
+sys_changeProcessStatus:
+    push rbp
+    mov rbp,rsp
+    mov rax,25
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret     
+
+sys_getCurrentPid:
+    push rbp
+    mov rbp,rsp
+    mov rax,26
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret  
+
+sys_secondsElapsed:
+    push rbp
+    mov rbp,rsp
+    mov rax,27
+    int 0x80
+    mov rsp,rbp
+    pop rbp
+    ret      
 
 inv_opcode:
     ud2
