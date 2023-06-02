@@ -160,6 +160,22 @@ command command_parser(char *buffer)
         putChar('\n');
         return (command)getProcessesInfo; 
     }
+    else if(containsString(buffer, "loop") >= 0 ){
+        putChar('\n');
+        return (command)loopProcess; 
+    }
+    else if(containsString(buffer, "kill") >= 0 ){
+        putChar('\n');
+        return (command)killProcess; 
+    }
+    else if(containsString(buffer, "nice") >= 0 ){
+        putChar('\n');
+        return (command)niceProcess; 
+    }
+    else if(containsString(buffer, "block") >= 0 ){
+        putChar('\n');
+        return (command)blockProcess; 
+    }
     return NULL;
 }
 

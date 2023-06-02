@@ -17,8 +17,6 @@ extern void _int20h();                                                          
 #define DEFAULT_PRIORITY 4
 priority_t priorities[NUMBER_OF_PRIORITIES] = {9, 8, 7, 6, 5, 4, 3, 2, 1};
 
-#define READY 0
-#define BLOCKED 1
 
 /* Status */
 // typedef enum

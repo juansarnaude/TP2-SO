@@ -4,6 +4,9 @@
 #include <stddef.h>
 
 // Processes
+#define READY 0
+#define BLOCKED 1
+
 typedef int pid_t;
 typedef unsigned int priority_t;
 typedef unsigned int status_t;
