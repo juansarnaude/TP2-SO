@@ -38,7 +38,7 @@ void sys_nice(pid_t pid, int newPriority);
 int sys_pipe(int pipefd[2]);
 int sys_dup2(int fd1, int fd2);
 int sys_open(int fd);
-int sys_open(int fd);
+int sys_close(int fd);
 
 unsigned int strlen(const char *s);
 void excepDivZero();

@@ -288,7 +288,6 @@ static int sys_nice(pid_t pid, int newPriority)
 static int sys_pipe(int pipefd[2])
 {
 
-    return pipeOpen();
 }
 
 static int sys_dup2(int fd1, int fd2)

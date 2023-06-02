@@ -12,15 +12,14 @@ typedef ptr (*pm)();
 void help();
 int readInput();
 void unknownCommand();
-void pipeManager();
+void pipeSeparator(char **parts, int part_count, int pipePosition);
 
-
-command command_parser(char * name);
+command command_parser(char *name);
 pm commandLine(char *buffer);
 
 command bck_fun = NULL;
 int bck_argc = -1;
-char ** bck_argv = NULL;
+char **bck_argv = NULL;
 
 void bash()
 {
@@ -37,15 +36,28 @@ int readInput()
 {
     int sizeRead = gets(buffer);
     int part_count;
-    char ** parts = strtok(buffer, ' ', &part_count);
+    char **parts = strtok(buffer, ' ', &part_count);
     if (strcmp(buffer, "exit") == 0)
     {
         puts("\nGoodbye\n");
         return -1;
-    } 
+    }
     else if (charBelongs(buffer, '|'))
     {
-        putChar('\n');
+        int i = 0;
+        char found = 0;
+        while (!found && i < part_count)
+        {
+            if (strcmp(parts[i], "|") == 0)
+            {
+                found = 1;
+            }
+            else
+            {
+                i++;
+            }
+            pipeSeparator(parts, part_count, i);
+        }
     }
     else
     {
@@ -53,16 +65,19 @@ int readInput()
         if (fun == NULL)
         {
             unknownCommand(parts[0]);
-        }else{
-            pid_t pid = sys_exec((uint64_t) fun, part_count, parts);
+        }
+        else
+        {
+            pid_t pid = sys_exec((uint64_t)fun, part_count, parts);
             sys_waitpid(pid);
         }
     }
     // etc, para los distintos comandos a implementar
-    for (int i = 0; i < part_count; i++) {
-        sys_memFree((uint64_t) parts[i]);
+    for (int i = 0; i < part_count; i++)
+    {
+        sys_memFree((uint64_t)parts[i]);
     }
-    sys_memFree((uint64_t) parts);
+    sys_memFree((uint64_t)parts);
     return sizeRead;
 }
 
@@ -144,7 +159,7 @@ command command_parser(char *buffer)
     return NULL;
 }
 
-void help(int argc, char * argv[])
+void help(int argc, char *argv[])
 {
     const char *helpstring =
         "help                 Provides help information for commands.\n"
@@ -167,4 +182,18 @@ void help(int argc, char * argv[])
         "                     to console.\n";
 
     puts(helpstring);
+}
+
+void pipeSeparator(char **parts, int part_count, int pipePosition)
+{
+    command writeFunction = command_parser(parts[0]);
+    if (writeFunction == NULL)
+        return;
+    command readFunction = command_parser(parts[pipePosition + 1]);
+    if (readFunction == NULL)
+        return;
+    
+    int fds[2];
+    sys_pipe(fds);
+    
 }
