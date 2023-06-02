@@ -522,3 +522,16 @@ void fprintf(int fd, char * str, ...) {
     va_end(vl);
     sys_write(fd, buff, j);
  }
+
+void getProcessesInfo(int argc, char * argv[]){
+    processInfo * current = sys_ps();
+    char * toPrint;
+
+    while(current != NULL){
+        fprintf(STDOUT, "PID: %d\n" ,current->pid);
+        fprintf(STDOUT, "Priority: %d\n", current->priority);
+        fprintf(STDOUT, "Stack Base: 0x%x\n", current->stackBase);
+        fprintf(STDOUT, "Status: %s\n\n", (current->status)?"BLOCKED":"READY" );
+        current = current->next;
+    }
+}

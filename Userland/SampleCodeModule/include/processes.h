@@ -18,5 +18,6 @@ void phylo(int argc, char * argv[]);
 void inforeg(int argc, char * argv[]);
 void test_priority(int argc, char * argv[]);
 void test_sync(int argc, char *argv[]);
+void getProcessesInfo(int argc, char * argv[]);
 
 #endif
