@@ -88,10 +88,9 @@ typedef pipeNode *pipeList;
 typedef struct
 {
     unsigned int mode;
-    Pipe *pipe;
 } fd_t;
 
-//Processes
+// Processes
 
 typedef unsigned int priority_t;
 typedef unsigned int status_t;
@@ -110,6 +109,7 @@ typedef struct
     uint64_t stackBase;
     BlockedQueueADT blockedQueue;
     fd_t fileDescriptors[FDS];
+    Pipe *pipe;
     unsigned int lastFd;
     unsigned int argc;
     char **argv;
@@ -123,12 +123,13 @@ typedef struct node
 
 typedef Node *Queue;
 
-typedef struct processInfo{
+typedef struct processInfo
+{
     pid_t pid;
     priority_t priority;
     uint64_t stackBase;
     status_t status;
-    struct processInfo * next;
+    struct processInfo *next;
 } processInfo;
 
 #endif

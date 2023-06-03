@@ -28,7 +28,7 @@ static int sys_pipe(int pipefd[2]);
 static int sys_dup2(int fd1, int fd2);
 static int sys_open(int fd);
 static int sys_close(int fd);
-static processInfo * sys_ps();
+static processInfo *sys_ps();
 static int sys_changeProcessStatus(pid_t pid);
 static pid_t sys_getCurrentPid();
 static int sys_secondsElapsed();
@@ -122,7 +122,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
     case 27:
         return sys_secondsElapsed();
         break;
-    return 0;
+        return 0;
     }
 }
 
@@ -139,7 +139,7 @@ static uint64_t sys_read(unsigned int fd, char *output, uint64_t count)
             return readBuffer(output, count);
             break;
         default:
-            return pipeRead(pcb->fileDescriptors[fd].pipe, output, count);
+            return pipeRead(pcb->pipe, output, count);
         }
     }
 }
@@ -166,7 +166,7 @@ static void sys_write(unsigned fd, const char *buffer, uint64_t count)
             i++;
         }
         if (fd != STDOUT && fd != STDERR)
-            pipeWrite(pcb->fileDescriptors[fd].pipe, buffer, count);
+            pipeWrite(pcb->pipe, buffer, count);
         return;
     }
 }
@@ -303,6 +303,12 @@ static int sys_nice(pid_t pid, int newPriority)
 
 static int sys_pipe(int pipefd[2])
 {
+    PCB *pcb = getProcess(getCurrentPid());
+    pcb->fileDescriptors[PIPEIN].mode = OPEN;
+    pcb->fileDescriptors[PIPEOUT].mode = OPEN;
+    pcb->pipe = pipeOpen();
+    pipefd[0] = PIPEOUT;
+    pipefd[1] = PIPEIN;
 }
 
 static int sys_dup2(int fd1, int fd2)
@@ -330,29 +336,37 @@ static int sys_close(int fd)
     return 1;
 }
 
-static processInfo *sys_ps(){
+static processInfo *sys_ps()
+{
     return getProccessesInfo();
 }
 
-//Returns READY if unblocked, BLOCKED if blocked, -1 if failed
-static int sys_changeProcessStatus(pid_t pid){
-    PCB * process = getProcess(pid);
-    if(process==NULL){
+// Returns READY if unblocked, BLOCKED if blocked, -1 if failed
+static int sys_changeProcessStatus(pid_t pid)
+{
+    PCB *process = getProcess(pid);
+    if (process == NULL)
+    {
         return -1;
     }
-    if(process->status == READY){
+    if (process->status == READY)
+    {
         sys_block(pid);
         return BLOCKED;
-    } else{
+    }
+    else
+    {
         sys_unblock(pid);
         return READY;
     }
 }
 
-static pid_t sys_getCurrentPid(){
+static pid_t sys_getCurrentPid()
+{
     return getCurrentPid();
 }
 
-static int sys_secondsElapsed(){
+static int sys_secondsElapsed()
+{
     return seconds_elapsed();
 }

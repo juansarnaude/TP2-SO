@@ -156,25 +156,30 @@ command command_parser(char *buffer)
         putChar('\n');
         return (command)test_sync;
     }
-    else if((containsString(buffer, "ps")) >= 0){
+    else if ((containsString(buffer, "ps")) >= 0)
+    {
         putChar('\n');
-        return (command)getProcessesInfo; 
+        return (command)getProcessesInfo;
     }
-    else if(containsString(buffer, "loop") >= 0 ){
+    else if (containsString(buffer, "loop") >= 0)
+    {
         putChar('\n');
-        return (command)loopProcess; 
+        return (command)loopProcess;
     }
-    else if(containsString(buffer, "kill") >= 0 ){
+    else if (containsString(buffer, "kill") >= 0)
+    {
         putChar('\n');
-        return (command)killProcess; 
+        return (command)killProcess;
     }
-    else if(containsString(buffer, "nice") >= 0 ){
+    else if (containsString(buffer, "nice") >= 0)
+    {
         putChar('\n');
-        return (command)niceProcess; 
+        return (command)niceProcess;
     }
-    else if(containsString(buffer, "block") >= 0 ){
+    else if (containsString(buffer, "block") >= 0)
+    {
         putChar('\n');
-        return (command)blockProcess; 
+        return (command)blockProcess;
     }
     return NULL;
 }
@@ -212,8 +217,21 @@ void pipeSeparator(char **parts, int part_count, int pipePosition)
     command readFunction = command_parser(parts[pipePosition + 1]);
     if (readFunction == NULL)
         return;
-    
+
     int fds[2];
     sys_pipe(fds);
+
+    sys_close(fds[0]);
+    sys_dup2(fds[1], STDOUT);
+    pid_t pidW = sys_exec((uint64_t)writeFunction, pipePosition, parts);
+    sys_close(STDOUT);
+
+    sys_close(fds[1]);
+    sys_dup2(fds[0], STDIN);
+    pid_t pidR = sys_exec((uint64_t)writeFunction, part_count - (pipePosition + 1), &parts[pipePosition + 1]);
+    sys_close(STDIN);
+
+    sys_waitpid(pidW);
+    sys_waitpid(pidR);
     
 }

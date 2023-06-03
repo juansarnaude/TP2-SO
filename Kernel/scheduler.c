@@ -17,7 +17,6 @@ extern void _int20h();                                                          
 #define DEFAULT_PRIORITY 4
 priority_t priorities[NUMBER_OF_PRIORITIES] = {9, 8, 7, 6, 5, 4, 3, 2, 1};
 
-
 /* Status */
 // typedef enum
 // {
@@ -228,12 +227,16 @@ pid_t createProcess(uint64_t rip, int argc, char *argv[])
     newProcess->process.argv = copy_argv(argc, argv);
 
     // STDIN, STDOUT
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i <= 2; i++)
     {
         newProcess->process.fileDescriptors[i].mode = OPEN;
-        newProcess->process.fileDescriptors[i].pipe = pipeOpen();
     }
-    newProcess->process.lastFd = 2;
+    // PIPEOUT, PIPEIN
+    for (int i = 3; i <= 4; i++)
+    {
+        newProcess->process.fileDescriptors[i].mode = CLOSED;
+    }
+    newProcess->process.lastFd = 4;
 
     uint64_t rsp = (uint64_t)memoryManagerAlloc(4 * 1024);
     if (rsp == 0)
