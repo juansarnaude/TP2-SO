@@ -181,6 +181,16 @@ command command_parser(char *buffer)
         putChar('\n');
         return (command)blockProcess;
     }
+    else if (containsString(buffer, "cat") >= 0)
+    {
+        putChar('\n');
+        return (command)cat;
+    }
+    else if (containsString(buffer, "wc") >= 0)
+    {
+        putChar('\n');
+        return (command)wc;
+    }
     return NULL;
 }
 
@@ -228,10 +238,9 @@ void pipeSeparator(char **parts, int part_count, int pipePosition)
 
     sys_close(fds[1]);
     sys_dup2(fds[0], STDIN);
-    pid_t pidR = sys_exec((uint64_t)writeFunction, part_count - (pipePosition + 1), &parts[pipePosition + 1]);
+    pid_t pidR = sys_exec((uint64_t)readFunction, part_count - (pipePosition + 1), &parts[pipePosition + 1]);
     sys_close(STDIN);
 
     sys_waitpid(pidW);
     sys_waitpid(pidR);
-    
 }
