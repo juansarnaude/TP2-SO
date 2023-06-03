@@ -108,7 +108,9 @@ typedef struct
     uint64_t rsp;
     uint64_t stackBase;
     BlockedQueueADT blockedQueue;
-    fd_t fileDescriptors[FDS];
+    fd_t fileDescriptors[FDS]; 
+    // 0: STDIN, 1: STDOUT, 2:STDERR
+    // 3: PIPEW, 4: PIPER
     Pipe *pipe;
     unsigned int lastFd;
     unsigned int argc;

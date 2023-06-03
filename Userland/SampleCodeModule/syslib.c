@@ -709,6 +709,7 @@ void cat(int argc, char *argv[])
     {
         fprintf(STDOUT, "%s", argv[i]);
     }
+    fprintf(STDOUT, "%c", EOF);
 }
 void wc(int argc, char *argv[])
 {
@@ -722,19 +723,18 @@ void wc(int argc, char *argv[])
 
 void filter(int argc, char *argv[])
 {
+
     char vowels[] = {'a','e','i','o','u'};
     char capitalVowels[] = {'A','E','I','O','U'};
-    for(int i = 1 ; i < argc ; i++){
-        for(int j = 0 ; argv[i][j] != 0 ; j++){
-            for(int k = 0 ; k < 5; k++){
-                if(argv[i][j] == vowels[k]){
-                    fprintf(STDOUT,"%c",vowels[k]);
-                }
-                if(argv[i][j] == capitalVowels[k]){
-                    fprintf(STDOUT,"%c",capitalVowels[k]);
-                }
+    char c;
+    while((c=getChar()) != EOF){
+        for(int k = 0 ; k < 5; k++){
+            if(c == vowels[k]){
+                fprintf(STDOUT,"%c",vowels[k]);
             }
-            
+            if(c == capitalVowels[k]){
+                fprintf(STDOUT,"%c",capitalVowels[k]);
+            }
         }
     }
 }

@@ -32,6 +32,7 @@ void bash()
     }
 }
 
+//Change : to |
 int readInput()
 {
     int sizeRead = gets(buffer);
@@ -42,13 +43,13 @@ int readInput()
         puts("\nGoodbye\n");
         return -1;
     }
-    else if (charBelongs(buffer, '|'))
+    else if (charBelongs(buffer, ':'))
     {
         int i = 0;
         char found = 0;
         while (!found && i < part_count)
         {
-            if (strcmp(parts[i], "|") == 0)
+            if (strcmp(parts[i], ":") == 0)
             {
                 found = 1;
             }
@@ -227,28 +228,34 @@ void help(int argc, char *argv[])
 void pipeSeparator(char **parts, int part_count, int pipePosition)
 {
     command writeFunction = command_parser(parts[0]);
-    if (writeFunction == NULL)
+    if (writeFunction == NULL){
         return;
+    }  
     command readFunction = command_parser(parts[pipePosition + 1]);
-    if (readFunction == NULL)
+    if (readFunction == NULL){
         return;
+    }
+    pid_t auxPid = sys_getCurrentPid();
+    
 
     int fds[2];
     sys_pipe(fds);
 
-    sys_close(fds[0]);
-    sys_dup2(fds[1], STDOUT);
-    pid_t pidW = sys_exec((uint64_t)writeFunction, pipePosition, parts);
-    sys_close(STDOUT);
-
     sys_close(fds[1]);
-    sys_dup2(fds[0], STDIN);
-    pid_t pidR = sys_exec((uint64_t)readFunction, part_count - (pipePosition + 1), &parts[pipePosition + 1]);
+    sys_dup2(fds[0], STDOUT);
+    sys_close(STDOUT);
+    pid_t pidW = sys_exec((uint64_t)writeFunction, pipePosition, parts); 
+
+
+    sys_close(fds[0]);
+    sys_dup2(fds[1], STDIN);
     sys_close(STDIN);
+    sys_open(STDOUT);
+    pid_t pidR = sys_exec((uint64_t)readFunction, part_count - (pipePosition + 1), &parts[pipePosition + 1]);
+    
 
     sys_waitpid(pidW);
     sys_waitpid(pidR);
 
     sys_open(STDIN);
-    sys_open(STDOUT);
 }

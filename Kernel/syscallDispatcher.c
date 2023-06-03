@@ -6,7 +6,7 @@
 #include <defs.h>
 
 static uint64_t sys_read(unsigned int fd, char *output, uint64_t count);
-static void sys_write(unsigned fd, const char *buffer, uint64_t count);
+static void sys_write(unsigned int fd, const char *buffer, uint64_t count);
 static pid_t sys_exec(uint64_t program, unsigned int argc, char *argv[]);
 static void sys_exit(int return_value, char autokill);
 static void sys_time(time_t *s);
@@ -129,25 +129,22 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
 static uint64_t sys_read(unsigned int fd, char *output, uint64_t count)
 {
     PCB *pcb = getProcess(getCurrentPid());
-    if (pcb->lastFd <= fd || pcb->fileDescriptors[fd].mode == CLOSED)
+    if (pcb->lastFd <= fd)
         return 0;
+
     if (pcb->fileDescriptors[fd].mode == OPEN)
     {
-        switch (fd)
-        {
-        case STDIN:
-            return readBuffer(output, count);
-            break;
-        default:
-            return pipeRead(pcb->pipe, output, count);
-        }
+        return readBuffer(output, count);
+    }
+    if(pcb->fileDescriptors[PIPEIN].mode == OPEN){
+        return pipeRead(pcb->pipe, output, count);
     }
 }
 
-static void sys_write(unsigned fd, const char *buffer, uint64_t count)
+static void sys_write(unsigned int fd, const char *buffer, uint64_t count)
 {
     PCB *pcb = getProcess(getCurrentPid());
-    if (pcb->lastFd <= fd || pcb->fileDescriptors[fd].mode == CLOSED)
+    if (pcb->lastFd < fd)
         return;
     if (pcb->fileDescriptors[fd].mode == OPEN)
     {
@@ -165,10 +162,11 @@ static void sys_write(unsigned fd, const char *buffer, uint64_t count)
             }
             i++;
         }
-        if (fd != STDOUT && fd != STDERR)
-            pipeWrite(pcb->pipe, buffer, count);
-        return;
     }
+    else if (pcb->fileDescriptors[PIPEOUT].mode == OPEN){
+        pipeWrite(pcb->pipe, buffer, count);
+    }
+    return;
 }
 
 static pid_t sys_exec(uint64_t program, unsigned int argc, char *argv[])
@@ -314,7 +312,7 @@ static int sys_pipe(int pipefd[2])
 static int sys_dup2(int fd1, int fd2)
 {
     PCB *pcb = getProcess(getCurrentPid());
-    if (fd1 >= pcb->lastFd || fd2 >= pcb->lastFd || pcb->fileDescriptors[fd2].mode == CLOSED)
+    if (fd1 > pcb->lastFd || fd2 > pcb->lastFd || pcb->fileDescriptors[fd2].mode == CLOSED)
         return 0;
     pcb->fileDescriptors[fd1] = pcb->fileDescriptors[fd2];
     return 1;
@@ -322,7 +320,7 @@ static int sys_dup2(int fd1, int fd2)
 static int sys_open(int fd)
 {
     PCB *pcb = getProcess(getCurrentPid());
-    if (pcb->lastFd <= fd)
+    if (pcb->lastFd < fd)
         return 0;
     pcb->fileDescriptors[fd].mode = OPEN;
     return 1;
@@ -330,7 +328,7 @@ static int sys_open(int fd)
 static int sys_close(int fd)
 {
     PCB *pcb = getProcess(getCurrentPid());
-    if (pcb->lastFd <= fd)
+    if (pcb->lastFd < fd)
         return 0;
     pcb->fileDescriptors[fd].mode = CLOSED;
     return 1;

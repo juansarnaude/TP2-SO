@@ -84,6 +84,16 @@ void createScheduler()
     char *name = "Kernel Task";
     char *argv[] = {name};
     dummyProcessPid = createProcess((uint64_t)dummyProcess, 0, NULL);
+        for (int i = 0; i <= 2; i++)
+    {
+        active->process.fileDescriptors[i].mode = OPEN;
+    }
+    // PIPEOUT, PIPEIN
+    for (int i = 3; i <= 4; i++)
+    {
+        active->process.fileDescriptors[i].mode = CLOSED;
+    }
+    active->process.lastFd = 4;
     active->process.status = BLOCKED;
     // readyProcessAmount--;
     processReadyCount--;
@@ -226,17 +236,16 @@ pid_t createProcess(uint64_t rip, int argc, char *argv[])
     newProcess->process.argc = argc;
     newProcess->process.argv = copy_argv(argc, argv);
 
-    // STDIN, STDOUT
-    for (int i = 0; i <= 2; i++)
+    // STDIN, STDOUT, STDERR, PIPEOUT, PIPEIN
+    if (active != NULL)
     {
-        newProcess->process.fileDescriptors[i].mode = OPEN;
+        for (int i = 0; i <= active->process.lastFd; i++)
+        {
+            newProcess->process.fileDescriptors[i].mode = active->process.fileDescriptors[i].mode;
+        }
+        newProcess->process.lastFd = active->process.lastFd;
+        newProcess->process.pipe = active->process.pipe;
     }
-    // PIPEOUT, PIPEIN
-    for (int i = 3; i <= 4; i++)
-    {
-        newProcess->process.fileDescriptors[i].mode = CLOSED;
-    }
-    newProcess->process.lastFd = 4;
 
     uint64_t rsp = (uint64_t)memoryManagerAlloc(4 * 1024);
     if (rsp == 0)

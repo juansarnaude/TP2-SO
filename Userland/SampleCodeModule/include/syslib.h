@@ -8,6 +8,8 @@
 #define STDIN 0
 #define STDOUT 1
 #define STDERR 2
+#define PIPEOUT 3
+#define PIPEIN 4
 
 #define EOF -1
 
