@@ -719,3 +719,22 @@ void wc(int argc, char *argv[])
                 lines++;
     fprintf(STDOUT, "%d lines detected\n", lines);
 }
+
+void filter(int argc, char *argv[])
+{
+    char vowels[] = {'a','e','i','o','u'};
+    char capitalVowels[] = {'A','E','I','O','U'};
+    for(int i = 1 ; i < argc ; i++){
+        for(int j = 0 ; argv[i][j] != 0 ; j++){
+            for(int k = 0 ; k < 5; k++){
+                if(argv[i][j] == vowels[k]){
+                    fprintf(STDOUT,"%c",vowels[k]);
+                }
+                if(argv[i][j] == capitalVowels[k]){
+                    fprintf(STDOUT,"%c",capitalVowels[k]);
+                }
+            }
+            
+        }
+    }
+}

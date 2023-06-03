@@ -25,5 +25,6 @@ void niceProcess(int argc, char *argv[]);
 void blockProcess(int argc, char *argv[]);
 void cat(int argc, char *argv[]);
 void wc(int argc, char *argv[]);
+void filter(int argc, char *argv[]);
 
 #endif

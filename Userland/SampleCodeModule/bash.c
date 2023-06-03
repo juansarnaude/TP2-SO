@@ -56,8 +56,8 @@ int readInput()
             {
                 i++;
             }
-            pipeSeparator(parts, part_count, i);
         }
+        pipeSeparator(parts, part_count, i);
     }
     else
     {
@@ -191,6 +191,11 @@ command command_parser(char *buffer)
         putChar('\n');
         return (command)wc;
     }
+    else if (containsString(buffer, "filter") >= 0)
+    {
+        putChar('\n');
+        return (command)filter;
+    }
     return NULL;
 }
 
@@ -243,4 +248,7 @@ void pipeSeparator(char **parts, int part_count, int pipePosition)
 
     sys_waitpid(pidW);
     sys_waitpid(pidR);
+
+    sys_open(STDIN);
+    sys_open(STDOUT);
 }
