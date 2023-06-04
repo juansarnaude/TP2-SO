@@ -99,15 +99,6 @@ unsigned int charBelongs(char *s, char c)
     return 0;
 }
 
-void excepDivZero()
-{
-    div_zero();
-}
-
-void excepInvalidOpcode()
-{
-    inv_opcode();
-}
 
 // https://code.woboq.org/userspace/glibc/string/strcmp.c.html
 int strcmp(const char *p1, const char *p2)
@@ -730,13 +721,16 @@ void wc(int argc, char *argv[])
 {
     char c;
     int lines = 0;
-    while((c = getChar()) != EOF){
-            if (c == '\n')
+    while(c != EOF){
+            c = getChar();
+            if (c == '\n'){
                 lines++;
+            }
+            if(c == EOF){
+                fprintf(STDOUT, "%d lines detected\n", lines);
+            }
     }
-    fprintf(STDOUT, "%d lines detected\n", lines);
 }
-
 void filter(int argc, char *argv[])
 {
 

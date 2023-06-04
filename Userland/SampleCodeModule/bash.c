@@ -109,17 +109,9 @@ command command_parser(char *buffer)
     {
         return (command)inforeg;
     }
-    else if (strcmp(buffer, "dividebyzero") == 0)
-    {
-        return (command)excepDivZero;
-    }
     else if (strcmp(buffer, "help") == 0)
     {
         return (command)help;
-    }
-    else if (strcmp(buffer, "invalidopcode") == 0)
-    {
-        return (command)excepInvalidOpcode;
     }
     else if (containsString(buffer, "printmem") >= 0)
     {

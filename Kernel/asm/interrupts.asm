@@ -14,11 +14,7 @@ GLOBAL _irq03Handler
 GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
-GLOBAL _exception0Handler
-GLOBAL _exception6Handler
-
 EXTERN irqDispatcher
-EXTERN exceptionDispatcher
 EXTERN contextSwitch
 
 SECTION .text
@@ -83,8 +79,6 @@ SECTION .text
 	mov rsi, [rsp+15*8]	; Position of the original RIP in the stack
 	mov rdx, [rsp+18*8]	; Position of the original RSP in the stack
 	mov rcx, rsp
-	call exceptionDispatcher
-
 	;Should we call haltcpu? _hlt? go to the return of the main function?
 	;Should we call or modify the RIP value in the stack?
 	call haltcpu
@@ -163,15 +157,6 @@ _irq04Handler:
 ;USB
 _irq05Handler:
 	irqHandlerMaster 5
-
-
-;Zero Division Exception
-_exception0Handler:
-	exceptionHandler 0
-
-;Invalid Opcode Exception
-_exception6Handler:
-	exceptionHandler 6
 
 haltcpu:
 	sti

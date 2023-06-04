@@ -47,8 +47,6 @@ pid_t sys_getCurrentPid();
 int sys_secondsElapsed();
 
 unsigned int strlen(const char *s);
-void excepDivZero();
-void excepInvalidOpcode();
 int puts(const char *s);
 int putChar(char);
 char getChar();

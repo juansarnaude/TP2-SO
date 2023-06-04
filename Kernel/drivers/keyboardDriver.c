@@ -114,19 +114,10 @@ void keyboard_handler(uint64_t * registers)
       switch (key)
       {
       case 0x20:  //Ctrl+D(20) = Pause left window
-          add(-1);
-          break;
-      case 0x26:  //Ctrl+L(26) = Pause left window
-        changeStatus(0);
-        break;
-      case 0x13:  //Ctrl+R(13) = Pause right window
-        changeStatus(1);
-        break;
-      case 0x12:   //Ctrl+E = Terminate both tasks
-        terminateTasks();
+        add(-1);
         break;
       case 0x2e:  //Ctrl+C = copy registers
-        setRegisters(registers);
+        //matar proceso background
         break;
       default:
         break;
