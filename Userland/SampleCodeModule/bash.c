@@ -180,6 +180,10 @@ command command_parser(char *buffer)
     {
         return (command)filter;
     }
+    else if (strcmp(buffer, "phylo") == 0)
+    {
+        return (command)phylo;
+    }
     return NULL;
 }
 

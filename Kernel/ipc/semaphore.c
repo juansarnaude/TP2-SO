@@ -22,6 +22,7 @@ semNode * findSemaphore(char * name){
         if( strcmp(current->sem.name, name) == 0){
             return current;
         }
+        current = current->next;
     }
     return NULL;
 }

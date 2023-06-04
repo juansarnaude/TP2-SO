@@ -617,22 +617,27 @@ void getProcessesInfo(int argc, char *argv[])
         current = current->next;
     }
 }
-
-void loopProcess(int argc, char *argv[])
-{
-    int secs = 5;
-    pid_t currentPid = sys_getCurrentPid();
-    int i = 0 - secs - 1;
-    while (1)
-    {
-        if (sys_secondsElapsed() - i >= secs)
+void wait(int secs){
+    int n = sys_secondsElapsed();
+    while(1){
+        if (sys_secondsElapsed() >= secs + n)
         {
-            fprintf(STDOUT, "McWhiggin manda saludos al proceso identificable por el siguiente PID: %d\n", (int)currentPid);
-            i = sys_secondsElapsed();
+            return;
         }
     }
 }
 
+void loopProcess(int argc, char *argv[])
+{
+    int secs = 1;
+    pid_t currentPid = sys_getCurrentPid();
+    while (1)
+    {
+        wait(secs);
+        fprintf(STDOUT, "McWhiggin manda saludos al proceso identificable por el siguiente PID: %d\n", (int)currentPid);
+    }
+}
+    
 void killProcess(int argc, char *argv[])
 {
     if (argc != 2)
