@@ -41,7 +41,7 @@ int sys_pipe(int pipefd[2]);
 int sys_dup2(int fd1, int fd2);
 int sys_open(int fd);
 int sys_close(int fd);
-processInfo * sys_ps();
+processInfo *sys_ps();
 int sys_changeProcessStatus(pid_t pid);
 pid_t sys_getCurrentPid();
 int sys_secondsElapsed();
@@ -62,6 +62,10 @@ int is_num(char c);
 int atoi(char *str);
 void itoa(int n, char s[]);
 void reverse(char s[]);
+
+void cat(int argc, char *argv[]);
+void wc(int argc, char *argv[]);
+void filter(int argc, char *argv[]);
 
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 

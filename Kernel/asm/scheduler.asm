@@ -1,23 +1,8 @@
-GLOBAL _defaultExit
 GLOBAL loadProcess
 GLOBAL _int20h
 EXTERN contextSwitch
 
 section .text
-
-scheduler_handler:
-    pushState
-    
-    mov rdi, rsp
-    call contextSwitch
-    mov rsp, rax
-
-    mov al, 20h
-    out 20h, al
-    
-    popState
-
-    iretq
 
 _start:
     ; Como en RCX quedo el entryPoint que estaba en rdi entonces
@@ -31,7 +16,6 @@ _start:
     ; TODO mov rax, Numero de syscall de exit
     mov rax, 4
     int 80h
-    int 20h
 
 ; Creamos el stack "simulado" del proceso para que el scheduler
 ; pueda tomar el programa y correrlo
@@ -39,6 +23,7 @@ _start:
 ; rsi -> rsp
 ; rdx -> argc
 ; rcx -> argv
+
 loadProcess:
     enter 0, 0
 

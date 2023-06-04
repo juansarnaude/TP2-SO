@@ -84,7 +84,7 @@ void createScheduler()
     char *name = "Kernel Task";
     char *argv[] = {name};
     dummyProcessPid = createProcess((uint64_t)dummyProcess, 0, NULL);
-        for (int i = 0; i <= 2; i++)
+    for (int i = 0; i <= 2; i++)
     {
         active->process.fileDescriptors[i].mode = OPEN;
     }
@@ -525,24 +525,34 @@ processInfo *getProccessesInfo()
 {
     processInfo *first;
     processInfo *current;
-    PCB *aux;
-    int i = -1;
+    Queue currentNode = active;
+    pid_t firstPid = active->process.pid;
 
-    aux = getProcess(i);
-    while (aux != NULL)
+    while (currentNode != NULL)
     {
         current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
         current = current->next;
-        current->pid = aux->pid;
-        if (current->pid == -1)
+        current->pid = currentNode->process.pid;
+        if (current->pid == firstPid)
         {
             first = current;
         }
-        current->priority = aux->priority;
-        current->stackBase = aux->stackBase;
-        current->status = aux->status;
-        i++;
-        aux = getProcess(i);
+        current->priority = currentNode->process.priority;
+        current->stackBase = currentNode->process.stackBase;
+        current->status = currentNode->process.status;
+        currentNode = currentNode->next;
+    }
+    currentNode = expired;
+
+    while (currentNode != NULL)
+    {
+        current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+        current = current->next;
+        current->pid = currentNode->process.pid;
+        current->priority = currentNode->process.priority;
+        current->stackBase = currentNode->process.stackBase;
+        current->status = currentNode->process.status;
+        currentNode = currentNode->next;
     }
     current->next = NULL;
     return first;

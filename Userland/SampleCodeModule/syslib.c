@@ -99,7 +99,6 @@ unsigned int charBelongs(char *s, char c)
     return 0;
 }
 
-
 // https://code.woboq.org/userspace/glibc/string/strcmp.c.html
 int strcmp(const char *p1, const char *p2)
 {
@@ -721,29 +720,32 @@ void wc(int argc, char *argv[])
 {
     char c;
     int lines = 0;
-    while(c != EOF){
-            c = getChar();
-            if (c == '\n'){
-                lines++;
-            }
-            if(c == EOF){
-                fprintf(STDOUT, "%d lines detected\n", lines);
-            }
+    while ((c = getChar()) != EOF)
+    {
+        if (c == '\n')
+        {
+            lines++;
+        }
     }
+    fprintf(STDOUT, "%d lines detected\n", lines);
 }
 void filter(int argc, char *argv[])
 {
 
-    char vowels[] = {'a','e','i','o','u'};
-    char capitalVowels[] = {'A','E','I','O','U'};
+    char vowels[] = {'a', 'e', 'i', 'o', 'u'};
+    char capitalVowels[] = {'A', 'E', 'I', 'O', 'U'};
     char c;
-    while((c=getChar()) != EOF){
-        for(int k = 0 ; k < 5; k++){
-            if(c == vowels[k]){
-                fprintf(STDOUT,"%c",vowels[k]);
+    while ((c = getChar()) != EOF)
+    {
+        for (int k = 0; k < 5; k++)
+        {
+            if (c == vowels[k])
+            {
+                fprintf(STDOUT, "%c", vowels[k]);
             }
-            if(c == capitalVowels[k]){
-                fprintf(STDOUT,"%c",capitalVowels[k]);
+            if (c == capitalVowels[k])
+            {
+                fprintf(STDOUT, "%c", capitalVowels[k]);
             }
         }
     }
