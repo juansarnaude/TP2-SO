@@ -614,6 +614,7 @@ void getProcessesInfo(int argc, char *argv[])
         fprintf(STDOUT, "Priority: %d\n", current->priority);
         fprintf(STDOUT, "Stack Base: 0x%x\n", current->stackBase);
         fprintf(STDOUT, "Status: %s\n\n", (current->status) ? "BLOCKED" : "READY");
+        sys_memFree(current);
         current = current->next;
     }
 }
@@ -637,7 +638,7 @@ void loopProcess(int argc, char *argv[])
         fprintf(STDOUT, "McWhiggin manda saludos al proceso identificable por el siguiente PID: %d\n", (int)currentPid);
     }
 }
-    
+
 void killProcess(int argc, char *argv[])
 {
     if (argc != 2)

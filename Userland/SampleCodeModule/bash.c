@@ -45,13 +45,13 @@ int readInput()
         puts("\nGoodbye\n");
         return -1;
     }
-    else if (charBelongs(buffer, '|'))
+    else if (charBelongs(buffer, ':'))
     {
         int i = 0;
         char found = 0;
         while (!found && i < part_count)
         {
-            if (strcmp(parts[i], "|") == 0)
+            if (strcmp(parts[i], ":") == 0)
             {
                 found = 1;
             }
