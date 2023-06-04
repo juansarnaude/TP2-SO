@@ -113,6 +113,9 @@ void keyboard_handler(uint64_t * registers)
     if (control){
       switch (key)
       {
+      case 0x20:  //Ctrl+D(20) = Pause left window
+          add(-1);
+          break;
       case 0x26:  //Ctrl+L(26) = Pause left window
         changeStatus(0);
         break;

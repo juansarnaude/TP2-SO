@@ -705,19 +705,35 @@ void blockProcess(int argc, char *argv[])
 
 void cat(int argc, char *argv[])
 {
-    for (int i = 1; i < argc; i++)
+    int i = 0, c = getChar();
+    while (c != EOF)
     {
-        fprintf(STDOUT, "%s", argv[i]);
+        if (c == '\b' && i > 0)
+        {
+            i--;
+            putChar(c);
+        }
+        else if (c == '\b' && i == 0)
+        {
+            // no hago nada
+        }
+        else
+        {
+            i++;
+            putChar(c);
+        }
+        c = getChar();
     }
-    fprintf(STDOUT, "%c", EOF);
 }
+
 void wc(int argc, char *argv[])
 {
+    char c;
     int lines = 0;
-    for (int i = 0; i < argc; i++)
-        for (int j = 0; argv[i][j] != EOF; j++)
-            if (argv[i][j] == '\n')
+    while((c = getChar()) != EOF){
+            if (c == '\n')
                 lines++;
+    }
     fprintf(STDOUT, "%d lines detected\n", lines);
 }
 

@@ -43,13 +43,13 @@ int readInput()
         puts("\nGoodbye\n");
         return -1;
     }
-    else if (charBelongs(buffer, ':'))
+    else if (charBelongs(buffer, '|'))
     {
         int i = 0;
         char found = 0;
         while (!found && i < part_count)
         {
-            if (strcmp(parts[i], ":") == 0)
+            if (strcmp(parts[i], "|") == 0)
             {
                 found = 1;
             }
@@ -58,6 +58,7 @@ int readInput()
                 i++;
             }
         }
+        putChar('\n');
         pipeSeparator(parts, part_count, i);
     }
     else
@@ -69,6 +70,7 @@ int readInput()
         }
         else
         {
+            putChar('\n');
             pid_t pid = sys_exec((uint64_t)fun, part_count, parts);
             sys_waitpid(pid);
         }
@@ -93,108 +95,87 @@ command command_parser(char *buffer)
 {
     if (strcmp(buffer, "time") == 0)
     {
-        putChar('\n');
         return (command)getTime;
     }
     else if (strcmp(buffer, "prime") == 0)
     {
-        putChar('\n');
         return (command)printPrime;
     }
     else if (strcmp(buffer, "fibonacci") == 0)
     {
-        putChar('\n');
         return (command)fibonacciNumbs;
     }
     else if (strcmp(buffer, "inforeg") == 0)
     {
-        putChar('\n');
         return (command)inforeg;
     }
     else if (strcmp(buffer, "dividebyzero") == 0)
     {
-        putChar('\n');
         return (command)excepDivZero;
     }
     else if (strcmp(buffer, "help") == 0)
     {
-        putChar('\n');
         return (command)help;
     }
     else if (strcmp(buffer, "invalidopcode") == 0)
     {
-        putChar('\n');
         return (command)excepInvalidOpcode;
     }
     else if (containsString(buffer, "printmem") >= 0)
     {
-        putChar('\n');
         savePrintMemParams(buffer);
         return (command)printmem;
     }
     else if ((strcmp(buffer, "inforeg")) == 0)
     {
-        putChar('\n');
         return (command)inforeg;
     }
-    else if ((containsString(buffer, "test_mm")) >= 0)
+    else if ((strcmp(buffer, "test_mm")) == 0)
     {
-        putChar('\n');
         return (command)test_mm;
     }
-    else if ((containsString(buffer, "test_processes")) >= 0)
+    else if ((strcmp(buffer, "test_processes")) == 0)
     {
-        putChar('\n');
         return (command)test_processes;
     }
-    else if ((containsString(buffer, "test_priority")) >= 0)
+    else if ((strcmp(buffer, "test_priority")) == 0)
     {
-        putChar('\n');
         return (command)test_priority;
     }
-    else if ((containsString(buffer, "test_sync")) >= 0)
+    else if ((strcmp(buffer, "test_sync")) == 0)
     {
-        putChar('\n');
         return (command)test_sync;
     }
-    else if ((containsString(buffer, "ps")) >= 0)
+    else if ((strcmp(buffer, "ps")) == 0)
     {
-        putChar('\n');
         return (command)getProcessesInfo;
     }
-    else if (containsString(buffer, "loop") >= 0)
+    else if (strcmp(buffer, "loop") == 0)
     {
-        putChar('\n');
         return (command)loopProcess;
     }
-    else if (containsString(buffer, "kill") >= 0)
+    else if (strcmp(buffer, "kill") == 0)
     {
-        putChar('\n');
         return (command)killProcess;
     }
-    else if (containsString(buffer, "nice") >= 0)
+    else if (strcmp(buffer, "nice") == 0)
     {
-        putChar('\n');
         return (command)niceProcess;
     }
-    else if (containsString(buffer, "block") >= 0)
+    else if (strcmp(buffer, "block") == 0)
     {
-        putChar('\n');
         return (command)blockProcess;
     }
-    else if (containsString(buffer, "cat") >= 0)
+    else if (strcmp(buffer, "cat") == 0)
     {
-        putChar('\n');
         return (command)cat;
     }
-    else if (containsString(buffer, "wc") >= 0)
+    else if (strcmp(buffer, "wc") == 0)
     {
-        putChar('\n');
         return (command)wc;
     }
-    else if (containsString(buffer, "filter") >= 0)
+    else if (strcmp(buffer, "filter") == 0)
     {
-        putChar('\n');
         return (command)filter;
     }
     return NULL;
@@ -203,24 +184,25 @@ command command_parser(char *buffer)
 void help(int argc, char *argv[])
 {
     const char *helpstring =
+        "cat                  Replicates whatever you input to the shell.\n"
+        "ps                   Prints information about current process.\n"
+        "loop                 Prints a greeting every certain period of time.\n"
+        "filter               Filters input to print only its vowels.\n"
+        "block <pid>          Blocks/unblocks process with pid = <pid>.\n"
+        "kill <pid>           Kills process with pid = <pid>.\n"
+        "nice <pid> <prio>    Changes priority of process with pid = <pid> to <prio>.\n"
+        "wc                   Prints the number of newlines from input.\n"
         "help                 Provides help information for commands.\n"
-        "dividebyzero         Command to verify the operation of the exception routine\n"
-        "                     \"Divide by zero\"\n"
-        "invalidopcode        Command to verify the operation of the exception routine\n"
-        "                     \"Invalid Opcode\"\n"
-        "inforeg              CTRL+C takes a screenshot of registers, inforeg prints on\n"
-        "                     screen the value of all registers screenshoted.\n"
-        "printmem             Receives as argument a pointer and performs a memory dump\n"
-        "                     of 32 bytes from the address received as an argument.\n"
-        "                     Format for address has to start with 0x and be followed up\n"
-        "                     with the actual address written in hex.\n"
         "time                 Command to display the system day and time.\n"
         "prime                Dispalys prime numbers starting from 1.\n"
         "fibonacci            Dispalys fibonacci series numbers.\n"
-        "COMMAND1|COMMAND2    The \"|\" operand allows the execution of multiple commands\n"
-        "                     at the same time. CTRL+L and CTRL+R stops and resumes left\n"
-        "                     and right windows. CTRL+E stops both windows and returns\n"
-        "                     to console.\n";
+        "COMMAND1|COMMAND2    The \"|\" operand allows the output of the first command\n"
+        "                     to be the input of the second command. CTRL+D sends an EOF.\n"
+        "test_mm <max-mem>    Tests memory manager with <max-mem> bytes.\n"
+        "test_priority        Tests priority changes of processes.\n"
+        "test_processes <max-proc>    Tests process creation with <max-proc>.\n"
+        "test_sync <max-proc> <sem-flag>    Tests synchronization of processes.\n";
+        
 
     puts(helpstring);
 }
@@ -255,7 +237,9 @@ void pipeSeparator(char **parts, int part_count, int pipePosition)
     
 
     sys_waitpid(pidW);
-    sys_waitpid(pidR);
+    //sys_waitpid(pidR);
 
     sys_open(STDIN);
+    sys_close(fds[0]);
+    sys_close(fds[1]);
 }
