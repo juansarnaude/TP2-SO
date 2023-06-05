@@ -3,8 +3,6 @@
 
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 
-
-
 unsigned int strlen(const char *str)
 {
     unsigned int len = 0;
@@ -51,7 +49,6 @@ int gets(char *s)
     s[i] = '\0';
     return i;
 }
-
 
 char getChar()
 {
@@ -118,33 +115,6 @@ void reverse(char s[])
         c = s[i];
         s[i] = s[j];
         s[j] = c;
-    }
-}
-
-
-
-// Ciclo infinito que imprime numeros de secuencia de fibonacci
-
-void fibonacciNumbs(int argc, char *argv[])
-{
-    char num[30];
-    int t1 = 0, t2 = 1;
-    long nextTerm = t1 + t2;
-    puts("Fibonacci Series: 0, 1, ");
-    while (1)
-    {
-        itoa(nextTerm, num);
-        puts(num);
-        puts(",");
-        t1 = t2;
-        t2 = nextTerm;
-        nextTerm = t1 + t2;
-        if (nextTerm < 0)
-        { // por si se pasa del max integer
-            puts("\b");
-            return;
-        }
-        puts("\n");
     }
 }
 
@@ -220,12 +190,12 @@ int checkPrintMemParams(char *s, uint64_t *address)
             puts("\nAddress can't be accesed\n");
             return -1;
         }
-        if (s[i] >= '0' && s[i] <= '9')
+        if (s[i] <= '9')
         {
             *address *= 16;
             *address += s[i] - '0';
         }
-        else if (s[i] >= 'a' && s[i] <= 'f')
+        else if (s[i] >= 'a')
         {
             if (i == 10)
             {
@@ -265,28 +235,6 @@ void printmem(int argc, char *argv[])
         putChar(' ');
     }
     putChar(' ');
-}
-
-void inforeg(int argc, char *argv[])
-{
-    static char *registers[18] = {"R15", "R14", "R13", "R12", "R11", "R10", "R9 ", "R8 ", "RSI", "RDI", "RBP", "RDX", "RCX", "RBX", "RAX", "RIP", "RFL", "RSP"};
-
-    uint64_t regval[18];
-    int sysret = sys_getregs(regval);
-    if (sysret == 0)
-    {
-        puts("No registers to print.\n");
-        return;
-    }
-    char buffer[64];
-    for (int i = 0; i < 18; i++)
-    {
-        puts(registers[i]);
-        puts(": 0x");
-        uintToBase(regval[i], buffer, 16);
-        puts(buffer);
-        putChar('\n');
-    }
 }
 
 // Tomado de x86-Barebones
@@ -546,21 +494,11 @@ void fprintf(int fd, char *str, ...)
     sys_write(fd, buff, j);
 }
 
-
-    while (current != NULL)
-    {
-        fprintf(STDOUT, "PID: %d\n", current->pid);
-        fprintf(STDOUT, "Priority: %d\n", current->priority);
-        fprintf(STDOUT, "Stack Base: 0x%x\n", current->stackBase);
-        fprintf(STDOUT, "Status: %s\n\n", (current->status) ? "BLOCKED" : "READY");
-        sys_memFree(current);
-        current = current->next;
-    }
-}
 void wait(int secs)
 {
     int n = sys_secondsElapsed();
-    while(1){
+    while (1)
+    {
         if (sys_secondsElapsed() >= secs + n)
         {
             return;
@@ -568,7 +506,7 @@ void wait(int secs)
     }
 }
 
-void loopProcess(int argc, char *argv[])
+void ess(int argc, char *argv[])
 {
     int secs = 1;
     pid_t currentPid = sys_getCurrentPid();
@@ -576,122 +514,5 @@ void loopProcess(int argc, char *argv[])
     {
         wait(secs);
         fprintf(STDOUT, "McWhiggin manda saludos al proceso identificable por el siguiente PID: %d\n", (int)currentPid);
-    }
-}
-
-void killProcess(int argc, char *argv[])
-{
-    if (argc != 2)
-    {
-        puts("kill should only receive 1 argument");
-        return;
-    }
-    if (sys_kill(atoi(argv[1])) == 0)
-    {
-        fprintf(STDOUT, "Killed PID: %d\n", atoi(argv[1]));
-    }
-    else
-    {
-        fprintf(STDOUT, "Failed to kill PID: %d\n", atoi(argv[1]));
-    }
-}
-
-void niceProcess(int argc, char *argv[])
-{
-    if (argc != 3)
-    {
-        puts("nice should only receive 2 argument");
-        return;
-    }
-    int a1 = atoi(argv[1]);
-    int a2 = atoi(argv[2]);
-    if (sys_nice((pid_t)a1, a2))
-    {
-        fprintf(STDOUT, "Changed priority of PID: %d , to %d\n", a1, a2);
-    }
-    else
-    {
-        puts("Failed to chang priority\n");
-    }
-}
-
-void blockProcess(int argc, char *argv[])
-{
-    if (argc != 2)
-    {
-        puts("block should only receive 1 arguments");
-        return;
-    }
-    int a = atoi(argv[1]);
-    int retValue = sys_changeProcessStatus(a);
-
-    if (retValue == READY)
-    {
-        fprintf(STDOUT, "PID: %d unblocked\n", a);
-    }
-    else if (retValue == BLOCKED)
-    {
-        fprintf(STDOUT, "PID: %d blocked\n", a);
-    }
-    else
-    {
-        puts("Failed to block/unblock the process\n");
-    }
-}
-
-void cat(int argc, char *argv[])
-{
-    int i = 0, c = getChar();
-    while (c != EOF)
-    {
-        if (c == '\b' && i > 0)
-        {
-            i--;
-            putChar(c);
-        }
-        else if (c == '\b' && i == 0)
-        {
-            // no hago nada
-        }
-        else
-        {
-            i++;
-            putChar(c);
-        }
-        c = getChar();
-    }
-}
-
-void wc(int argc, char *argv[])
-{
-    int c;
-    int lines = 0;
-    while ((c = getChar()) != EOF)
-    {
-        if (c == '\n')
-        {
-            lines++;
-        }
-    }
-    fprintf(STDOUT, "%d lines detected\n", lines);
-}
-
-
-    char vowels[] = {'a', 'e', 'i', 'o', 'u'};
-    char capitalVowels[] = {'A', 'E', 'I', 'O', 'U'};
-    int c;
-    while ((c = getChar()) != EOF)
-    {
-        for (int k = 0; k < 5; k++)
-        {
-            if (c == vowels[k])
-            {
-                fprintf(STDOUT, "%c", vowels[k]);
-            }
-            if (c == capitalVowels[k])
-            {
-                fprintf(STDOUT, "%c", capitalVowels[k]);
-            }
-        }
     }
 }

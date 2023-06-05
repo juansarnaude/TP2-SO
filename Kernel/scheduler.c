@@ -32,7 +32,6 @@ void dummyProcess()
 {
     while (1)
     {
-        ncPrint("a");
         _hlt();
     }
 }
@@ -487,15 +486,22 @@ int yieldProcess()
 
 processInfo *getProccessesInfo()
 {
-    processInfo *first;
-    processInfo *current;
+    processInfo *first = NULL;
+    processInfo *current = NULL;
     Queue currentNode = active;
     pid_t firstPid = active->process.pid;
 
     while (currentNode != NULL)
     {
-        current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
-        current = current->next;
+        if (current != NULL)
+        {
+            current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+            current = current->next;
+        }
+        else
+        {
+            current = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+        }
         current->pid = currentNode->process.pid;
         if (current->pid == firstPid)
         {
@@ -510,8 +516,15 @@ processInfo *getProccessesInfo()
 
     while (currentNode != NULL)
     {
-        current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
-        current = current->next;
+        if (current != NULL)
+        {
+            current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+            current = current->next;
+        }
+        else
+        {
+            current = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+        }
         current->pid = currentNode->process.pid;
         current->priority = currentNode->process.priority;
         current->stackBase = currentNode->process.stackBase;

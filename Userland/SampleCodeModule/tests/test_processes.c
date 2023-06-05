@@ -2,7 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "test_util.h"
 #include <syslib.h>
-#include <syscall.h>
 
 enum State {RUNNING, BLOCKEDD, KILLED};
 

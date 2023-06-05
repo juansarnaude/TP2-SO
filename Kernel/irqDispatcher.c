@@ -2,7 +2,6 @@
 #include <timerDriver.h>
 #include <keyboardDriver.h>
 
-
 static void int_20(uint64_t *registers);
 static void int_21(uint64_t *registers);
 

@@ -14,6 +14,19 @@ void unknownCommand();
 void pipeSeparator(char **parts, int part_count, int pipePosition);
 void backgroundManager(char *fun, int part_count, char **parts);
 void backgroundFunction(command fun, int argc, char *argv[]);
+void functionRead(int argc, char *argv[]);
+void functionWrite(int argc, char *argv[]);
+
+int fds[2];
+command readFunc = NULL;
+
+char *argvR = NULL;
+int argcR = 0;
+
+char *argvW = NULL;
+int argcW = 0;
+command writeFunc = NULL;
+void functionWrite(int argc, char *argv[]);
 
 command command_parser(char *name);
 pm commandLine(char *buffer);
@@ -44,13 +57,13 @@ int readInput()
         puts("\nGoodbye\n");
         return -1;
     }
-    else if (charBelongs(buffer, ':'))
+    else if (charBelongs(buffer, '|'))
     {
         int i = 0;
         char found = 0;
         while (!found && i < part_count)
         {
-            if (strcmp(parts[i], ":") == 0)
+            if (strcmp(parts[i], "|") == 0)
             {
                 found = 1;
             }
@@ -106,10 +119,6 @@ command command_parser(char *buffer)
     {
         return (command)getTime;
     }
-    else if (strcmp(buffer, "prime") == 0)
-    {
-        return (command)printPrime;
-    }
     else if (strcmp(buffer, "fibonacci") == 0)
     {
         return (command)fibonacciNumbs;
@@ -126,10 +135,6 @@ command command_parser(char *buffer)
     {
         savePrintMemParams(buffer);
         return (command)printmem;
-    }
-    else if ((strcmp(buffer, "inforeg")) == 0)
-    {
-        return (command)inforeg;
     }
     else if ((strcmp(buffer, "test_mm")) == 0)
     {
@@ -186,8 +191,6 @@ command command_parser(char *buffer)
     return NULL;
 }
 
-
-
 void pipeSeparator(char **parts, int part_count, int pipePosition)
 {
     command writeFunction = command_parser(parts[0]);
@@ -202,19 +205,25 @@ void pipeSeparator(char **parts, int part_count, int pipePosition)
     }
     pid_t auxPid = sys_getCurrentPid();
 
-    int fds[2];
     sys_pipe(fds);
 
     sys_close(fds[1]);
     sys_dup2(fds[0], STDOUT);
     sys_close(STDOUT);
-    pid_t pidW = sys_exec((uint64_t)writeFunction, pipePosition, parts);
+    writeFunc = writeFunction;
+    argvW = parts;
+    argcW = pipePosition;
+    pid_t pidW = sys_exec((uint64_t)functionWrite, 0, NULL);
+
+    argcR = part_count - (pipePosition + 1);
+    argvR = &parts[pipePosition + 1];
+    readFunc = readFunction;
 
     sys_close(fds[0]);
     sys_dup2(fds[1], STDIN);
     sys_close(STDIN);
     sys_open(STDOUT);
-    pid_t pidR = sys_exec((uint64_t)readFunction, part_count - (pipePosition + 1), &parts[pipePosition + 1]);
+    pid_t pidR = sys_exec((uint64_t)functionRead, 0, NULL);
 
     sys_waitpid(pidW);
     sys_waitpid(pidR);
@@ -222,6 +231,26 @@ void pipeSeparator(char **parts, int part_count, int pipePosition)
     sys_open(STDIN);
     sys_close(fds[0]);
     sys_close(fds[1]);
+}
+
+void functionWrite(int argc, char *argv[])
+{
+    sys_close(fds[1]);
+    sys_dup2(fds[0], STDOUT);
+    sys_close(STDOUT);
+    pid_t pidW = sys_exec((uint64_t)writeFunc, argcW, argvW);
+    sys_waitpid(pidW);
+}
+
+void functionRead(int argc, char *argv[])
+{
+
+    sys_close(fds[0]);
+    sys_dup2(fds[1], STDIN);
+    sys_close(STDIN);
+    sys_open(STDOUT);
+    pid_t pidR = sys_exec((uint64_t)readFunc, argcR, argvR);
+    sys_waitpid(pidR);
 }
 
 void backgroundManager(char *fun, int part_count, char **parts)
