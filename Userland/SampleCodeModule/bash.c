@@ -116,10 +116,6 @@ command command_parser(char *buffer)
     {
         return (command)getTime;
     }
-    else if (strcmp(buffer, "prime") == 0)
-    {
-        return (command)printPrime;
-    }
     else if (strcmp(buffer, "fibonacci") == 0)
     {
         return (command)fibonacciNumbs;
@@ -206,7 +202,6 @@ void help(int argc, char *argv[])
         "wc                   Prints the number of newlines from input.\n"
         "help                 Provides help information for commands.\n"
         "time                 Command to display the system day and time.\n"
-        "prime                Dispalys prime numbers starting from 1.\n"
         "fibonacci            Dispalys fibonacci series numbers.\n"
         "COMMAND1|COMMAND2    The \"|\" operand allows the output of the first command\n"
         "                     to be the input of the second command. CTRL+D sends an EOF.\n"

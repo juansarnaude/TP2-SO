@@ -146,40 +146,7 @@ void reverse(char s[])
     }
 }
 
-// Devuelve 1 si es primo, 0 si no lo es.
-int isPrime(int n)
-{
-    int i;
-    for (i = 2; i <= n / 2; i++)
-    {
-        if (n % i == 0)
-            return 0;
-    }
-    return 1;
-}
 
-// Ciclo infinito que imprime numeros primos
-void printPrime(int argc, char *argv[])
-{
-    char *num = NULL;
-    int i = 2;
-    puts("Prime numbers: ");
-    puts("1, ");
-    while (1)
-    {
-        if (isPrime(i))
-        {
-            if (num != NULL && num[0] == '-')
-            { // por si se pasa del max integer
-                return;
-            }
-            itoa(i, num);
-            puts(num);
-            puts(",\n");
-        }
-        i++;
-    }
-}
 
 // Ciclo infinito que imprime numeros de secuencia de fibonacci
 

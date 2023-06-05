@@ -1,7 +1,6 @@
 - [Bash](#bash)
   - [Help](#help)
   - [Fibonacci](#fibonacci)
-  - [Prime](#prime)
   - [Inforeg](#inforeg)
   - [Divide by Zero](#divide-by-zero)
   - [Invalid Opcode](#invalid-opcode)
@@ -26,10 +25,6 @@ Imprime un mensaje indicando los comandos y lo que realizan.
 ### Fibonacci
 
 Imprime los numberos de la serie de fibonacci, hasta que ocurre overflow.
-
-### Prime
-
-Calcula e imprime los numeros primos, hasta que ocurre overflow.
 
 ### Inforeg
 
