@@ -9,7 +9,7 @@ static uint64_t sys_read(unsigned int fd, char *output, uint64_t count);
 static void sys_write(unsigned int fd, const char *buffer, uint64_t count);
 static pid_t sys_exec(uint64_t program, unsigned int argc, char *argv[]);
 static void sys_exit(int return_value, char autokill);
-static void sys_time(time_t *s);
+static void sys_time(sysTime_t *s);
 static void sys_copymem(uint64_t address, uint8_t *buffer, uint64_t length);
 static MemoryInfo *sys_memInfo();
 static void *sys_memMalloc(uint64_t size);
@@ -54,7 +54,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         sys_exit((int)rdi, 1);
         break;
     case 5:
-        sys_time((time_t *)rdi);
+        sys_time((sysTime_t *)rdi);
         break;
     case 6:
         sys_copymem(rdi, (uint8_t *)rsi, rdx);
@@ -122,8 +122,8 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
     case 27:
         return sys_secondsElapsed();
         break;
-        return 0;
     }
+    return 0;
 }
 
 static uint64_t sys_read(unsigned int fd, char *output, uint64_t count)
@@ -140,6 +140,7 @@ static uint64_t sys_read(unsigned int fd, char *output, uint64_t count)
     {
         return pipeRead(pcb->pipe, output, count);
     }
+    return 0;
 }
 
 static void sys_write(unsigned int fd, const char *buffer, uint64_t count)
@@ -189,7 +190,7 @@ static void sys_exit(int return_value, char autokill)
     killProcess(return_value, autokill);
 }
 
-static void sys_time(time_t *s)
+static void sys_time(sysTime_t *s)
 {
     s->day = localDay();
     s->month = localMonth();
@@ -309,6 +310,7 @@ static int sys_pipe(int pipefd[2])
     pcb->pipe = pipeOpen();
     pipefd[0] = PIPEIN;
     pipefd[1] = PIPEOUT;
+    return 0;
 }
 
 static int sys_dup2(int fd1, int fd2)

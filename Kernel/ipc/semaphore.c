@@ -3,23 +3,27 @@
 #include <queue.h>
 #include <scheduler.h>
 
-extern int spinlock(uint8_t * lock);    //Both of theese functions will be used to avoid
-extern void unlock(uint8_t * lock);     // race conditions in the post and wait
+extern int spinlock(uint8_t *lock); // Both of theese functions will be used to avoid
+extern void unlock(uint8_t *lock);  // race conditions in the post and wait
 
-typedef struct semNode{
+typedef struct semNode
+{
     semaphore sem;
-    struct semNode * next;
-    struct semNode * previous;
+    struct semNode *next;
+    struct semNode *previous;
 } semNode;
 
-typedef semNode * semList;
+typedef semNode *semList;
 
 semList semaphoreList = NULL;
 
-semNode * findSemaphore(char * name){
-    semNode * current = semaphoreList;
-    while (current != NULL){
-        if( strcmp(current->sem.name, name) == 0){
+semNode *findSemaphore(char *name)
+{
+    semNode *current = semaphoreList;
+    while (current != NULL)
+    {
+        if (strcmp(current->sem.name, name) == 0)
+        {
             return current;
         }
         current = current->next;
@@ -29,13 +33,15 @@ semNode * findSemaphore(char * name){
 
 // Creates semaphore
 // If same with name already exists already exist, doesnt change value
-sem_t sem_open(char * name, uint64_t value){
-    semNode * semAux = findSemaphore(name);
-    if(semAux != NULL){
+sem_t sem_open(char *name, uint64_t value)
+{
+    semNode *semAux = findSemaphore(name);
+    if (semAux != NULL)
+    {
         semAux->sem.processesOpened++;
         return &(semAux->sem);
     }
-    semAux = (semNode *) memoryManagerAlloc(sizeof(semNode));
+    semAux = (semNode *)memoryManagerAlloc(sizeof(semNode));
     semAux->sem.name = strcpy(name);
     semAux->sem.value = value;
     semAux->sem.locked = 0;
@@ -49,45 +55,54 @@ sem_t sem_open(char * name, uint64_t value){
 
 // Removes a semaphore
 // 1 if it could remove it, 0 if it wasnt removed but didnt fail (just removed it in this process) -1 if it failed
-int sem_close(sem_t sem){
-   semNode * semAux = findSemaphore(sem->name);
-    if(semAux == NULL){
+int sem_close(sem_t sem)
+{
+    semNode *semAux = findSemaphore(sem->name);
+    if (semAux == NULL)
+    {
         return -1;
     }
 
-    if(sem->processesOpened > 1){
+    if (sem->processesOpened > 1)
+    {
         sem->processesOpened--;
-        return;
+        return 0;
     }
 
-    if(semAux->previous != NULL){
-       semAux->previous->next = semAux->next; 
+    if (semAux->previous != NULL)
+    {
+        semAux->previous->next = semAux->next;
     }
-    if(semAux->next != NULL){
+    if (semAux->next != NULL)
+    {
         semAux->next->previous = semAux->previous;
     }
-    
-    
+
     freeQueue(sem->blockedProcesses);
     memory_manager_free(sem->name);
     memory_manager_free(semAux);
     return 1;
-} 
+}
 
 // Adds 1 to the value of a semaphore, if it was blocked (==0) it unblocks one of the blocked process
 // Returns 1 on success, -1 on error
-int sem_post(sem_t sem){
-    semNode * semAux = findSemaphore(sem->name);
+int sem_post(sem_t sem)
+{
+    semNode *semAux = findSemaphore(sem->name);
 
-    if(semAux == NULL){
+    if (semAux == NULL)
+    {
         return -1;
     }
 
     spinlock(&(sem->locked));
-    if(sem->blockedProcesses->qty != 0){
+    if (sem->blockedProcesses->qty != 0)
+    {
         pid_t pidCurrent = dequeuePid(sem->blockedProcesses);
         unblockProcess(pidCurrent);
-    }else{
+    }
+    else
+    {
         sem->value++;
     }
     unlock(&(sem->locked));
@@ -97,22 +112,27 @@ int sem_post(sem_t sem){
 
 // Reduce the value of the semaphore by 1, if it is now 0 it is blocked
 // Returns 1 on success, -1 on error
-int sem_wait(sem_t sem){
-    semNode * semAux = findSemaphore(sem->name);
+int sem_wait(sem_t sem)
+{
+    semNode *semAux = findSemaphore(sem->name);
 
-    if(semAux == NULL){
+    if (semAux == NULL)
+    {
         return -1;
     }
 
     spinlock(&(sem->locked));
-    if(sem->value > 0){
+    if (sem->value > 0)
+    {
         sem->value--;
         unlock(&(sem->locked));
-    } else{
+    }
+    else
+    {
         pid_t pidCurrent = getCurrentPid();
         enqueuePid(sem->blockedProcesses, pidCurrent);
         unlock(&(sem->locked));
         blockProcess(pidCurrent);
-    } 
+    }
     return 1;
 }

@@ -104,7 +104,7 @@ static uint8_t pressed(uint16_t scancode, uint16_t key);
 
 void keyboard_handler(uint64_t *registers)
 {
-  if (!read_port(0x64) & 0x01)
+  if ((!read_port(0x64)) & (0x01))
     return;
   uint16_t scancode = read_port(0x60);
   uint16_t key = scancode & 0x7F;

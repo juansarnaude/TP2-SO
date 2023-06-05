@@ -1,5 +1,4 @@
 #include <bash.h>
-#include <syscall.h>
 #include <syslib.h>
 #include <processes.h>
 
@@ -124,10 +123,6 @@ command command_parser(char *buffer)
     else if (strcmp(buffer, "fibonacci") == 0)
     {
         return (command)fibonacciNumbs;
-    }
-    else if (strcmp(buffer, "inforeg") == 0)
-    {
-        return (command)inforeg;
     }
     else if (strcmp(buffer, "help") == 0)
     {

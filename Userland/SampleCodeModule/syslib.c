@@ -52,7 +52,7 @@ int gets(char *s)
 
 void getTime(int argc, char *argv[])
 {
-    time_t time;
+    sysTime_t time;
     char buffer[64] = {'0'};
     sys_time(&time);
 
@@ -169,7 +169,7 @@ void printPrime(int argc, char *argv[])
     {
         if (isPrime(i))
         {
-            if (num < 0)
+            if (i < 0)
             { // por si se pasa del max integer
                 return;
             }
@@ -277,12 +277,12 @@ int checkPrintMemParams(char *s, uint64_t *address)
             puts("\nAddress can't be accesed\n");
             return -1;
         }
-        if (s[i] >= '0' && s[i] <= '9')
+        if (s[i] <= '9')
         {
             *address *= 16;
             *address += s[i] - '0';
         }
-        else if (s[i] >= 'a' && s[i] <= 'f')
+        else if (s[i] >= 'a')
         {
             if (i == 10)
             {
@@ -726,7 +726,7 @@ void cat(int argc, char *argv[])
 
 void wc(int argc, char *argv[])
 {
-    char c;
+    int c;
     int lines = 0;
     while ((c = getChar()) != EOF)
     {
@@ -743,7 +743,7 @@ void filter(int argc, char *argv[])
 
     char vowels[] = {'a', 'e', 'i', 'o', 'u'};
     char capitalVowels[] = {'A', 'E', 'I', 'O', 'U'};
-    char c;
+    int c;
     while ((c = getChar()) != EOF)
     {
         for (int k = 0; k < 5; k++)

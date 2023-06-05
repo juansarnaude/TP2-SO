@@ -523,8 +523,8 @@ int yieldProcess()
 
 processInfo *getProccessesInfo()
 {
-    processInfo *first;
-    processInfo *current;
+    processInfo *first = NULL;
+    processInfo *current = NULL;
     Queue currentNode = active;
     pid_t firstPid = active->process.pid;
 
