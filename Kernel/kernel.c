@@ -15,8 +15,8 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-static uint64_t const sampleCodeModuleAddress = 0x400000;
-static uint64_t const sampleDataModuleAddress = 0x500000;
+static void *const sampleCodeModuleAddress = (void *)0x400000;
+static void *const sampleDataModuleAddress = (void *)0x500000;
 
 typedef int (*EntryPoint)();
 
@@ -51,7 +51,7 @@ int main()
 	load_idt();
 	createMemory(0x2000000 - 0x1000000);
 	createScheduler();
-	createProcess(sampleCodeModuleAddress, 0, NULL);
+    createProcess(sampleCodeModuleAddress, 0, NULL);
 	_sti();
 	_hlt();
 	return 0;

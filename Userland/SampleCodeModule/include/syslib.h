@@ -17,7 +17,7 @@
 
 int sys_write(int fd, const char *buffer, int size);
 int sys_read(int fd, char *buffer, int size);
-void sys_time(sysTime_t *time);
+void sys_time(time_t *time);
 int sys_getregs(uint64_t *registers);
 void inv_opcode();
 void div_zero();

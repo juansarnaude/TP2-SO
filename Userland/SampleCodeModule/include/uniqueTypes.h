@@ -24,7 +24,7 @@ typedef struct
 {
     uint8_t day, month, year;
     uint8_t hours, minutes, seconds;
-} sysTime_t;
+} time_t;
 
 // Memory
 typedef struct memoryInfo
