@@ -618,9 +618,11 @@ void getProcessesInfo(int argc, char *argv[])
         current = current->next;
     }
 }
-void wait(int secs){
+void wait(int secs)
+{
     int n = sys_secondsElapsed();
-    while(1){
+    while (1)
+    {
         if (sys_secondsElapsed() >= secs + n)
         {
             return;
@@ -720,7 +722,6 @@ void cat(int argc, char *argv[])
         }
         c = getChar();
     }
-    putChar(c);
 }
 
 void wc(int argc, char *argv[])

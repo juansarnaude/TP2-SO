@@ -55,13 +55,13 @@ int readInput()
         puts("\nGoodbye\n");
         return -1;
     }
-    else if (charBelongs(buffer, ':'))
+    else if (charBelongs(buffer, '|'))
     {
         int i = 0;
         char found = 0;
         while (!found && i < part_count)
         {
-            if (strcmp(parts[i], ":") == 0)
+            if (strcmp(parts[i], "|") == 0)
             {
                 found = 1;
             }
@@ -201,6 +201,7 @@ void help(int argc, char *argv[])
 {
     const char *helpstring =
         "cat                  Replicates whatever you input to the shell.\n"
+        "phylo                Simulates famous synchronization phylosophers problem.\n"
         "ps                   Prints information about current process.\n"
         "loop                 Prints a greeting every certain period of time.\n"
         "filter               Filters input to print only its vowels.\n"
