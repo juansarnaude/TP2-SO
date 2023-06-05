@@ -99,7 +99,7 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         return (uint64_t)sys_nice((pid_t)rdi, (int)rsi);
         break;
     case 20:
-        return (uint64_t)sys_pipe((uint64_t)rdi);
+        return (uint64_t)sys_pipe((int *)rdi);
         break;
     case 21:
         return (uint64_t)sys_dup2((uint64_t)rdi, (uint64_t)rsi);
@@ -242,7 +242,7 @@ static int sys_kill(pid_t pid)
         return -1;
     }
 
-    int x = prepareDummyForWork(pid);
+    int x = preparePlaceholderProcess(pid);
     if (x == -1)
     {
         return -1;

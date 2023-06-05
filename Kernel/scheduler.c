@@ -24,22 +24,21 @@ Queue expired = NULL;
 // Schelduler states
 int processAmount = -1;
 unsigned int processReadyCount = 0;
-pid_t dummyProcessPid = NULL;
+pid_t placeholderProcessPid = NULL;
 char proccessBeingRun = 0;
 int readyProcessAmount = 0;
 
-void dummyProcess()
+void placeholderProcess()
 {
     while (1)
     {
-        ncPrint("a");
         _hlt();
     }
 }
 
 void createScheduler()
 {
-    dummyProcessPid = createProcess((uint64_t)dummyProcess, 0, NULL);
+    placeholderProcessPid = createProcess((uint64_t)placeholderProcess, 0, NULL);
     for (int i = 0; i <= 2; i++)
     {
         active->process.fileDescriptors[i].mode = OPEN;
@@ -297,7 +296,7 @@ void nextProcess()
     }
 }
 
-int prepareDummyForWork(pid_t pid)
+int preparePlaceholderProcess(pid_t pid)
 {
     Node *current = active;
     Node *previous = NULL;
@@ -357,7 +356,7 @@ uint64_t contextSwitch(uint64_t rsp)
         }
         else
         { // C1.3.2 y C1.3.3
-            prepareDummyForWork(dummyProcessPid);
+            preparePlaceholderProcess(placeholderProcessPid);
         }
         return active->process.rsp;
     }
@@ -365,11 +364,11 @@ uint64_t contextSwitch(uint64_t rsp)
     Node *currentProcess = active;
     currentProcess->process.rsp = rsp;
 
-    // Si no tengo procesos en ready, es decir, estan todos bloqueados tengo que correr el dummy
+    // Si no tengo procesos en ready, es decir, estan todos bloqueados tengo que correr el placeholderProcess
     if //(readyProcessAmount == 0)
         (processReadyCount == 0)
     {
-        prepareDummyForWork(dummyProcessPid);
+        preparePlaceholderProcess(placeholderProcessPid);
         return active->process.rsp;
     }
 

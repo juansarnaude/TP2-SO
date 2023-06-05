@@ -190,11 +190,15 @@ void pipeSeparator(char **parts, int part_count, int pipePosition)
     command writeFunction = command_parser(parts[0]);
     if (writeFunction == NULL)
     {
+        puts("Unkown input function in Pipe");
+        putChar('\n');
         return;
     }
     command readFunction = command_parser(parts[pipePosition + 1]);
     if (readFunction == NULL)
     {
+        puts("Unkown output function in Pipe");
+        putChar('\n');
         return;
     }
     sys_pipe(fds);

@@ -8,7 +8,7 @@
 #include <defs.h>
 #include <queue.h>
 
-void dummyProcess();
+void placeholderProcess();
 void createScheduler();
 PCB *getProcess(pid_t pid);
 uint64_t getCurrentPid();
@@ -16,7 +16,7 @@ int blockProcess(pid_t pid);
 int unblockProcess(pid_t pid);
 pid_t createProcess(uint64_t rip, int argc, char *argv[]);
 void nextProcess();
-int prepareDummyForWork(pid_t pid);
+int preparePlaceholderProcess(pid_t pid);
 uint64_t contextSwitch(uint64_t rsp);
 int killProcess(int returnValue, char autokill);
 int changePriority(pid_t pid, int priorityValue);

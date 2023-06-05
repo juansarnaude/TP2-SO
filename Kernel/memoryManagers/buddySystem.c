@@ -33,7 +33,6 @@ buddyADT table;
 // size MUST be equal to 2MB^k with k>1
 void createMemory(size_t size)
 {
-    size_t finalAddress = START_ADDRESS + size;
     totalMemory = size;
 
     buddyMaxCount = size / MIN_BUDDY_SIZE;
@@ -44,7 +43,7 @@ void createMemory(size_t size)
         buddyTreeHeight++;
     }
 
-    table = START_ADDRESS;
+    table = (buddyADT) START_ADDRESS;
     for (int i = 0; i < buddyMaxCount; i++)
     {
        table[i].occupied = FREE;
@@ -107,7 +106,7 @@ void *memoryManagerAlloc(size_t nbytes)
     if (index == -1)
     {
         // ERROR
-        return -1;
+        return (void *)-1;
     }
     if (index != 0)
     {
@@ -132,7 +131,7 @@ void *memoryManagerAlloc(size_t nbytes)
     }
     buddyCount++;
     usedMemory += MIN_BUDDY_SIZE * POWER_OF_2(buddyTreeHeight - height);
-    return START_ADDRESS + findIndexInHeight(height, index) * totalMemory / POWER_OF_2(height);
+    return (void *)(START_ADDRESS + findIndexInHeight(height, index) * totalMemory / POWER_OF_2(height));
 }
 
 // Must give the start of the memory used
@@ -143,7 +142,6 @@ void memory_manager_free(void *ap)
         return;
     }
     size_t position = (size_t)ap;
-    size_t a = buddyTreeHeight;
     size_t indexInMaxHeight = (position - START_ADDRESS) / MIN_BUDDY_SIZE;
     size_t index = indexInMaxHeight + firstIndexInHeight(buddyTreeHeight);
     size_t height = buddyTreeHeight;
