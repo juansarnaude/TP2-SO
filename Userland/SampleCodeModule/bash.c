@@ -241,7 +241,7 @@ void pipeSeparator(char **parts, int part_count, int pipePosition)
     pid_t pidR = sys_exec((uint64_t)readFunction, part_count - (pipePosition + 1), &parts[pipePosition + 1]);
 
     sys_waitpid(pidW);
-    // sys_waitpid(pidR);
+    sys_waitpid(pidR);
 
     sys_open(STDIN);
     sys_close(fds[0]);

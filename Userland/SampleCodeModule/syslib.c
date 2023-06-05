@@ -720,6 +720,7 @@ void cat(int argc, char *argv[])
         }
         c = getChar();
     }
+    putChar(c);
 }
 
 void wc(int argc, char *argv[])
@@ -735,6 +736,7 @@ void wc(int argc, char *argv[])
     }
     fprintf(STDOUT, "%d lines detected\n", lines);
 }
+
 void filter(int argc, char *argv[])
 {
 
