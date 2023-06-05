@@ -1,5 +1,6 @@
 #include <syslib.h>
 #include <stdint.h>
+#include <syslib.h>
 
 #define INITIAL_PHYLO   5
 #define MAX_PHYLO       20
@@ -34,13 +35,12 @@ void eat(int number){
         phyloState[number] = EATING;
         printStates();
         sem_post(nSem[number]);
-        wait(WAIT_TIME);
     }
 }
 
 void takeForks(int number){
-    phyloState[number] = HUNGRY;
     sem_wait(semaphore);
+    phyloState[number] = HUNGRY;
     eat(number);
     sem_post(semaphore);
     sem_wait(nSem[number]);
@@ -58,7 +58,9 @@ void phylosopher(int argc, char * argv[]){
     int number = atoi(argv[0]);
     while(1) {
         takeForks(number);
+        wait(WAIT_TIME);
         putForks(number);
+        wait(WAIT_TIME);
     }
 }
 
@@ -68,7 +70,7 @@ void addPhylo(int number){
         return;
     }
 
-    //sem_wait(semaphore);
+    sem_wait(semaphore);
 
     char *phyloNumber = NULL;
     itoa(number, phyloNumber);
@@ -78,15 +80,19 @@ void addPhylo(int number){
         return;
     }
     char *argv[] = {phyloNumber};
+
     phyloState[number] = THINKING;
-    currentPhyloAmount++; 
+    
+
     phyloPid[number] = sys_exec( (uint64_t)phylosopher, 1, argv);
-    fprintf(STDOUT, "P:%d\n", phyloPid[number]);
-    //sem_post(semaphore);
+    
+    currentPhyloAmount++; 
+    sem_post(semaphore);
 }
 
 void removePhylo(){
-    if(currentPhyloAmount==0){
+    if(currentPhyloAmount==INITIAL_PHYLO){
+        fprintf(STDOUT,"Failed, philos amount must be greater than initial value.\n");
         return; 
     }
     currentPhyloAmount--;
@@ -94,6 +100,7 @@ void removePhylo(){
     sem_close(nSem[currentPhyloAmount]);
     sys_kill(phyloPid[currentPhyloAmount]);
     sem_post(semaphore);
+    return;
 }
 
 void phylo(int argc, char *argv[]){
@@ -118,8 +125,8 @@ void phylo(int argc, char *argv[]){
         else if(c == 'r' || c=='R'){
             removePhylo();
         }
-        if(currentPhyloAmount==0){
-            return;
-        }
+        else if(c='p'){
+            getProcessesInfo(0,NULL);
+        }        
     }
 }

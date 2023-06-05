@@ -7,7 +7,7 @@
 typedef struct blockCDT
 {
     size_t size;           // Number of bytes allocated
-    size_t unused;      // Number of bytes free for allocated
+    size_t unused;         // Number of bytes free for allocated
     struct blockCDT *prev; // Pointer to prevoius block
     struct blockCDT *next; // Pointer to next block
 } BlockCDT;
@@ -25,7 +25,7 @@ void createMemory(size_t size)
     totalHeapMemory = size;
     usedHeapMemory = sizeof(BlockCDT);
     memoryBlockCount = 1;
-    head = (void *)START_ADDRESS;
+    head = START_ADDRESS;
     head->size = 0;
     head->unused = totalHeapMemory - usedHeapMemory;
     head->prev = NULL;
@@ -47,9 +47,9 @@ void *memoryManagerAlloc(size_t nbytes)
     if (current->size == 0)
     {
         current->size = nbytes;
-        usedHeapMemory += nbytes; //Ver si hay que sumarle un sizeof(BlockCDT)
+        usedHeapMemory += nbytes; // Ver si hay que sumarle un sizeof(BlockCDT)
         current->unused -= nbytes;
-        return (void *) current + sizeof(BlockCDT); // Return pointer to next block
+        return (void *)current + sizeof(BlockCDT); // Return pointer to next block
     }
     else
     {

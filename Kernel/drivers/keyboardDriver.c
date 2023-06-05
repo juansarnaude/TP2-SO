@@ -102,27 +102,30 @@ static void add(char key);
 static char translate(uint16_t key);
 static uint8_t pressed(uint16_t scancode, uint16_t key);
 
-void keyboard_handler(uint64_t * registers)
+void keyboard_handler(uint64_t *registers)
 {
-  if (!read_port(0x64) & 0x01)
+  if ((!read_port(0x64)) & (0x01))
     return;
   uint16_t scancode = read_port(0x60);
   uint16_t key = scancode & 0x7F;
   if (pressed(scancode, key))
   {
-    if (control){
+    if (control)
+    {
       switch (key)
       {
-      case 0x20:  //Ctrl+D(20) = Pause left window
-        add(-1);
+      case 0x20: // Ctrl+D(20) = SENDS EOF
+        add(EOF);
         break;
-      case 0x2e:  //Ctrl+C = copy registers
-        //matar proceso background
+      case 0x2e: // Ctrl+C = KILLS FOREGROUND PROCESS
+        killProcess(0, 1);
         break;
       default:
         break;
       }
-    } else {
+    }
+    else
+    {
       add(translate(key));
     }
   }
@@ -210,11 +213,12 @@ uint64_t readBuffer(char *output, uint64_t count)
   _sti();
   while (i < count)
   {
-    if (last < realDim){
+    if (last < realDim)
+    {
       output[i++] = buffer[last++];
     }
   }
   _cli();
 
   return i;
-} 
+}
