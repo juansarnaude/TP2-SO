@@ -179,7 +179,7 @@ void memory_manager_free(void *ap)
     {
         table[index].occupied = FREE;
     }
-    usedMemory -= MIN_BUDDY_SIZE * POWER_OF_2(buddyTreeHeight - height);
+    usedMemory -= MIN_BUDDY_SIZE * POWER_OF_2(buddyTreeHeight - height + 1);
     buddyCount--;
 }
 
