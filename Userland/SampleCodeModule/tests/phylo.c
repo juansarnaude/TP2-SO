@@ -56,6 +56,7 @@ void putForks(int number){
     eat((number+1)%currentPhyloAmount);
     eat((number+currentPhyloAmount-1)%currentPhyloAmount);
     sem_post(semaphore);
+    //sem_post(nSem[number]);
 }
 
 void phylosopher(int argc, char * argv[]){
@@ -127,7 +128,7 @@ void phylo(int argc, char *argv[]){
         else if(c == 'r' || c=='R'){
             removePhylo();
         }
-        else if(c=EOF){
+        else if(c==EOF){
             sem_wait(semaphore);
             for(int i=0; i<currentPhyloAmount ; i++){
                 sem_close(nSem[i]);
@@ -135,6 +136,6 @@ void phylo(int argc, char *argv[]){
             }
             sem_close(semaphore);
             return;
-        }        
+        }     
     }
 }
