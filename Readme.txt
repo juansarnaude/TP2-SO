@@ -70,12 +70,6 @@ Al ejecutarlo, comienza un ciclo infinito que imprime cada cierta cantidad de ti
 loop
 ```
 
-### loop
-Al ejecutarlo, comienza un ciclo infinito que imprime cada cierta cantidad de tiempo, un saludo al usuario.
-```bash
-loop
-```
-
 ### filter
 Al ejecutarlo, filtra las vocales de la entrada ingresada.
 ```bash
