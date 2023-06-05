@@ -20,8 +20,11 @@ int currentPhyloAmount = 0;
 
 void printStates(){
     for (int i=0; i < currentPhyloAmount; i++){
-        if(phyloState[i] == HUNGRY || phyloState[i]==THINKING){
+        if(phyloState[i] == HUNGRY){
             fprintf(STDOUT, ".");
+        }
+        if((phyloState[i]==THINKING)){
+            fprintf(STDOUT, ",");
         }
         if(phyloState[i] == EATING){
             fprintf(STDOUT, "E");
@@ -31,8 +34,9 @@ void printStates(){
 }
 
 void eat(int number){
-    if(phyloState[number] == HUNGRY && phyloState[(number+1)%currentPhyloAmount] != EATING && phyloState[(number+currentPhyloAmount-1)%currentPhyloAmount] != EATING){
+    if(phyloState[number] == HUNGRY && phyloState[(number+currentPhyloAmount-1)%currentPhyloAmount] != EATING && phyloState[(number+1)%currentPhyloAmount] != EATING){
         phyloState[number] = EATING;
+        fprintf(STDOUT, "%d ATE        ", number);
         printStates();
         sem_post(nSem[number]);
     }
@@ -71,20 +75,17 @@ void addPhylo(int number){
     }
 
     sem_wait(semaphore);
+    phyloState[number] = THINKING;
 
     char *phyloNumber = NULL;
     itoa(number, phyloNumber);
-    
     if( (nSem[number] = sem_open(phyloNumber, 1)) == 0){
         fprintf(STDOUT,"Failed to add phylosopher\n");
         return;
     }
     char *argv[] = {phyloNumber};
-
-    phyloState[number] = THINKING;
-    
-
     phyloPid[number] = sys_exec( (uint64_t)phylosopher, 1, argv);
+    fprintf(STDOUT,"Added phylosopher\n");
     
     currentPhyloAmount++; 
     sem_post(semaphore);
@@ -95,8 +96,9 @@ void removePhylo(){
         fprintf(STDOUT,"Failed, philos amount must be greater than initial value.\n");
         return; 
     }
-    currentPhyloAmount--;
+    
     sem_wait(semaphore); 
+    currentPhyloAmount--;
     sem_close(nSem[currentPhyloAmount]);
     sys_kill(phyloPid[currentPhyloAmount]);
     sem_post(semaphore);
@@ -125,8 +127,14 @@ void phylo(int argc, char *argv[]){
         else if(c == 'r' || c=='R'){
             removePhylo();
         }
-        else if(c='p'){
-            getProcessesInfo(0,NULL);
+        else if(c=EOF){
+            sem_wait(semaphore);
+            for(int i=0; i<currentPhyloAmount ; i++){
+                sem_close(nSem[i]);
+                sys_kill(phyloPid[i]);
+            }
+            sem_close(semaphore);
+            return;
         }        
     }
 }
