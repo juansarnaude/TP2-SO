@@ -161,7 +161,7 @@ int isPrime(int n)
 // Ciclo infinito que imprime numeros primos
 void printPrime(int argc, char *argv[])
 {
-    char num[30];
+    char *num = NULL;
     int i = 2;
     puts("Prime numbers: ");
     puts("1, ");
@@ -169,7 +169,7 @@ void printPrime(int argc, char *argv[])
     {
         if (isPrime(i))
         {
-            if (num[0] == '-')
+            if (num != NULL && num[0] == '-')
             { // por si se pasa del max integer
                 return;
             }
@@ -182,6 +182,7 @@ void printPrime(int argc, char *argv[])
 }
 
 // Ciclo infinito que imprime numeros de secuencia de fibonacci
+
 void fibonacciNumbs(int argc, char *argv[])
 {
     char num[30];
