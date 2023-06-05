@@ -493,6 +493,12 @@ int killProcess(int returnValue, char autokill)
     memory_manager_free(currentProcess->process.argv);
     freeQueue(currentProcess->process.blockedQueue);
     memory_manager_free((void *)currentProcess->process.stackBase);
+    if (currentProcess->process.pipe != NULL)
+    {
+        char msg[1] = {EOF};
+        pipeWrite(currentProcess->process.pipe, msg, 1);
+        //pipeClose(currentProcess->process.pipe);
+    }
     memory_manager_free(currentProcess);
     if (autokill)
     {

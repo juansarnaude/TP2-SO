@@ -335,11 +335,11 @@ static int sys_close(int fd)
     if (pcb->lastFd < fd)
         return 0;
     pcb->fileDescriptors[fd].mode = CLOSED;
-    if (fd == PIPEIN)
-    {
-        char msg[1] = {EOF};
-        pipeWrite(pcb->pipe, msg, 1);
-    }
+    // if (fd == PIPEIN)
+    // {
+    //     char msg[1] = {EOF};
+    //     pipeWrite(pcb->pipe, msg, 1);
+    // }
     return 1;
 }
 
