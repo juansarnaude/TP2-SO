@@ -12,7 +12,7 @@ Pipe *pipeOpen()
     newPipe->openW = 1;
     newPipe->queueWriteBlocked = newQueue();
     newPipe->queueReadBlocked = newQueue();
-
+    newPipe->processCount = 1;
     pipeNode *newPipeNode = (pipeNode *)memoryManagerAlloc(sizeof(pipeNode));
     newPipeNode->pipe = newPipe;
     newPipeNode->next = pipesList;
@@ -24,6 +24,9 @@ Pipe *pipeOpen()
 // TODO tengo que ver como liberar las queues
 int pipeClose(Pipe *pipe)
 {
+    if(pipe->processCount > 1){
+        pipe->processCount--;
+    }
     pipeNode *current = pipesList;
     while (current != NULL && current->pipe != pipe)
     {

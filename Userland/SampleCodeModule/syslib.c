@@ -614,22 +614,28 @@ void getProcessesInfo(int argc, char *argv[])
         fprintf(STDOUT, "Priority: %d\n", current->priority);
         fprintf(STDOUT, "Stack Base: 0x%x\n", current->stackBase);
         fprintf(STDOUT, "Status: %s\n\n", (current->status) ? "BLOCKED" : "READY");
+        sys_memFree(current);
         current = current->next;
+    }
+}
+void wait(int secs){
+    int n = sys_secondsElapsed();
+    while(1){
+        if (sys_secondsElapsed() >= secs + n)
+        {
+            return;
+        }
     }
 }
 
 void loopProcess(int argc, char *argv[])
 {
-    int secs = 5;
+    int secs = 1;
     pid_t currentPid = sys_getCurrentPid();
-    int i = 0 - secs - 1;
     while (1)
     {
-        if (sys_secondsElapsed() - i >= secs)
-        {
-            fprintf(STDOUT, "McWhiggin manda saludos al proceso identificable por el siguiente PID: %d\n", (int)currentPid);
-            i = sys_secondsElapsed();
-        }
+        wait(secs);
+        fprintf(STDOUT, "McWhiggin manda saludos al proceso identificable por el siguiente PID: %d\n", (int)currentPid);
     }
 }
 
@@ -714,6 +720,7 @@ void cat(int argc, char *argv[])
         }
         c = getChar();
     }
+    putChar(c);
 }
 
 void wc(int argc, char *argv[])
@@ -729,6 +736,7 @@ void wc(int argc, char *argv[])
     }
     fprintf(STDOUT, "%d lines detected\n", lines);
 }
+
 void filter(int argc, char *argv[])
 {
 

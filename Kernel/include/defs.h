@@ -70,6 +70,7 @@ typedef semaphore *sem_t;
 typedef struct Pipe
 {
     char data[PIPESIZE];
+    unsigned int processCount;
     unsigned int openR;
     unsigned int openW;
     uint64_t indexR;
