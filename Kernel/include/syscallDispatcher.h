@@ -19,7 +19,7 @@ typedef struct
 {
     uint8_t day, month, year;
     uint8_t hours, minutes, seconds;
-} sysTime_t;
+} time_t;
 
 uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rax, uint64_t *registers);
 

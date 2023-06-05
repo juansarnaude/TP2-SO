@@ -135,7 +135,7 @@ Recibe como argumento una estructura que debe tener el siguiente formato:
 typedef struct {
     uint8_t day, month, year;
     uint8_t hours, minutes, seconds;
-} sysTime_t;
+} time_t;
 ```
 
 Luego, devuelve el tiempo en formato ART(UTC-3), pero para el año solo retorna los ultimos dos digitos.

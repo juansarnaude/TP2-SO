@@ -1,6 +1,7 @@
 - [Bash](#bash)
   - [Help](#help)
   - [Fibonacci](#fibonacci)
+  - [Prime](#prime)
   - [Inforeg](#inforeg)
   - [Divide by Zero](#divide-by-zero)
   - [Invalid Opcode](#invalid-opcode)
@@ -25,6 +26,10 @@ Imprime un mensaje indicando los comandos y lo que realizan.
 ### Fibonacci
 
 Imprime los numberos de la serie de fibonacci, hasta que ocurre overflow.
+
+### Prime
+
+Calcula e imprime los numeros primos, hasta que ocurre overflow.
 
 ### Inforeg
 
@@ -61,7 +66,7 @@ Con Ctrl+E se terminan ambas funciones y vuelve al bash.
 |2|getRegisters|0x02|`uint64_t*`|-|-|
 |3|exec|0x03|`int(*)()` f1|`int(*)()` f2|-|
 |4|exit|0x04|`int` ret|-|-|
-|5|time|0x05|`sysTime_t *` time|-|-|
+|5|time|0x05|`time_t *` time|-|-|
 |6|copymem|0x06|`uint64_t` address|`uint8_t *` pointer| `uint64_t` length|
 
 ### Read
@@ -111,7 +116,7 @@ Para obtenerlo, se le debe pasar un puntero a una estructura en especifico:
 typedef struct {
     uint8_t day, month, year;
     uint8_t hours, minutes, seconds;
-} sysTime_t;
+} time_t;
 ```
 
 ### Copy memory

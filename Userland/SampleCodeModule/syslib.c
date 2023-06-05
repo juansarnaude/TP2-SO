@@ -52,8 +52,8 @@ int gets(char *s)
 
 void getTime(int argc, char *argv[])
 {
-    sysTime_t time;
-    char buffer[64];
+    time_t time;
+    char buffer[64] = {'0'};
     sys_time(&time);
 
     putChar('\n');
@@ -146,10 +146,42 @@ void reverse(char s[])
     }
 }
 
+// Devuelve 1 si es primo, 0 si no lo es.
+int isPrime(int n)
+{
+    int i;
+    for (i = 2; i <= n / 2; i++)
+    {
+        if (n % i == 0)
+            return 0;
+    }
+    return 1;
+}
 
+// Ciclo infinito que imprime numeros primos
+void printPrime(int argc, char *argv[])
+{
+    char num[30];
+    int i = 2;
+    puts("Prime numbers: ");
+    puts("1, ");
+    while (1)
+    {
+        if (isPrime(i))
+        {
+            if (num < 0)
+            { // por si se pasa del max integer
+                return;
+            }
+            itoa(i, num);
+            puts(num);
+            puts(",\n");
+        }
+        i++;
+    }
+}
 
 // Ciclo infinito que imprime numeros de secuencia de fibonacci
-
 void fibonacciNumbs(int argc, char *argv[])
 {
     char num[30];
@@ -245,12 +277,12 @@ int checkPrintMemParams(char *s, uint64_t *address)
             puts("\nAddress can't be accesed\n");
             return -1;
         }
-        if (s[i] <= '9')
+        if (s[i] >= '0' && s[i] <= '9')
         {
             *address *= 16;
             *address += s[i] - '0';
         }
-        else if (s[i] >= 'a')
+        else if (s[i] >= 'a' && s[i] <= 'f')
         {
             if (i == 10)
             {
@@ -303,7 +335,7 @@ void inforeg(int argc, char *argv[])
         puts("No registers to print.\n");
         return;
     }
-    char buffer[64];
+    char buffer[64] = {'0'};
     for (int i = 0; i < 18; i++)
     {
         puts(registers[i]);
@@ -586,11 +618,9 @@ void getProcessesInfo(int argc, char *argv[])
         current = current->next;
     }
 }
-void wait(int secs)
-{
+void wait(int secs){
     int n = sys_secondsElapsed();
-    while (1)
-    {
+    while(1){
         if (sys_secondsElapsed() >= secs + n)
         {
             return;
@@ -690,11 +720,12 @@ void cat(int argc, char *argv[])
         }
         c = getChar();
     }
+    putChar(c);
 }
 
 void wc(int argc, char *argv[])
 {
-    int c;
+    char c;
     int lines = 0;
     while ((c = getChar()) != EOF)
     {
@@ -711,7 +742,7 @@ void filter(int argc, char *argv[])
 
     char vowels[] = {'a', 'e', 'i', 'o', 'u'};
     char capitalVowels[] = {'A', 'E', 'I', 'O', 'U'};
-    int c;
+    char c;
     while ((c = getChar()) != EOF)
     {
         for (int k = 0; k < 5; k++)

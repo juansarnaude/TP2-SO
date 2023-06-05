@@ -1,7 +1,3 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include <scheduler.h>
 #include <interrupts.h>
 #include <memoryManager.h>
@@ -493,12 +489,6 @@ int killProcess(int returnValue, char autokill)
     memory_manager_free(currentProcess->process.argv);
     freeQueue(currentProcess->process.blockedQueue);
     memory_manager_free((void *)currentProcess->process.stackBase);
-    if (currentProcess->process.pipe != NULL)
-    {
-        char msg[1] = {EOF};
-        pipeWrite(currentProcess->process.pipe, msg, 1);
-        //pipeClose(currentProcess->process.pipe);
-    }
     memory_manager_free(currentProcess);
     if (autokill)
     {
@@ -533,22 +523,15 @@ int yieldProcess()
 
 processInfo *getProccessesInfo()
 {
-    processInfo *first = NULL;
-    processInfo *current = NULL;
+    processInfo *first;
+    processInfo *current;
     Queue currentNode = active;
     pid_t firstPid = active->process.pid;
 
     while (currentNode != NULL)
     {
-        if (current != NULL)
-        {
-            current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
-            current = current->next;
-        }
-        else
-        {
-            current = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
-        }
+        current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+        current = current->next;
         current->pid = currentNode->process.pid;
         if (current->pid == firstPid)
         {
@@ -563,15 +546,8 @@ processInfo *getProccessesInfo()
 
     while (currentNode != NULL)
     {
-        if (current != NULL)
-        {
-            current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
-            current = current->next;
-        }
-        else
-        {
-            current = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
-        }
+        current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+        current = current->next;
         current->pid = currentNode->process.pid;
         current->priority = currentNode->process.priority;
         current->stackBase = currentNode->process.stackBase;
