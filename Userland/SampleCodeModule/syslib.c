@@ -324,9 +324,9 @@ char **strtok(char *str, char delim, int *qty)
             {
                 while (k > 0)
                 {
-                    sys_memFree((uint64_t)parts[--k]);
+                    sys_memFree((void *)parts[--k]);
                 }
-                sys_memFree((uint64_t)parts);
+                sys_memFree((void *)parts);
                 return NULL;
             }
             strcpy(new_part, buffer);
@@ -345,9 +345,9 @@ char **strtok(char *str, char delim, int *qty)
     {
         while (k > 0)
         {
-            sys_memFree((uint64_t)parts[--k]);
+            sys_memFree((void *)parts[--k]);
         }
-        sys_memFree((uint64_t)parts);
+        sys_memFree((void *)parts);
         return NULL;
     }
     strcpy(new_part, buffer);

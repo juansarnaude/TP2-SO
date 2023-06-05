@@ -6,4 +6,4 @@
 Pipe *pipeOpen();
 int pipeClose(Pipe *pipe);
 int pipeRead(Pipe *pipe, char *msg, int size);
-int pipeWrite(Pipe *pipe, char *msg, int size);
+int pipeWrite(Pipe *pipe, const char *msg, int size);

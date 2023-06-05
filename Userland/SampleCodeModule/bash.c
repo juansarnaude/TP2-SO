@@ -27,10 +27,10 @@ command backgroundFun = NULL;
 int fds[2];
 command readFunc = NULL;
 
-char *argvR = NULL;
+char **argvR = NULL;
 int argcR = 0;
 
-char *argvW = NULL;
+char **argvW = NULL;
 int argcW = 0;
 command writeFunc = NULL;
 void functionWrite(int argc, char *argv[]);
@@ -77,8 +77,6 @@ int readInput()
     }
     else if (charBelongs(buffer, '&'))
     {
-        int i = 0;
-        char found = 0;
         backgroundArgv = parts;
         backgroundArgc = part_count;
         backgroundManager(parts[0], part_count, parts);
@@ -100,9 +98,9 @@ int readInput()
     // etc, para los distintos comandos a implementar
     for (int i = 0; i < part_count; i++)
     {
-        sys_memFree((uint64_t)parts[i]);
+        sys_memFree((void *)parts[i]);
     }
-    sys_memFree((uint64_t)parts);
+    sys_memFree((void *)parts);
     return sizeRead;
 }
 
@@ -199,8 +197,6 @@ void pipeSeparator(char **parts, int part_count, int pipePosition)
     {
         return;
     }
-    pid_t auxPid = sys_getCurrentPid();
-
     sys_pipe(fds);
 
     sys_close(fds[1]);
@@ -263,5 +259,5 @@ void backgroundFunction(command fun, int argc, char *argv[])
 {
     sys_close(STDIN);
     sys_close(STDOUT);
-    pid_t pid = sys_exec((uint64_t)backgroundFun, backgroundArgc, backgroundArgv);
+    sys_exec((uint64_t)backgroundFun, backgroundArgc, backgroundArgv);
 }

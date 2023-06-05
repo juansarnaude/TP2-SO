@@ -53,7 +53,6 @@ void fibonacciNumbs(int argc, char *argv[])
 void getProcessesInfo(int argc, char *argv[])
 {
     processInfo *current = sys_ps();
-    char *toPrint;
 
     while (current != NULL)
     {

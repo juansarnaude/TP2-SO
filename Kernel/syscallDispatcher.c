@@ -99,10 +99,10 @@ uint64_t syscallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t ra
         return (uint64_t)sys_nice((pid_t)rdi, (int)rsi);
         break;
     case 20:
-        return (uint64_t)sys_pipe((int)rdi);
+        return (uint64_t)sys_pipe((uint64_t)rdi);
         break;
     case 21:
-        return (uint64_t)sys_dup2((int)rdi, (int)rsi);
+        return (uint64_t)sys_dup2((uint64_t)rdi, (uint64_t)rsi);
         break;
     case 22:
         return sys_open((int)rdi);

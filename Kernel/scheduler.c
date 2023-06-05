@@ -39,8 +39,6 @@ void dummyProcess()
 
 void createScheduler()
 {
-    char *name = "Kernel Task";
-    char *argv[] = {name};
     dummyProcessPid = createProcess((uint64_t)dummyProcess, 0, NULL);
     for (int i = 0; i <= 2; i++)
     {
@@ -53,7 +51,6 @@ void createScheduler()
     }
     active->process.lastFd = 4;
     active->process.status = BLOCKED;
-    // readyProcessAmount--;
     processReadyCount--;
 }
 

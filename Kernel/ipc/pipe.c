@@ -1,7 +1,4 @@
-#include <defs.h>
-#include <memoryManager.h>
-#include <queue.h>
-#include <scheduler.h>
+#include <pipe.h>
 
 pipeList pipesList = NULL;
 
@@ -24,7 +21,8 @@ Pipe *pipeOpen()
 // TODO tengo que ver como liberar las queues
 int pipeClose(Pipe *pipe)
 {
-    if(pipe->processCount > 1){
+    if (pipe->processCount > 1)
+    {
         pipe->processCount--;
     }
     pipeNode *current = pipesList;
@@ -32,69 +30,79 @@ int pipeClose(Pipe *pipe)
     {
         current = current->next;
     }
-    if (current == NULL){
+    if (current == NULL)
+    {
         return 0;
     }
 
     freeQueue(pipe->queueReadBlocked);
     freeQueue(pipe->queueWriteBlocked);
-    if (current->next != NULL){
+    if (current->next != NULL)
+    {
         current->next->previous = current->previous;
-    }  
-    if (current->previous != NULL){
+    }
+    if (current->previous != NULL)
+    {
         current->previous->next = current->next;
-    }   
+    }
     memory_manager_free(current);
     memory_manager_free(pipe);
     return 1;
 }
 
-//Returns the amount of chars read or -1 if it failed
+// Returns the amount of chars read or -1 if it failed
 int pipeRead(Pipe *pipe, char *msg, int size)
 {
-    if(pipe->openR == 0){
+    if (pipe->openR == 0)
+    {
         return -1;
     }
 
-    int i=0;
+    int i = 0;
     pid_t currentPid;
     while (i < size)
     {
-        if(pipe->indexR == pipe->indexW){
+        if (pipe->indexR == pipe->indexW)
+        {
             currentPid = getCurrentPid();
             enqueuePid(pipe->queueReadBlocked, currentPid);
             blockProcess(currentPid);
-        }        
-        msg[i] = pipe->data[pipe->indexR %PIPESIZE];
-        pipe->indexR ++;
+        }
+        msg[i] = pipe->data[pipe->indexR % PIPESIZE];
+        pipe->indexR++;
         i++;
-        while((currentPid = dequeuePid(pipe->queueWriteBlocked)) != -1){
+        while ((currentPid = dequeuePid(pipe->queueWriteBlocked)) != -1)
+        {
             unblockProcess(currentPid);
-        }        
+        }
     }
 
     return i;
 }
 
-//Returns the amount of chars writen or -1 if it failed
-int pipeWrite(Pipe *pipe, char *msg, int size)
+// Returns the amount of chars writen or -1 if it failed
+int pipeWrite(Pipe *pipe, const char *msg, int size)
 {
-    if(pipe->openW == 0){
+    if (pipe->openW == 0)
+    {
         return -1;
     }
 
-    int i=0;
+    int i = 0;
     pid_t currentPid;
-    while(i < size){        
-        if(pipe->indexW == pipe->indexR + PIPESIZE ){
+    while (i < size)
+    {
+        if (pipe->indexW == pipe->indexR + PIPESIZE)
+        {
             currentPid = getCurrentPid();
             enqueuePid(pipe->queueWriteBlocked, currentPid);
             blockProcess(currentPid);
         }
         pipe->data[pipe->indexW % PIPESIZE] = msg[i];
-        pipe->indexW ++;
+        pipe->indexW++;
         i++;
-        while((currentPid = dequeuePid(pipe->queueReadBlocked)) != -1){
+        while ((currentPid = dequeuePid(pipe->queueReadBlocked)) != -1)
+        {
             unblockProcess(currentPid);
         }
     }
