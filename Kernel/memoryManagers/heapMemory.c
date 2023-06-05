@@ -2,7 +2,7 @@
 
 #include <memoryManager.h>
 #define START_ADDRESS 0xF00000
-#define MEMORY_MANAGMENT_NAME 'Fixed size allocation'
+#define MEMORY_MANAGMENT_NAME "Fixed size allocation"
 
 typedef struct blockCDT
 {
@@ -98,7 +98,7 @@ MemoryInfo *mem_info()
     {
         return NULL;
     }
-    // info->memoryAlgorithmName = strcpy(MEMORY_MANAGMENT_NAME);
+    info->memoryAlgorithmName = MEMORY_MANAGMENT_NAME;
     info->totalMemory = totalHeapMemory;
     info->occupiedMemory = usedHeapMemory;
     info->freeMemory = totalHeapMemory - usedHeapMemory;

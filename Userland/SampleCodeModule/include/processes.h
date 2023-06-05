@@ -3,6 +3,7 @@
 
 void help(int argc, char *argv[]);
 void printmem(int argc, char *argv[]);
+void mem(int argc, char *argv[]);
 void getTime(int argc, char *argv[]);
 void printPrime(int argc, char *argv[]);
 void fibonacciNumbs(int argc, char *argv[]);

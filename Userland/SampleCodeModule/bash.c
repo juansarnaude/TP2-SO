@@ -182,6 +182,10 @@ command command_parser(char *buffer)
     {
         return (command)phylo;
     }
+    else if (strcmp(buffer, "mem") == 0)
+    {
+        return (command)mem;
+    }
     return NULL;
 }
 

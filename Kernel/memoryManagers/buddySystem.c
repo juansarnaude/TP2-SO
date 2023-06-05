@@ -190,7 +190,7 @@ MemoryInfo *mem_info()
     {
         return NULL;
     }
-    // info->memoryAlgorithmName = strcpy(MEMORY_MANAGEMENT_NAME);
+    info->memoryAlgorithmName = MEMORY_MANAGEMENT_NAME;
     info->totalMemory = totalMemory;
     info->occupiedMemory = usedMemory;
     info->freeMemory = totalMemory - usedMemory;

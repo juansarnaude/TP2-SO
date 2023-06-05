@@ -18,6 +18,7 @@ void help(int argc, char *argv[])
         "fibonacci            Dispalys fibonacci series numbers.\n"
         "COMMAND1|COMMAND2    The \"|\" operand allows the output of the first command\n"
         "                     to be the input of the second command. CTRL+D sends an EOF.\n"
+        "mem                  Prints out information about the curren memory manager.\n"
         "test_mm <max-mem>    Tests memory manager with <max-mem> bytes.\n"
         "test_priority        Tests priority changes of processes.\n"
         "test_processes <max-proc>    Tests process creation with <max-proc>.\n"
@@ -26,6 +27,18 @@ void help(int argc, char *argv[])
     puts(helpstring);
 }
 
+void mem(int argc, char *argv[])
+{
+    MemoryInfo *mem = sys_memInfo();
+
+    fprintf(STDOUT, "Algorithm Name: %s\n", mem->memoryAlgorithmName);
+    fprintf(STDOUT, "Free Memory: %d\n", mem->freeMemory);
+    fprintf(STDOUT, "Occupied Memory: %d\n", mem->occupiedMemory);
+    fprintf(STDOUT, "Total Memory: %d\n", mem->totalMemory);
+    fprintf(STDOUT, "Blocks Used: %d\n", mem->blocksUsed);
+
+    sys_memFree((void *)mem);
+}
 
 void fibonacciNumbs(int argc, char *argv[])
 {
