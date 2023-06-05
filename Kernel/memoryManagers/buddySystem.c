@@ -3,7 +3,7 @@
 #include <memoryManager.h>
 #define START_ADDRESS 0xF00000
 #define MIN_BUDDY_SIZE (8 * 1024)
-#define MEMORY_MANAGEMENT_NAME "buddy"
+#define MEMORY_MANAGEMENT_NAME "Buddy"
 #define FREE 0
 #define OCCUPIED 1
 
@@ -23,11 +23,11 @@ size_t totalMemory;
 size_t usedMemory;
 size_t buddyCount;
 size_t buddyMaxCount;
-size_t buddyTreeHeight = 0; //Total Height of the Tree
+size_t buddyTreeHeight = 0; // Total Height of the Tree
 
 buddyADT table;
 
-//Children status will have number of children, 0 if it is one that cna be liberated and 
+// Children status will have number of children, 0 if it is one that cna be liberated and
 //-1 if is son of one that can be liberated
 
 // size MUST be equal to 2MB^k with k>1
@@ -38,16 +38,17 @@ void createMemory(size_t size)
     buddyMaxCount = size / MIN_BUDDY_SIZE;
 
     size_t auxAmount = MIN_BUDDY_SIZE;
-    while(auxAmount != size){
-        auxAmount=auxAmount*2;
+    while (auxAmount != size)
+    {
+        auxAmount = auxAmount * 2;
         buddyTreeHeight++;
     }
 
-    table = (buddyADT) START_ADDRESS;
+    table = (buddyADT)START_ADDRESS;
     for (int i = 0; i < buddyMaxCount; i++)
     {
-       table[i].occupied = FREE;
-       table[i].childrenStatus = FREE;
+        table[i].occupied = FREE;
+        table[i].childrenStatus = FREE;
     }
     memoryManagerAlloc(buddyMaxCount * 2 * sizeof(buddyCDT));
 }
@@ -75,25 +76,30 @@ size_t findBuddyposition(size_t nbytes)
 
     size_t index = POWER_OF_2(height) - 1;
     size_t maxHeightIndex = POWER_OF_2(height + 1) - 1;
-    //Finds the position
+    // Finds the position
     for (; index < maxHeightIndex; index++)
     {
         if (table[index].occupied == FREE)
         {
             return index;
         }
-    }    
+    }
     return -1;
 }
 
-void setDescendants(size_t index, int value){
-    if(value==-1){
+void setDescendants(size_t index, int value)
+{
+    if (value == -1)
+    {
         table[index].occupied = OCCUPIED;
-    } else{
+    }
+    else
+    {
         table[index].occupied = FREE;
     }
     table[index].childrenStatus = value;
-    if(index < firstIndexInHeight(buddyTreeHeight+1)){
+    if (index < firstIndexInHeight(buddyTreeHeight + 1))
+    {
         setDescendants(LEFT_SON(index), value);
         setDescendants(RIGHT_SON(index), value);
     }
@@ -110,7 +116,7 @@ void *memoryManagerAlloc(size_t nbytes)
     }
     if (index != 0)
     {
-        //Marks parents as occupied
+        // Marks parents as occupied
         size_t auxIndex = PARENT(index);
         while (auxIndex > 0)
         {
@@ -120,8 +126,9 @@ void *memoryManagerAlloc(size_t nbytes)
             height++;
         }
 
-        //Marks descendants as occupied
-        if(index < firstIndexInHeight(buddyTreeHeight)){
+        // Marks descendants as occupied
+        if (index < firstIndexInHeight(buddyTreeHeight))
+        {
             setDescendants(index, -1);
         }
         table[index].occupied = OCCUPIED;
@@ -158,7 +165,7 @@ void memory_manager_free(void *ap)
         {
             height++;
             index = PARENT(index);
-            //Agregar qué pasa si no lo encuentra
+            // Agregar qué pasa si no lo encuentra
         }
     }
 
@@ -179,7 +186,7 @@ void memory_manager_free(void *ap)
     {
         table[index].occupied = FREE;
     }
-    usedMemory -= MIN_BUDDY_SIZE * POWER_OF_2(buddyTreeHeight - height + 1);
+    usedMemory -= MIN_BUDDY_SIZE * POWER_OF_2(buddyTreeHeight - height + 2);
     buddyCount--;
 }
 

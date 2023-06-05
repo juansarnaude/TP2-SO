@@ -33,7 +33,6 @@ int argcR = 0;
 char **argvW = NULL;
 int argcW = 0;
 command writeFunc = NULL;
-void functionWrite(int argc, char *argv[]);
 
 void bash()
 {
@@ -46,7 +45,6 @@ void bash()
     }
 }
 
-// Change : to |
 int readInput()
 {
     int sizeRead = gets(buffer);
@@ -124,11 +122,6 @@ command command_parser(char *buffer)
     else if (strcmp(buffer, "help") == 0)
     {
         return (command)help;
-    }
-    else if (containsString(buffer, "printmem") >= 0)
-    {
-        savePrintMemParams(buffer);
-        return (command)printmem;
     }
     else if ((strcmp(buffer, "test_mm")) == 0)
     {
