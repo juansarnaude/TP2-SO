@@ -40,13 +40,12 @@ sem_t sem_open(char *name, uint64_t value)
     {
         semAux->sem.processesOpened++;
         return &(semAux->sem);
-    } else {
-        semAux->sem.processesOpened = 1;
     }
     semAux = (semNode *)memoryManagerAlloc(sizeof(semNode));
     semAux->sem.name = strcpy(name);
     semAux->sem.value = value;
     semAux->sem.locked = 0;
+    semAux->sem.processesOpened = 1;
     semAux->next = semaphoreList;
     semAux->previous = NULL;
     semAux->sem.blockedProcesses = newQueue();
