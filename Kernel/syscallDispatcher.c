@@ -136,7 +136,8 @@ static uint64_t sys_read(unsigned int fd, char *output, uint64_t count)
     {
         return readBuffer(output, count);
     }
-    if(pcb->fileDescriptors[PIPEIN].mode == OPEN){
+    if (pcb->fileDescriptors[PIPEOUT].mode == OPEN)
+    {
         return pipeRead(pcb->pipe, output, count);
     }
 }
@@ -163,7 +164,8 @@ static void sys_write(unsigned int fd, const char *buffer, uint64_t count)
             i++;
         }
     }
-    else if (pcb->fileDescriptors[PIPEOUT].mode == OPEN){
+    else if (pcb->fileDescriptors[PIPEIN].mode == OPEN)
+    {
         pipeWrite(pcb->pipe, buffer, count);
     }
     return;
@@ -305,8 +307,8 @@ static int sys_pipe(int pipefd[2])
     pcb->fileDescriptors[PIPEIN].mode = OPEN;
     pcb->fileDescriptors[PIPEOUT].mode = OPEN;
     pcb->pipe = pipeOpen();
-    pipefd[0] = PIPEOUT;
-    pipefd[1] = PIPEIN;
+    pipefd[0] = PIPEIN;
+    pipefd[1] = PIPEOUT;
 }
 
 static int sys_dup2(int fd1, int fd2)
@@ -331,6 +333,11 @@ static int sys_close(int fd)
     if (pcb->lastFd < fd)
         return 0;
     pcb->fileDescriptors[fd].mode = CLOSED;
+    if (fd == PIPEIN)
+    {
+        char msg[1] = {EOF};
+        pipeWrite(pcb->pipe, msg, 1);
+    }
     return 1;
 }
 

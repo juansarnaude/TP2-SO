@@ -34,6 +34,8 @@
 #define OPEN 1
 #define CLOSED 0
 
+#define EOF -1
+
 typedef int pid_t;
 
 // Blocked Queue
@@ -108,7 +110,7 @@ typedef struct
     uint64_t rsp;
     uint64_t stackBase;
     BlockedQueueADT blockedQueue;
-    fd_t fileDescriptors[FDS]; 
+    fd_t fileDescriptors[FDS];
     // 0: STDIN, 1: STDOUT, 2:STDERR
     // 3: PIPEW, 4: PIPER
     Pipe *pipe;
