@@ -53,7 +53,7 @@ int gets(char *s)
 void getTime(int argc, char *argv[])
 {
     sysTime_t time;
-    char buffer[64] = {'0'};
+    char buffer[64];
     sys_time(&time);
 
     putChar('\n');
@@ -169,7 +169,7 @@ void printPrime(int argc, char *argv[])
     {
         if (isPrime(i))
         {
-            if (i < 0)
+            if (num[0] == '-')
             { // por si se pasa del max integer
                 return;
             }
@@ -335,7 +335,7 @@ void inforeg(int argc, char *argv[])
         puts("No registers to print.\n");
         return;
     }
-    char buffer[64] = {'0'};
+    char buffer[64];
     for (int i = 0; i < 18; i++)
     {
         puts(registers[i]);

@@ -530,8 +530,15 @@ processInfo *getProccessesInfo()
 
     while (currentNode != NULL)
     {
-        current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
-        current = current->next;
+        if (current != NULL)
+        {
+            current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+            current = current->next;
+        }
+        else
+        {
+            current = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+        }
         current->pid = currentNode->process.pid;
         if (current->pid == firstPid)
         {
@@ -546,8 +553,15 @@ processInfo *getProccessesInfo()
 
     while (currentNode != NULL)
     {
-        current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
-        current = current->next;
+        if (current != NULL)
+        {
+            current->next = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+            current = current->next;
+        }
+        else
+        {
+            current = (processInfo *)memoryManagerAlloc(sizeof(processInfo));
+        }
         current->pid = currentNode->process.pid;
         current->priority = currentNode->process.priority;
         current->stackBase = currentNode->process.stackBase;
