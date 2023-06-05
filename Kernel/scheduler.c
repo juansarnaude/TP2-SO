@@ -21,48 +21,6 @@ extern void _int20h();                                                          
 #define DEFAULT_PRIORITY 4
 priority_t priorities[NUMBER_OF_PRIORITIES] = {9, 8, 7, 6, 5, 4, 3, 2, 1};
 
-/* Status */
-// typedef enum
-// {
-//     READY,
-//     RUNNING,
-//     BLOCKED,
-//     KILLED,
-// } State;
-
-// typedef const char *StateStrings[];
-
-// StateStrings stateStrings = {
-//     "READY",
-//     "RUNNING",
-//     "BLOCKED",
-//     "KILLED",
-// };
-
-// // Proccess info, nodes and lists
-
-// typedef struct processInfo
-// {
-//     uint64_t pid;
-//     uint64_t p_pid;
-//     uint64_t priority;
-//     State state;
-// } pInfo;
-
-// typedef struct processNode
-// {
-//     pInfo info;
-//     struct processNode *next;
-// } pNode;
-
-// typedef struct processList
-// {
-//     pNode *first;
-//     pNode *last;
-//     uint64_t size;
-//     uint64_t readyAmount;
-// } pList;
-
 // Queues
 Queue active = NULL;
 Queue expired = NULL;
@@ -497,8 +455,8 @@ int killProcess(int returnValue, char autokill)
     {
         char msg[1] = {EOF};
         pipeWrite(currentProcess->process.pipe, msg, 1);
-        //pipeClose(currentProcess->process.pipe);
     }
+
     memory_manager_free(currentProcess);
     if (autokill)
     {

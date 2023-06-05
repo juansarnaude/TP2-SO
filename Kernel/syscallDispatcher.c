@@ -184,7 +184,7 @@ static void sys_exit(int return_value, char autokill)
 
     for (int i = 0; i < lastFd; i++)
     {
-        // sys_close(i);
+        sys_close(i);
     }
 
     killProcess(return_value, autokill);
@@ -335,11 +335,6 @@ static int sys_close(int fd)
     if (pcb->lastFd < fd)
         return 0;
     pcb->fileDescriptors[fd].mode = CLOSED;
-    // if (fd == PIPEIN)
-    // {
-    //     char msg[1] = {EOF};
-    //     pipeWrite(pcb->pipe, msg, 1);
-    // }
     return 1;
 }
 

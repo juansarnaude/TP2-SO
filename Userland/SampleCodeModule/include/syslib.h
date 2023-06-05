@@ -63,9 +63,6 @@ int atoi(char *str);
 void itoa(int n, char s[]);
 void reverse(char s[]);
 void wait(int secs);
-void cat(int argc, char *argv[]);
-void wc(int argc, char *argv[]);
-void filter(int argc, char *argv[]);
 
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 

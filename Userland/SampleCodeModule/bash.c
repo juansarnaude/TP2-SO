@@ -8,7 +8,6 @@ static char buffer[32];
 typedef void (*ptr)();
 typedef ptr (*pm)();
 
-void help();
 int readInput();
 void unknownCommand();
 void pipeSeparator(char **parts, int part_count, int pipePosition);
@@ -191,30 +190,7 @@ command command_parser(char *buffer)
     return NULL;
 }
 
-void help(int argc, char *argv[])
-{
-    const char *helpstring =
-        "cat                  Replicates whatever you input to the shell.\n"
-        "phylo                Simulates famous synchronization phylosophers problem.\n"
-        "ps                   Prints information about current process.\n"
-        "loop                 Prints a greeting every certain period of time.\n"
-        "filter               Filters input to print only its vowels.\n"
-        "block <pid>          Blocks/unblocks process with pid = <pid>.\n"
-        "kill <pid>           Kills process with pid = <pid>.\n"
-        "nice <pid> <prio>    Changes priority of process with pid = <pid> to <prio>.\n"
-        "wc                   Prints the number of newlines from input.\n"
-        "help                 Provides help information for commands.\n"
-        "time                 Command to display the system day and time.\n"
-        "fibonacci            Dispalys fibonacci series numbers.\n"
-        "COMMAND1|COMMAND2    The \"|\" operand allows the output of the first command\n"
-        "                     to be the input of the second command. CTRL+D sends an EOF.\n"
-        "test_mm <max-mem>    Tests memory manager with <max-mem> bytes.\n"
-        "test_priority        Tests priority changes of processes.\n"
-        "test_processes <max-proc>    Tests process creation with <max-proc>.\n"
-        "test_sync <max-proc> <sem-flag>    Tests synchronization of processes.\n";
 
-    puts(helpstring);
-}
 
 void pipeSeparator(char **parts, int part_count, int pipePosition)
 {
