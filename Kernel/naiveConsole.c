@@ -6,7 +6,7 @@
 #define WINDOWS 2
 
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
-static char buffer[64] = {'0'};
+static char buffer[64];
 static uint8_t *const video = (uint8_t *)VIDEOSTART;
 static uint8_t *currentVideo = (uint8_t *)VIDEOSTART;
 static const uint32_t width = WIDTH;
