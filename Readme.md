@@ -125,7 +125,7 @@ phylo
 ```
 
 ### test_mm
-Al ejecutarlo, testea el memory manager con el parámetro <max-memory> ingresado.
+Al ejecutarlo, testea el memory manager con el parámetro `max-memory` ingresado.
 ```bash
 test_mm <max-memory>
 ```
@@ -143,19 +143,19 @@ test_processes <max-processes>
 ```
 
 ### test_sync  
-Al ejecutarlo con un 0 en <sem-flag>, realiza el test sin sincronización. En cambio, al ejecutarlo con un 1 en <sem-flag>, se realiza el test con sincronización.
+Al ejecutarlo con un 0 en `sem-flag`, realiza el test sin sincronización. En cambio, al ejecutarlo con un 1 en `sem-flag`, se realiza el test con sincronización.
 ```bash
 test_sync <max-processes> <sem-flag>
 ```
 
-### <COMMAND1> | <COMMAND2>
-Al ejecutarlo, la salida de <COMMAND1> pasa a ser la entrada de <COMMAND2>, devolviendo a la salida el resultado de <COMMAND2> con dicho input.
+### COMMAND1 | COMMAND2
+Al ejecutarlo, la salida de `COMMAND1` pasa a ser la entrada de `COMMAND2`, devolviendo a la salida el resultado de <COMMAND2> con dicho input.
 ```bash
 <COMMAND1> | <COMMAND2>
 ```
 
-### &<COMMAND1>
-Al ejecutarlo, se corre <COMMAND1> en background
+### &COMMAND1
+Al ejecutarlo, se corre `COMMAND1` en background
 ```bash
 &<COMMAND1>
 ```
