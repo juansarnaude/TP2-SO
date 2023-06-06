@@ -1,16 +1,16 @@
-global spinlock
-global unlock
+global block
+global unblock
 
-spinlock:
+block:
     mov rax, 0
     mov al, 1
   
     xchg al, [rdi]
     cmp al, 0
-    jne spinlock
+    jne block
 
     ret
 
-unlock:
+unblock:
     mov byte [rdi], 0
     ret

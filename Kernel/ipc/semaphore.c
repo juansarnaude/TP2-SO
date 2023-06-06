@@ -3,8 +3,8 @@
 #include <queue.h>
 #include <scheduler.h>
 
-extern int spinlock(uint8_t *lock); // Both of theese functions will be used to avoid
-extern void unlock(uint8_t *lock);  // race conditions in the post and wait
+extern int block(uint8_t *lock); // Both of theese functions will be used to avoid
+extern void unblock(uint8_t *lock);  // race conditions in the post and wait
 
 typedef struct semNode
 {
@@ -95,7 +95,7 @@ int sem_post(sem_t sem)
         return -1;
     }
 
-    spinlock(&(sem->locked));
+    block(&(sem->locked));
     if (sem->blockedProcesses->qty != 0)
     {
         pid_t pidCurrent = dequeuePid(sem->blockedProcesses);
@@ -105,7 +105,7 @@ int sem_post(sem_t sem)
     {
         sem->value++;
     }
-    unlock(&(sem->locked));
+    unblock(&(sem->locked));
 
     return 1;
 }
@@ -121,17 +121,17 @@ int sem_wait(sem_t sem)
         return -1;
     }
 
-    spinlock(&(sem->locked));
+    block(&(sem->locked));
     if (sem->value > 0)
     {
         sem->value--;
-        unlock(&(sem->locked));
+        unblock(&(sem->locked));
     }
     else
     {
         pid_t pidCurrent = getCurrentPid();
         enqueuePid(sem->blockedProcesses, pidCurrent);
-        unlock(&(sem->locked));
+        unblock(&(sem->locked));
         blockProcess(pidCurrent);
     }
     return 1;
