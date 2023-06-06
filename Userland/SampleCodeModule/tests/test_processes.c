@@ -8,10 +8,6 @@ typedef struct P_rq {
   enum State state;
 } p_rq;
 
-void prueba(){
-    return;
-}
-
 void test_processes(int argc, char * argv[]) {
     uint8_t rq;
     uint8_t alive = 0;
@@ -97,5 +93,4 @@ void test_processes(int argc, char * argv[]) {
         j++;
     }
     fprintf(STDOUT, "All good with test_processes. ;)\n");
-    prueba();
 }
