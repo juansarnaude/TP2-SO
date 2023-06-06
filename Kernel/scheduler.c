@@ -26,7 +26,6 @@ int processAmount = -1;
 unsigned int processReadyCount = 0;
 pid_t placeholderProcessPid = NULL;
 char proccessBeingRun = 0;
-int readyProcessAmount = 0;
 
 void placeholderProcess()
 {
@@ -349,8 +348,7 @@ uint64_t contextSwitch(uint64_t rsp)
     {
         proccessBeingRun = 1;
         // C1.1 o C1.3.1: NO HAY NADA CORRIENDOSE Y TENGO ALGO PARA CORRER
-        if //(readyProcessAmount > 0)
-            (processReadyCount > 0)
+        if (processReadyCount > 0)
         {
             nextProcess();
         }
@@ -365,8 +363,7 @@ uint64_t contextSwitch(uint64_t rsp)
     currentProcess->process.rsp = rsp;
 
     // Si no tengo procesos en ready, es decir, estan todos bloqueados tengo que correr el placeholderProcess
-    if //(readyProcessAmount == 0)
-        (processReadyCount == 0)
+    if (processReadyCount == 0)
     {
         preparePlaceholderProcess(placeholderProcessPid);
         return active->process.rsp;
@@ -447,7 +444,7 @@ int killProcess(int returnValue, char autokill)
     {
         char msg[1] = {EOF};
         pipeWrite(currentProcess->process.pipe, msg, 1);
-        //pipeClose(currentProcess->process.pipe);
+        // pipeClose(currentProcess->process.pipe);
     }
     memoryManagerFreefree(currentProcess);
     if (autokill)
