@@ -184,7 +184,7 @@ static void sys_exit(int return_value, char autokill)
 
     for (int i = 0; i < lastFd; i++)
     {
-        // sys_close(i);
+        sys_close(i);
     }
 
     killProcess(return_value, autokill);
