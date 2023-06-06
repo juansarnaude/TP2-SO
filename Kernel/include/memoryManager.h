@@ -1,5 +1,5 @@
-#ifndef MEMORY_MANAGER_H
-#define MEMORY_MANAGER_H
+#ifndef memoryManagerFreeH
+#define memoryManagerFreeH
 
 #include <unistd.h>
 typedef struct memoryInfo
@@ -13,7 +13,7 @@ typedef struct memoryInfo
 
 void createMemory(size_t size);
 void *memoryManagerAlloc(size_t nbytes);
-void memory_manager_free(void *ap);
+void memoryManagerFreefree(void *ap);
 MemoryInfo *mem_info();
 
 #endif

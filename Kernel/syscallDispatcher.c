@@ -217,7 +217,7 @@ static void *sys_memMalloc(uint64_t size)
 
 static void sys_memFree(uint64_t ap)
 {
-    memory_manager_free((void *)ap);
+    memoryManagerFreefree((void *)ap);
 }
 
 static pid_t sys_waitpid(pid_t pid)

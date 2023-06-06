@@ -79,8 +79,8 @@ int sem_close(sem_t sem)
     }
 
     freeQueue(sem->blockedProcesses);
-    memory_manager_free(sem->name);
-    memory_manager_free(semAux);
+    memoryManagerFreefree(sem->name);
+    memoryManagerFreefree(semAux);
     return 1;
 }
 

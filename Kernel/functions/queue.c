@@ -24,7 +24,7 @@ pid_t dequeuePid(BlockedQueueADT queue) {
     queue->qty--;
     queue->first = first->next;
     pid_t ans = first->pid;
-    memory_manager_free(first);
+    memoryManagerFreefree(first);
     return ans;
 }
 
@@ -53,7 +53,7 @@ void freeQueue(BlockedQueueADT queue) {
     while (queue->first != NULL) {
         BlockedNode * aux = queue->first;
         queue->first = queue->first->next;
-        memory_manager_free(aux);
+        memoryManagerFreefree(aux);
     }
-    memory_manager_free(queue);
+    memoryManagerFreefree(queue);
 }
