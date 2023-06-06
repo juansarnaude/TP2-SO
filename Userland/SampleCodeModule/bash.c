@@ -8,7 +8,7 @@ static char buffer[32];
 typedef void (*ptr)();
 typedef ptr (*pm)();
 
-void help();
+void sh();
 int readInput();
 void unknownCommand();
 void pipeSeparator(char **parts, int part_count, int pipePosition);
@@ -35,6 +35,11 @@ int argcW = 0;
 command writeFunc = NULL;
 
 void bash()
+{
+    sh();
+}
+
+void sh()
 {
     int i = 0;
     while (i != -1)
