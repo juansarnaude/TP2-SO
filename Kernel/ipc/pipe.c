@@ -45,8 +45,8 @@ int pipeClose(Pipe *pipe)
     {
         current->previous->next = current->next;
     }
-    memory_manager_free(current);
-    memory_manager_free(pipe);
+    memoryManagerFreefree(current);
+    memoryManagerFreefree(pipe);
     return 1;
 }
 

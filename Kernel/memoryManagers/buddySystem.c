@@ -142,7 +142,7 @@ void *memoryManagerAlloc(size_t nbytes)
 }
 
 // Must give the start of the memory used
-void memory_manager_free(void *ap)
+void memoryManagerFreefree(void *ap)
 {
     if (ap == NULL)
     {

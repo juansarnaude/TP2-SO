@@ -68,7 +68,7 @@ void *memoryManagerAlloc(size_t nbytes)
     }
 }
 
-void memory_manager_free(void *ap)
+void memoryManagerFreefree(void *ap)
 {
     if (ap == NULL)
         return;
