@@ -113,7 +113,7 @@ typedef struct
     BlockedQueueADT blockedQueue;
     fd_t fileDescriptors[FDS];
     // 0: STDIN, 1: STDOUT, 2:STDERR
-    // 3: PIPEW, 4: PIPER
+    // 3: PIPEOUT, 4: PIPEIN
     Pipe *pipe;
     unsigned int lastFd;
     unsigned int argc;
