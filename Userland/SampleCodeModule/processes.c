@@ -164,7 +164,7 @@ void phylo(int argc, char *argv[])
     }
 
     fprintf(STDOUT, "Phylosopher starting\n");
-    char c;
+    int c;
 
     while (1)
     {
